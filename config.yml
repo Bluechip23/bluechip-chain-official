@@ -1,5 +1,9 @@
 version: 1
 validation: sovereign
+wasm:
+ code:
+  - path: "./smartcontracts/bluechip-contracts/target/wasm32-unknown-unknown/release/factory.wasm"
+  - path: "./smartcontracts/bluechip-contracts/target/wasm32-unknown-unknown/release/pool.wasm"
 accounts: 
 - name: alice
   coins:
@@ -26,3 +30,4 @@ validators:
   bonded: 200000000stake
 - name: validator3
   bonded: 300000000stake
+

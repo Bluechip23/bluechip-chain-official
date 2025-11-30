@@ -78,10 +78,13 @@ import (
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	"bluechipChain/docs"
+	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+
+	// Name is the name of the application.
+	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
 )
 
 const (
-	// Name is the name of the application.
 	Name = "bluechipChain"
 	// AccountAddressPrefix is the prefix for accounts addresses.
 	AccountAddressPrefix = "cosmos"
@@ -143,6 +146,10 @@ type App struct {
 	ScopedICAControllerKeeper capabilitykeeper.ScopedKeeper
 	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
 	ScopedKeepers             map[string]capabilitykeeper.ScopedKeeper
+
+	// CosmWasm
+	WasmKeeper       wasmkeeper.Keeper
+	ScopedWasmKeeper capabilitykeeper.ScopedKeeper
 
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
@@ -293,6 +300,9 @@ func New(
 
 	if err := app.Load(loadLatest); err != nil {
 		return nil, err
+	}
+	if err := app.WasmKeeper.InitializePinnedCodes(app.NewUncachedContext(true, tmproto.Header{})); err != nil {
+		panic(err)
 	}
 
 	return app, nil
