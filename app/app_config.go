@@ -53,7 +53,10 @@ import (
 	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 	"google.golang.org/protobuf/types/known/durationpb"
-	// this line is used by starport scaffolding # stargate/app/moduleImport
+	fixedmintmodulev1 "bluechipChain/api/bluechipchain/fixedmint/module"
+_ "bluechipChain/x/fixedmint/module" // import for side-effects
+fixedmintmoduletypes "bluechipChain/x/fixedmint/types"
+// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
 var (
@@ -91,7 +94,8 @@ var (
 		circuittypes.ModuleName,
 		// chain modules
 		wasmtypes.ModuleName,
-		// this line is used by starport scaffolding # stargate/app/initGenesis
+		fixedmintmoduletypes.ModuleName,
+// this line is used by starport scaffolding # stargate/app/initGenesis
 	}
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -116,7 +120,8 @@ var (
 		ibcfeetypes.ModuleName,
 		// chain modules
 		wasmtypes.ModuleName,
-		// this line is used by starport scaffolding # stargate/app/beginBlockers
+		fixedmintmoduletypes.ModuleName,
+// this line is used by starport scaffolding # stargate/app/beginBlockers
 	}
 
 	endBlockers = []string{
@@ -135,7 +140,8 @@ var (
 		ibcfeetypes.ModuleName,
 		// chain modules
 		wasmtypes.ModuleName,
-		// this line is used by starport scaffolding # stargate/app/endBlockers
+		fixedmintmoduletypes.ModuleName,
+// this line is used by starport scaffolding # stargate/app/endBlockers
 	}
 
 	preBlockers = []string{
@@ -156,7 +162,8 @@ var (
 		{Account: ibcfeetypes.ModuleName},
 		{Account: icatypes.ModuleName},
 		{Account: wasmtypes.ModuleName, Permissions: []string{authtypes.Burner}},
-		// this line is used by starport scaffolding # stargate/app/maccPerms
+		{Account: fixedmintmoduletypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner, authtypes.Staking}},
+// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 
 	// blocked account addresses
@@ -291,7 +298,11 @@ var (
 				Name:   circuittypes.ModuleName,
 				Config: appconfig.WrapAny(&circuitmodulev1.Module{}),
 			},
-			// this line is used by starport scaffolding # stargate/app/moduleConfig
+			{
+				Name:   fixedmintmoduletypes.ModuleName,
+				Config: appconfig.WrapAny(&fixedmintmodulev1.Module{}),
+			},
+// this line is used by starport scaffolding # stargate/app/moduleConfig
 		},
 	})
 )

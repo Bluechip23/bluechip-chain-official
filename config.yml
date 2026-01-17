@@ -1,9 +1,5 @@
 version: 1
 validation: sovereign
-wasm:
- code:
-  - path: "./smartcontracts/bluechip-contracts/target/wasm32-unknown-unknown/release/factory.wasm"
-  - path: "./smartcontracts/bluechip-contracts/target/wasm32-unknown-unknown/release/pool.wasm"
 accounts: 
 - name: alice
   coins:
@@ -30,4 +26,13 @@ validators:
   bonded: 200000000stake
 - name: validator3
   bonded: 300000000stake
+consensus:
+  timeout_commit: "6s"
+genesis:
+  app_state:
+    mint:
+      params:
+        inflation_rate_change: "0.000000000000000000"
+        inflation_max: "0.000000000000000000"
+        inflation_min: "0.000000000000000000"
 
