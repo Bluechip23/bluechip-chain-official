@@ -36,7 +36,7 @@ BlueChip is a young and growing chain. As more smart contracts and history devel
 
 # Set the required mainnet chain-id
 
-CHAIN_ID=bluechip-2
+CHAIN_ID=bluechip-3
 
 
 # Please decide what you would like your validator to be named:
