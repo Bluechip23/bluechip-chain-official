@@ -1,16 +1,38 @@
 package keeper
 
 import (
+	"context"
 	"fmt"
-
+    
+    "cosmossdk.io/math"
 	"cosmossdk.io/core/store"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-    
+    authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"bluechipChain/x/fixedmint/types"
 )
+
+// ...
+
+// MintFixedBlockReward mints the fixed amount of tokens and sends them to the fee collector.
+func (k Keeper) MintFixedBlockReward(ctx context.Context) error {
+    amount := sdk.NewCoins(sdk.NewCoin("ubluechip", math.NewInt(1000000)))
+
+    // Mint coins to the fixedmint module account
+    if err := k.bankKeeper.MintCoins(ctx, types.ModuleName, amount); err != nil {
+        return err
+    }
+
+    // Send the minted coins to the fee_collector module account
+    if err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.ModuleName, authtypes.FeeCollectorName, amount); err != nil {
+        return err
+    }
+    
+    k.Logger().Info("Minted fixed block reward", "amount", amount)
+    return nil
+}
 
 type (
 	Keeper struct {
