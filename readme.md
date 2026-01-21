@@ -4,7 +4,7 @@ This assumes that you have go and a proper operating system installed to your ma
 
 Once everything is installed, you will need to build the BlueChip binary:
 # from $HOME dir
-git clone https://github.com/Bluechip23/bluechip
+git clone https://github.com/Bluechip23/bluechip-chain-official.git
 
 cd bluechip
 
@@ -59,7 +59,7 @@ priv_validator_key.json
 
 rm ~/.bluechip/config/genesis.json
 
-wget https://raw.githubusercontent.com/Bluechip23/bluechip/main/genesis.json
+wget https://raw.githubusercontent.com/Bluechip23/bluechip-chain-official/main/genesis.json
 
 mv bluechip-genesis.json $HOME/.bluechip/config/genesis.json
 
@@ -69,7 +69,7 @@ By running this you will replace the genesis file you previously created with th
 # Find Peers For Network
 Find Peers from the BlueChip network and place them in your config file to allow proper node communication.
 
-CHAIN_REPO="https://raw.githubusercontent.com/BlueChip23/bluechip/main" && \
+CHAIN_REPO="https://raw.githubusercontent.com/BlueChip23/bluechip-chain-official/main" && \
 export PEERS="$(curl -sL "$CHAIN_REPO/peers.txt")"
 
 # Set peers in your newly created config file
