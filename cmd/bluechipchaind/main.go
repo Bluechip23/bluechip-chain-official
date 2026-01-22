@@ -8,7 +8,7 @@ import (
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 
 	"bluechipChain/app"
-	"bluechipChain/cmd/bluechipChaind/cmd"
+	"bluechipChain/cmd/bluechipchaind/cmd"
 )
 
 func main() {
