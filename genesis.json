@@ -265,7 +265,16 @@
         "send_sequences": [],
         "recv_sequences": [],
         "ack_sequences": [],
-        "next_channel_sequence": "0"
+        "next_channel_sequence": "0",
+        "params": {
+          "upgrade_timeout": {
+            "height": {
+              "revision_number": "0",
+              "revision_height": "0"
+            },
+            "timestamp": "600000000000"
+          }
+        }
       }
     },
     "transfer": {
@@ -288,6 +297,15 @@
       "index": "1",
       "owners": []
     },
+    "circuit": {
+      "account_permissions": [],
+      "disabled_type_urls": []
+    },
+    "nft": {
+      "classes": [],
+      "entries": []
+    },
+    "vesting": {},
     "interchainaccounts": {
       "controller_genesis_state": {
         "active_channels": [],
@@ -330,6 +348,20 @@
     "evidence": {
       "evidence": []
     },
-    "upgrade": {}
+    "runtime": null,
+    "upgrade": {},
+    "group": {
+      "group_seq": "0",
+      "groups": [],
+      "group_members": [],
+      "group_policy_seq": "0",
+      "group_policies": [],
+      "proposal_seq": "0",
+      "proposals": [],
+      "votes": []
+    },
+    "06-solomachine": null,
+    "07-tendermint": null,
+    "params": null
   }
 }
