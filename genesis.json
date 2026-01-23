@@ -276,6 +276,60 @@
         "receive_enabled": true
       },
       "total_escrowed": []
-    }
+    },
+    "feeibc": {
+      "identified_fees": [],
+      "fee_enabled_channels": [],
+      "registered_payees": [],
+      "registered_counterparty_payees": [],
+      "forward_relayers": []
+    },
+    "capability": {
+      "index": "1",
+      "owners": []
+    },
+    "interchainaccounts": {
+      "controller_genesis_state": {
+        "active_channels": [],
+        "interchain_accounts": [],
+        "ports": [],
+        "params": {
+          "controller_enabled": true
+        }
+      },
+      "host_genesis_state": {
+        "active_channels": [],
+        "interchain_accounts": [],
+        "port": "icahost",
+        "params": {
+          "host_enabled": true,
+          "allow_messages": [
+            "*"
+          ]
+        }
+      }
+    },
+    "wasm": {
+      "params": {
+        "code_upload_access": {
+          "permission": "Everybody",
+          "addresses": []
+        },
+        "instantiate_default_permission": "Everybody"
+      },
+      "codes": [],
+      "contracts": [],
+      "sequences": []
+    },
+    "authz": {
+      "authorization": []
+    },
+    "feegrant": {
+      "allowances": []
+    },
+    "evidence": {
+      "evidence": []
+    },
+    "upgrade": {}
   }
 }
