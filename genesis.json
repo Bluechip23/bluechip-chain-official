@@ -73,7 +73,7 @@
           "coins": [
             {
               "denom": "ubluechip",
-              "amount": "30000000000000"
+              "amount": "50000000000000"
             }
           ]
         },
@@ -90,7 +90,7 @@
       "supply": [
         {
           "denom": "ubluechip",
-          "amount": "30000050000000"
+          "amount": "50000050000000"
         }
       ],
       "denom_metadata": [
