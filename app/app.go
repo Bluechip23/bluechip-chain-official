@@ -88,7 +88,7 @@ import (
 const (
 	Name = "bluechipChain"
 	// AccountAddressPrefix is the prefix for accounts addresses.
-	AccountAddressPrefix = "cosmos"
+	AccountAddressPrefix = "bluechip"
 	// ChainCoinType is the coin type of the chain.
 	ChainCoinType = 118
 )
