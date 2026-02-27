@@ -6,6 +6,7 @@ package types
 import (
 	cosmossdk_io_math "cosmossdk.io/math"
 	fmt "fmt"
+	_ "github.com/cosmos/cosmos-proto"
 	_ "github.com/cosmos/cosmos-sdk/types/tx/amino"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/cosmos/gogoproto/proto"
@@ -27,18 +28,23 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Params defines the parameters for the module.
 type Params struct {
-	StakeCap                       cosmossdk_io_math.Int       `protobuf:"bytes,1,opt,name=stake_cap,json=stakeCap,proto3,customtype=cosmossdk.io/math.Int" json:"stake_cap"`
-	SimpleCheckInterval            uint64                      `protobuf:"varint,2,opt,name=simple_check_interval,json=simpleCheckInterval,proto3" json:"simple_check_interval,omitempty"`
-	ComplexCheckInterval           uint64                      `protobuf:"varint,3,opt,name=complex_check_interval,json=complexCheckInterval,proto3" json:"complex_check_interval,omitempty"`
-	ValuePostsPerComplexInterval   uint64                      `protobuf:"varint,4,opt,name=value_posts_per_complex_interval,json=valuePostsPerComplexInterval,proto3" json:"value_posts_per_complex_interval,omitempty"`
-	DefaultDelegatorRewardPercent  cosmossdk_io_math.LegacyDec `protobuf:"bytes,5,opt,name=default_delegator_reward_percent,json=defaultDelegatorRewardPercent,proto3,customtype=cosmossdk.io/math.LegacyDec" json:"default_delegator_reward_percent"`
+	// stake_cap is the maximum ubluechip a single validator can stake directly
+	StakeCap cosmossdk_io_math.Int `protobuf:"bytes,1,opt,name=stake_cap,json=stakeCap,proto3,customtype=cosmossdk.io/math.Int" json:"stake_cap"`
+	// simple_check_interval is block count between simple checks (default 14400 = ~24h)
+	SimpleCheckInterval uint64 `protobuf:"varint,2,opt,name=simple_check_interval,json=simpleCheckInterval,proto3" json:"simple_check_interval,omitempty"`
+	// complex_check_interval is block count between complex checks (default 72000 = ~5d)
+	ComplexCheckInterval uint64 `protobuf:"varint,3,opt,name=complex_check_interval,json=complexCheckInterval,proto3" json:"complex_check_interval,omitempty"`
+	// value_posts_per_complex_interval is the number of pseudo-random value posts (default 6)
+	ValuePostsPerComplexInterval uint64 `protobuf:"varint,4,opt,name=value_posts_per_complex_interval,json=valuePostsPerComplexInterval,proto3" json:"value_posts_per_complex_interval,omitempty"`
+	// default_delegator_reward_percent is the default % of LP rewards passed to delegators (0-100)
+	DefaultDelegatorRewardPercent cosmossdk_io_math.LegacyDec `protobuf:"bytes,5,opt,name=default_delegator_reward_percent,json=defaultDelegatorRewardPercent,proto3,customtype=cosmossdk.io/math.LegacyDec" json:"default_delegator_reward_percent"`
 }
 
 func (m *Params) Reset()         { *m = Params{} }
 func (m *Params) String() string { return proto.CompactTextString(m) }
 func (*Params) ProtoMessage()    {}
 func (*Params) Descriptor() ([]byte, []int) {
-	return nil, nil
+	return fileDescriptor_2a52f6c9b27b44fb, []int{0}
 }
 func (m *Params) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -67,8 +73,63 @@ func (m *Params) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Params proto.InternalMessageInfo
 
+func (m *Params) GetSimpleCheckInterval() uint64 {
+	if m != nil {
+		return m.SimpleCheckInterval
+	}
+	return 0
+}
+
+func (m *Params) GetComplexCheckInterval() uint64 {
+	if m != nil {
+		return m.ComplexCheckInterval
+	}
+	return 0
+}
+
+func (m *Params) GetValuePostsPerComplexInterval() uint64 {
+	if m != nil {
+		return m.ValuePostsPerComplexInterval
+	}
+	return 0
+}
+
 func init() {
 	proto.RegisterType((*Params)(nil), "bluechipchain.liquidityvault.Params")
+}
+
+func init() {
+	proto.RegisterFile("bluechipchain/liquidityvault/params.proto", fileDescriptor_2a52f6c9b27b44fb)
+}
+
+var fileDescriptor_2a52f6c9b27b44fb = []byte{
+	// 414 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x92, 0x3f, 0x6f, 0xd4, 0x30,
+	0x18, 0xc6, 0x13, 0x5a, 0x2a, 0xea, 0x8d, 0xd0, 0xa2, 0xa3, 0x94, 0x5c, 0x84, 0x40, 0x2a, 0x20,
+	0x12, 0xf1, 0x67, 0x62, 0x60, 0x68, 0x4e, 0x88, 0x93, 0x18, 0xa2, 0x8c, 0x2c, 0x96, 0xeb, 0xbc,
+	0x24, 0xd6, 0x25, 0xb1, 0xb1, 0x9d, 0xa3, 0xc7, 0x47, 0x60, 0xe2, 0x23, 0xf0, 0x11, 0x3a, 0xf0,
+	0x21, 0x3a, 0x9e, 0x98, 0x10, 0xc3, 0x09, 0xdd, 0x0d, 0xf0, 0x31, 0x50, 0xec, 0xdc, 0x89, 0x1c,
+	0x2c, 0x91, 0xe3, 0xe7, 0x79, 0x7e, 0x96, 0x9e, 0xf7, 0x45, 0x0f, 0xce, 0xca, 0x06, 0x68, 0xc1,
+	0x04, 0x2d, 0x08, 0xab, 0xa3, 0x92, 0xbd, 0x6f, 0x58, 0xc6, 0xf4, 0x6c, 0x4a, 0x9a, 0x52, 0x47,
+	0x82, 0x48, 0x52, 0xa9, 0x50, 0x48, 0xae, 0xb9, 0x77, 0xdc, 0xb3, 0x86, 0x7d, 0xeb, 0xd1, 0x75,
+	0x52, 0xb1, 0x9a, 0x47, 0xe6, 0x6b, 0x03, 0x47, 0x07, 0x39, 0xcf, 0xb9, 0x39, 0x46, 0xed, 0xa9,
+	0xbb, 0xbd, 0x45, 0xb9, 0xaa, 0xb8, 0xc2, 0x56, 0xb0, 0x3f, 0x56, 0xba, 0x7b, 0xb1, 0x83, 0xf6,
+	0x12, 0xf3, 0xa4, 0xf7, 0x1a, 0xed, 0x2b, 0x4d, 0x26, 0x80, 0x29, 0x11, 0x03, 0x37, 0x70, 0x4f,
+	0xf6, 0x4f, 0x1f, 0x5d, 0x2e, 0x86, 0xce, 0x8f, 0xc5, 0xf0, 0xd0, 0x66, 0x54, 0x36, 0x09, 0x19,
+	0x8f, 0x2a, 0xa2, 0x8b, 0x70, 0x5c, 0xeb, 0x6f, 0x5f, 0x1f, 0xa3, 0x0e, 0x36, 0xae, 0x75, 0x7a,
+	0xcd, 0xa4, 0x63, 0x22, 0xbc, 0xa7, 0xe8, 0x50, 0xb1, 0x4a, 0x94, 0x80, 0x69, 0x01, 0x74, 0x82,
+	0x59, 0xad, 0x41, 0x4e, 0x49, 0x39, 0xb8, 0x12, 0xb8, 0x27, 0xbb, 0xe9, 0x0d, 0x2b, 0xc6, 0xad,
+	0x36, 0xee, 0x24, 0xef, 0x39, 0xba, 0x49, 0x79, 0x7b, 0x7d, 0xbe, 0x1d, 0xda, 0x31, 0xa1, 0x83,
+	0x4e, 0xed, 0xa7, 0x5e, 0xa1, 0x60, 0x4a, 0xca, 0x06, 0xb0, 0xe0, 0x4a, 0x2b, 0x2c, 0x40, 0xe2,
+	0x35, 0x65, 0x93, 0xdf, 0x35, 0xf9, 0x63, 0xe3, 0x4b, 0x5a, 0x5b, 0x02, 0x32, 0xb6, 0xa6, 0x0d,
+	0xe7, 0x23, 0x0a, 0x32, 0x78, 0xd7, 0xb6, 0x8a, 0x33, 0x28, 0x21, 0x27, 0x9a, 0x4b, 0x2c, 0xe1,
+	0x03, 0x91, 0x59, 0x0b, 0xa5, 0x50, 0xeb, 0xc1, 0x55, 0x53, 0xc9, 0x93, 0xae, 0x92, 0xdb, 0xff,
+	0x56, 0xf2, 0x06, 0x72, 0x42, 0x67, 0x23, 0xa0, 0x7f, 0x15, 0x33, 0x02, 0x9a, 0xde, 0xe9, 0xd0,
+	0xa3, 0x35, 0x39, 0x35, 0xe0, 0xc4, 0x72, 0x5f, 0x84, 0xbf, 0xbf, 0x0c, 0xdd, 0x4f, 0xbf, 0x2e,
+	0x1e, 0xde, 0xef, 0x2f, 0xc6, 0xf9, 0xf6, 0x6a, 0xd8, 0x39, 0x9d, 0xbe, 0xbc, 0x5c, 0xfa, 0xee,
+	0x7c, 0xe9, 0xbb, 0x3f, 0x97, 0xbe, 0xfb, 0x79, 0xe5, 0x3b, 0xf3, 0x95, 0xef, 0x7c, 0x5f, 0xf9,
+	0xce, 0xdb, 0x7b, 0x6b, 0x40, 0xfc, 0x7f, 0x80, 0x9e, 0x09, 0x50, 0x67, 0x7b, 0x66, 0xf2, 0xcf,
+	0xfe, 0x04, 0x00, 0x00, 0xff, 0xff, 0x94, 0x3b, 0xa2, 0x81, 0x88, 0x02, 0x00, 0x00,
 }
 
 func (this *Params) Equal(that interface{}) bool {
@@ -107,7 +168,6 @@ func (this *Params) Equal(that interface{}) bool {
 	}
 	return true
 }
-
 func (m *Params) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -128,7 +188,6 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	// field 5: default_delegator_reward_percent (customtype cosmossdk.io/math.LegacyDec)
 	{
 		size := m.DefaultDelegatorRewardPercent.Size()
 		i -= size
@@ -136,28 +195,24 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i = encodeVarintParams(dAtA, i, uint64(size))
-		i--
-		dAtA[i] = 0x2a
 	}
-	// field 4: value_posts_per_complex_interval (varint)
+	i--
+	dAtA[i] = 0x2a
 	if m.ValuePostsPerComplexInterval != 0 {
 		i = encodeVarintParams(dAtA, i, uint64(m.ValuePostsPerComplexInterval))
 		i--
 		dAtA[i] = 0x20
 	}
-	// field 3: complex_check_interval (varint)
 	if m.ComplexCheckInterval != 0 {
 		i = encodeVarintParams(dAtA, i, uint64(m.ComplexCheckInterval))
 		i--
 		dAtA[i] = 0x18
 	}
-	// field 2: simple_check_interval (varint)
 	if m.SimpleCheckInterval != 0 {
 		i = encodeVarintParams(dAtA, i, uint64(m.SimpleCheckInterval))
 		i--
 		dAtA[i] = 0x10
 	}
-	// field 1: stake_cap (customtype cosmossdk.io/math.Int)
 	{
 		size := m.StakeCap.Size()
 		i -= size
@@ -165,9 +220,9 @@ func (m *Params) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i = encodeVarintParams(dAtA, i, uint64(size))
-		i--
-		dAtA[i] = 0xa
 	}
+	i--
+	dAtA[i] = 0xa
 	return len(dAtA) - i, nil
 }
 
@@ -182,29 +237,23 @@ func encodeVarintParams(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-
 func (m *Params) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	// field 1: stake_cap
 	l = m.StakeCap.Size()
 	n += 1 + l + sovParams(uint64(l))
-	// field 2: simple_check_interval
 	if m.SimpleCheckInterval != 0 {
 		n += 1 + sovParams(uint64(m.SimpleCheckInterval))
 	}
-	// field 3: complex_check_interval
 	if m.ComplexCheckInterval != 0 {
 		n += 1 + sovParams(uint64(m.ComplexCheckInterval))
 	}
-	// field 4: value_posts_per_complex_interval
 	if m.ValuePostsPerComplexInterval != 0 {
 		n += 1 + sovParams(uint64(m.ValuePostsPerComplexInterval))
 	}
-	// field 5: default_delegator_reward_percent
 	l = m.DefaultDelegatorRewardPercent.Size()
 	n += 1 + l + sovParams(uint64(l))
 	return n
@@ -213,11 +262,9 @@ func (m *Params) Size() (n int) {
 func sovParams(x uint64) (n int) {
 	return (math_bits.Len64(x|1) + 6) / 7
 }
-
 func sozParams(x uint64) (n int) {
 	return sovParams(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-
 func (m *Params) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -251,7 +298,7 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field StakeCap", wireType)
 			}
-			var byteLen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowParams
@@ -261,15 +308,16 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if byteLen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthParams
 			}
-			postIndex := iNdEx + byteLen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthParams
 			}
@@ -341,7 +389,7 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DefaultDelegatorRewardPercent", wireType)
 			}
-			var byteLen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowParams
@@ -351,15 +399,16 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if byteLen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthParams
 			}
-			postIndex := iNdEx + byteLen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthParams
 			}
@@ -391,7 +440,6 @@ func (m *Params) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-
 func skipParams(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0

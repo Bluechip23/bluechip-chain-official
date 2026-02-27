@@ -21,6 +21,9 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					RpcMethod: "Vault",
 					Use:       "vault [validator-address]",
 					Short:     "Query a validator's liquidity vault",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "validator_address"},
+					},
 				},
 				{
 					RpcMethod: "AllVaults",
@@ -31,6 +34,9 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					RpcMethod: "CompositeScore",
 					Use:       "composite-score [validator-address]",
 					Short:     "Query a validator's composite score",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "validator_address"},
+					},
 				},
 				{
 					RpcMethod: "ValidatorRankings",
@@ -51,16 +57,31 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					RpcMethod: "RegisterValidator",
 					Use:       "register-validator [validator-address] [validator-type]",
 					Short:     "Register a validator in the liquidity vault system",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "validator_address"},
+						{ProtoField: "validator_type"},
+					},
 				},
 				{
 					RpcMethod: "DepositToVault",
 					Use:       "deposit-to-vault [validator-address] [pool-contract] [amount0] [cw20-contract] [amount1]",
 					Short:     "Deposit tokens into a validator's liquidity vault",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "validator_address"},
+						{ProtoField: "pool_contract_address"},
+						{ProtoField: "amount0"},
+						{ProtoField: "cw20_contract_address"},
+						{ProtoField: "amount1"},
+					},
 				},
 				{
 					RpcMethod: "SetDelegatorRewardPercent",
 					Use:       "set-delegator-reward-percent [validator-address] [percent]",
 					Short:     "Set the delegator reward pass-through percentage",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "validator_address"},
+						{ProtoField: "percent"},
+					},
 				},
 			},
 		},

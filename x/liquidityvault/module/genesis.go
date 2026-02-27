@@ -30,10 +30,10 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 
 	// Restore check heights
 	if genState.LastSimpleCheckHeight > 0 {
-		k.SetLastSimpleCheckHeight(ctx, int64(genState.LastSimpleCheckHeight))
+		k.SetLastSimpleCheckHeight(ctx, genState.LastSimpleCheckHeight)
 	}
 	if genState.LastComplexCheckHeight > 0 {
-		k.SetLastComplexCheckHeight(ctx, int64(genState.LastComplexCheckHeight))
+		k.SetLastComplexCheckHeight(ctx, genState.LastComplexCheckHeight)
 	}
 }
 
@@ -41,8 +41,8 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis := types.DefaultGenesis()
 	genesis.Params = k.GetParams(ctx)
-	genesis.LastSimpleCheckHeight = uint64(k.GetLastSimpleCheckHeight(ctx))
-	genesis.LastComplexCheckHeight = uint64(k.GetLastComplexCheckHeight(ctx))
+	genesis.LastSimpleCheckHeight = k.GetLastSimpleCheckHeight(ctx)
+	genesis.LastComplexCheckHeight = k.GetLastComplexCheckHeight(ctx)
 
 	// Export all validator records
 	vaults := k.GetAllVaults(ctx)

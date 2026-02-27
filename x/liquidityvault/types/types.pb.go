@@ -6,8 +6,8 @@ package types
 import (
 	cosmossdk_io_math "cosmossdk.io/math"
 	fmt "fmt"
-	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
-	_ "github.com/cosmos/cosmos-sdk/types/tx/amino"
+	_ "github.com/cosmos/cosmos-proto"
+	types "github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	proto "github.com/cosmos/gogoproto/proto"
 	io "io"
@@ -26,6 +26,7 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+// ValidatorType distinguishes Full Validators from Liquidity-only Validators.
 type ValidatorType int32
 
 const (
@@ -42,8 +43,8 @@ var ValidatorType_name = map[int32]string{
 
 var ValidatorType_value = map[string]int32{
 	"VALIDATOR_TYPE_UNSPECIFIED": 0,
-	"VALIDATOR_TYPE_FULL":       1,
-	"VALIDATOR_TYPE_LIQUIDITY":  2,
+	"VALIDATOR_TYPE_FULL":        1,
+	"VALIDATOR_TYPE_LIQUIDITY":   2,
 }
 
 func (x ValidatorType) String() string {
@@ -51,22 +52,22 @@ func (x ValidatorType) String() string {
 }
 
 func (ValidatorType) EnumDescriptor() ([]byte, []int) {
-	return nil, nil
+	return fileDescriptor_94d92a26fce97721, []int{0}
 }
 
-// PoolPosition defines a position in a liquidity pool.
+// PoolPosition represents a single LP position in a specific pool.
 type PoolPosition struct {
 	PoolContractAddress string                `protobuf:"bytes,1,opt,name=pool_contract_address,json=poolContractAddress,proto3" json:"pool_contract_address,omitempty"`
 	PositionId          string                `protobuf:"bytes,2,opt,name=position_id,json=positionId,proto3" json:"position_id,omitempty"`
-	DepositAmount0      cosmossdk_io_math.Int `protobuf:"bytes,3,opt,name=deposit_amount_0,json=depositAmount0,proto3,customtype=cosmossdk.io/math.Int" json:"deposit_amount_0"`
-	DepositAmount1      cosmossdk_io_math.Int `protobuf:"bytes,4,opt,name=deposit_amount_1,json=depositAmount1,proto3,customtype=cosmossdk.io/math.Int" json:"deposit_amount_1"`
+	DepositAmount0      cosmossdk_io_math.Int `protobuf:"bytes,3,opt,name=deposit_amount0,json=depositAmount0,proto3,customtype=cosmossdk.io/math.Int" json:"deposit_amount0"`
+	DepositAmount1      cosmossdk_io_math.Int `protobuf:"bytes,4,opt,name=deposit_amount1,json=depositAmount1,proto3,customtype=cosmossdk.io/math.Int" json:"deposit_amount1"`
 }
 
 func (m *PoolPosition) Reset()         { *m = PoolPosition{} }
 func (m *PoolPosition) String() string { return proto.CompactTextString(m) }
 func (*PoolPosition) ProtoMessage()    {}
 func (*PoolPosition) Descriptor() ([]byte, []int) {
-	return nil, nil
+	return fileDescriptor_94d92a26fce97721, []int{0}
 }
 func (m *PoolPosition) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -109,20 +110,20 @@ func (m *PoolPosition) GetPositionId() string {
 	return ""
 }
 
-// Vault defines a liquidity vault for a validator.
+// Vault represents a validator's liquidity vault.
 type Vault struct {
-	ValidatorAddress       string                                          `protobuf:"bytes,1,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
-	TotalDeposited         github_com_cosmos_cosmos_sdk_types.Coin         `protobuf:"bytes,2,opt,name=total_deposited,json=totalDeposited,proto3" json:"total_deposited"`
-	DelegatorRewardPercent cosmossdk_io_math.LegacyDec                    `protobuf:"bytes,3,opt,name=delegator_reward_percent,json=delegatorRewardPercent,proto3,customtype=cosmossdk.io/math.LegacyDec" json:"delegator_reward_percent"`
-	Positions              []PoolPosition                                  `protobuf:"bytes,4,rep,name=positions,proto3" json:"positions"`
-	ValidatorType          ValidatorType                                   `protobuf:"varint,5,opt,name=validator_type,json=validatorType,proto3,enum=bluechipchain.liquidityvault.ValidatorType" json:"validator_type,omitempty"`
+	ValidatorAddress       string                      `protobuf:"bytes,1,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
+	TotalDeposited         types.Coin                  `protobuf:"bytes,2,opt,name=total_deposited,json=totalDeposited,proto3" json:"total_deposited"`
+	DelegatorRewardPercent cosmossdk_io_math.LegacyDec `protobuf:"bytes,3,opt,name=delegator_reward_percent,json=delegatorRewardPercent,proto3,customtype=cosmossdk.io/math.LegacyDec" json:"delegator_reward_percent"`
+	Positions              []PoolPosition              `protobuf:"bytes,4,rep,name=positions,proto3" json:"positions"`
+	ValidatorType          ValidatorType               `protobuf:"varint,5,opt,name=validator_type,json=validatorType,proto3,enum=bluechipchain.liquidityvault.ValidatorType" json:"validator_type,omitempty"`
 }
 
 func (m *Vault) Reset()         { *m = Vault{} }
 func (m *Vault) String() string { return proto.CompactTextString(m) }
 func (*Vault) ProtoMessage()    {}
 func (*Vault) Descriptor() ([]byte, []int) {
-	return nil, nil
+	return fileDescriptor_94d92a26fce97721, []int{1}
 }
 func (m *Vault) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -158,11 +159,11 @@ func (m *Vault) GetValidatorAddress() string {
 	return ""
 }
 
-func (m *Vault) GetTotalDeposited() github_com_cosmos_cosmos_sdk_types.Coin {
+func (m *Vault) GetTotalDeposited() types.Coin {
 	if m != nil {
 		return m.TotalDeposited
 	}
-	return github_com_cosmos_cosmos_sdk_types.Coin{}
+	return types.Coin{}
 }
 
 func (m *Vault) GetPositions() []PoolPosition {
@@ -179,7 +180,7 @@ func (m *Vault) GetValidatorType() ValidatorType {
 	return ValidatorType_VALIDATOR_TYPE_UNSPECIFIED
 }
 
-// CompositeScore defines a composite score for a validator.
+// CompositeScore represents a validator's composite score for ranking.
 type CompositeScore struct {
 	ValidatorAddress string                `protobuf:"bytes,1,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
 	ChainStake       cosmossdk_io_math.Int `protobuf:"bytes,2,opt,name=chain_stake,json=chainStake,proto3,customtype=cosmossdk.io/math.Int" json:"chain_stake"`
@@ -190,7 +191,7 @@ func (m *CompositeScore) Reset()         { *m = CompositeScore{} }
 func (m *CompositeScore) String() string { return proto.CompactTextString(m) }
 func (*CompositeScore) ProtoMessage()    {}
 func (*CompositeScore) Descriptor() ([]byte, []int) {
-	return nil, nil
+	return fileDescriptor_94d92a26fce97721, []int{2}
 }
 func (m *CompositeScore) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -226,7 +227,7 @@ func (m *CompositeScore) GetValidatorAddress() string {
 	return ""
 }
 
-// ValuePost defines a value post from a validator.
+// ValuePost represents a single value posting for a vault.
 type ValuePost struct {
 	ValidatorAddress string                `protobuf:"bytes,1,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
 	Value            cosmossdk_io_math.Int `protobuf:"bytes,2,opt,name=value,proto3,customtype=cosmossdk.io/math.Int" json:"value"`
@@ -237,7 +238,7 @@ func (m *ValuePost) Reset()         { *m = ValuePost{} }
 func (m *ValuePost) String() string { return proto.CompactTextString(m) }
 func (*ValuePost) ProtoMessage()    {}
 func (*ValuePost) Descriptor() ([]byte, []int) {
-	return nil, nil
+	return fileDescriptor_94d92a26fce97721, []int{3}
 }
 func (m *ValuePost) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -280,7 +281,7 @@ func (m *ValuePost) GetBlockHeight() int64 {
 	return 0
 }
 
-// ValidatorRecord defines a complete record for a validator.
+// ValidatorRecord stores the combined information about a validator in this module.
 type ValidatorRecord struct {
 	ValidatorAddress  string          `protobuf:"bytes,1,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
 	ValidatorType     ValidatorType   `protobuf:"varint,2,opt,name=validator_type,json=validatorType,proto3,enum=bluechipchain.liquidityvault.ValidatorType" json:"validator_type,omitempty"`
@@ -293,7 +294,7 @@ func (m *ValidatorRecord) Reset()         { *m = ValidatorRecord{} }
 func (m *ValidatorRecord) String() string { return proto.CompactTextString(m) }
 func (*ValidatorRecord) ProtoMessage()    {}
 func (*ValidatorRecord) Descriptor() ([]byte, []int) {
-	return nil, nil
+	return fileDescriptor_94d92a26fce97721, []int{4}
 }
 func (m *ValidatorRecord) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -366,7 +367,61 @@ func init() {
 	proto.RegisterType((*ValidatorRecord)(nil), "bluechipchain.liquidityvault.ValidatorRecord")
 }
 
-// PoolPosition marshal/unmarshal
+func init() {
+	proto.RegisterFile("bluechipchain/liquidityvault/types.proto", fileDescriptor_94d92a26fce97721)
+}
+
+var fileDescriptor_94d92a26fce97721 = []byte{
+	// 758 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x55, 0xcf, 0x4e, 0xdb, 0x30,
+	0x1c, 0x6e, 0x5a, 0x3a, 0x09, 0x17, 0xda, 0x12, 0x60, 0x0b, 0x0c, 0x05, 0xd6, 0x4d, 0x5a, 0x05,
+	0x23, 0x5d, 0xbb, 0xd3, 0x2e, 0x93, 0x4a, 0x5b, 0x44, 0xa4, 0x8a, 0x75, 0xe9, 0x1f, 0x89, 0x49,
+	0x53, 0x94, 0x3a, 0x5e, 0x1b, 0x35, 0x8d, 0xb3, 0xc4, 0xe9, 0xd6, 0xb7, 0xd8, 0x0b, 0xec, 0x01,
+	0xb8, 0x73, 0xd8, 0x23, 0x70, 0x44, 0x9c, 0xa6, 0x1d, 0xd0, 0x04, 0x8f, 0xb0, 0x17, 0x98, 0x62,
+	0xbb, 0x85, 0xc2, 0x04, 0x1b, 0x70, 0x8b, 0xfd, 0xf3, 0xf7, 0xd9, 0xdf, 0xf7, 0xfb, 0x1c, 0x83,
+	0x6c, 0xdb, 0x0e, 0x10, 0xec, 0x5a, 0x2e, 0xec, 0x1a, 0x96, 0x93, 0xb3, 0xad, 0x4f, 0x81, 0x65,
+	0x5a, 0x64, 0x38, 0x30, 0x02, 0x9b, 0xe4, 0xc8, 0xd0, 0x45, 0xbe, 0xe2, 0x7a, 0x98, 0x60, 0x71,
+	0x65, 0x62, 0xa5, 0x32, 0xb9, 0x72, 0x79, 0xa1, 0x83, 0x3b, 0x98, 0x2e, 0xcc, 0x85, 0x5f, 0x0c,
+	0xb3, 0xbc, 0x04, 0xb1, 0xdf, 0xc7, 0xbe, 0xce, 0x0a, 0x6c, 0xc0, 0x4b, 0x32, 0x1b, 0xe5, 0xda,
+	0x86, 0x8f, 0x72, 0x83, 0x7c, 0x1b, 0x11, 0x23, 0x9f, 0x83, 0xd8, 0x72, 0x58, 0x3d, 0xb3, 0x1f,
+	0x05, 0x33, 0x35, 0x8c, 0xed, 0x1a, 0xf6, 0x2d, 0x62, 0x61, 0x47, 0xac, 0x82, 0x45, 0x17, 0x63,
+	0x5b, 0x87, 0xd8, 0x21, 0x9e, 0x01, 0x89, 0x6e, 0x98, 0xa6, 0x87, 0x7c, 0x5f, 0x12, 0xd6, 0x84,
+	0xec, 0xf4, 0x96, 0x74, 0x7c, 0xb0, 0xb9, 0xc0, 0x77, 0x28, 0xb2, 0x4a, 0x9d, 0x78, 0x96, 0xd3,
+	0xd1, 0xe6, 0x43, 0x58, 0x89, 0xa3, 0x78, 0x49, 0x5c, 0x05, 0x09, 0x97, 0x33, 0xeb, 0x96, 0x29,
+	0x45, 0x43, 0x0e, 0x0d, 0x8c, 0xa6, 0x54, 0x53, 0x6c, 0x80, 0x94, 0x89, 0xe8, 0x58, 0x37, 0xfa,
+	0x38, 0x70, 0xc8, 0x4b, 0x29, 0x46, 0x37, 0xda, 0x38, 0x3c, 0x59, 0x8d, 0xfc, 0x3c, 0x59, 0x5d,
+	0x64, 0x9b, 0xf9, 0x66, 0x4f, 0xb1, 0x70, 0xae, 0x6f, 0x90, 0xae, 0xa2, 0x3a, 0xe4, 0xf8, 0x60,
+	0x13, 0xf0, 0x53, 0xa8, 0x0e, 0xd1, 0x92, 0x9c, 0xa3, 0xc8, 0x28, 0xae, 0xb2, 0xe6, 0xa5, 0xa9,
+	0xbb, 0xb2, 0xe6, 0x33, 0xfb, 0x31, 0x10, 0x6f, 0x85, 0x6d, 0x10, 0x2b, 0x60, 0x6e, 0x60, 0xd8,
+	0x96, 0x69, 0x10, 0xec, 0xfd, 0xb3, 0x41, 0xe9, 0x31, 0x64, 0xe4, 0xce, 0x0e, 0x48, 0x11, 0x4c,
+	0x0c, 0x5b, 0xe7, 0x1b, 0x21, 0xe6, 0x50, 0xa2, 0xb0, 0xa4, 0x70, 0x86, 0xb0, 0x6d, 0x0a, 0x6f,
+	0x9b, 0x52, 0xc2, 0x96, 0xb3, 0x35, 0x15, 0x2a, 0xd0, 0x92, 0x14, 0x57, 0x1e, 0xc1, 0xc4, 0x1e,
+	0x90, 0x4c, 0x64, 0xa3, 0x0e, 0x3d, 0x90, 0x87, 0x3e, 0x1b, 0x9e, 0xa9, 0xbb, 0xc8, 0x83, 0xc8,
+	0x21, 0xdc, 0xcf, 0x3c, 0x57, 0xfe, 0xf8, 0xaa, 0xf2, 0x2a, 0xea, 0x18, 0x70, 0x58, 0x46, 0xf0,
+	0x82, 0xfe, 0x32, 0x82, 0xda, 0xc3, 0x31, 0xa5, 0x46, 0x19, 0x6b, 0x8c, 0x50, 0xdc, 0x05, 0xd3,
+	0xa3, 0x0e, 0xfa, 0xd2, 0xd4, 0x5a, 0x2c, 0x9b, 0x28, 0xac, 0x2b, 0xd7, 0xc5, 0x56, 0xb9, 0x98,
+	0x30, 0xae, 0xe0, 0x9c, 0x42, 0xd4, 0x40, 0xf2, 0xdc, 0xcd, 0xf0, 0x2e, 0x48, 0xf1, 0x35, 0x21,
+	0x9b, 0x2c, 0x6c, 0x5c, 0x4f, 0xda, 0x1a, 0x61, 0x1a, 0x43, 0x17, 0x69, 0xb3, 0x83, 0x8b, 0xc3,
+	0xcc, 0x6f, 0x01, 0x24, 0x4b, 0xb8, 0xcf, 0xfc, 0xa9, 0x43, 0xec, 0xa1, 0xfb, 0x6a, 0x5a, 0x15,
+	0x24, 0xe8, 0x71, 0x74, 0x9f, 0x18, 0x3d, 0xc4, 0x22, 0xfd, 0x7f, 0xb9, 0x02, 0x14, 0x5f, 0x0f,
+	0xe1, 0x21, 0x1b, 0x55, 0xa3, 0x0f, 0x0c, 0x3b, 0x40, 0xb7, 0xc9, 0x3e, 0xa0, 0xf8, 0x56, 0x08,
+	0xcf, 0x7c, 0x17, 0xc0, 0x34, 0xfd, 0xaa, 0x61, 0xff, 0xde, 0x52, 0x5a, 0x04, 0x71, 0x76, 0xb8,
+	0x5b, 0x48, 0x65, 0x48, 0xf1, 0x09, 0x98, 0x69, 0xdb, 0x18, 0xf6, 0xf4, 0x2e, 0xb2, 0x3a, 0x5d,
+	0x16, 0xc9, 0x98, 0x96, 0xa0, 0x73, 0x3b, 0x74, 0x2a, 0xf3, 0x2d, 0x06, 0x52, 0xe3, 0x8e, 0x6a,
+	0x08, 0x62, 0xcf, 0xbc, 0x2f, 0x01, 0x57, 0xf3, 0x15, 0xbd, 0x6b, 0xbe, 0xc4, 0xd7, 0xa1, 0x29,
+	0x81, 0xcd, 0xa4, 0x24, 0x0a, 0x4f, 0x6f, 0xa2, 0x0a, 0x6c, 0x6a, 0x46, 0xf8, 0xf3, 0x68, 0x82,
+	0x14, 0x1c, 0x25, 0x53, 0xf7, 0xc3, 0x68, 0xd2, 0x9f, 0x53, 0xa2, 0xf0, 0xe2, 0x7a, 0x92, 0xc9,
+	0x38, 0x6b, 0x49, 0x38, 0x19, 0xef, 0x0f, 0x60, 0x1e, 0x06, 0x9e, 0x87, 0x1c, 0x9e, 0x25, 0xdd,
+	0xc5, 0x3e, 0xf1, 0xa5, 0x38, 0xbd, 0x9f, 0xcf, 0x6f, 0x94, 0xca, 0x32, 0xc3, 0x2f, 0xe7, 0x1c,
+	0x67, 0x1a, 0xcf, 0xfb, 0xeb, 0x1f, 0xc1, 0xec, 0x84, 0x21, 0xa2, 0x0c, 0x96, 0x5b, 0xc5, 0xaa,
+	0x5a, 0x2e, 0x36, 0xde, 0x6a, 0x7a, 0x63, 0xaf, 0x56, 0xd1, 0x9b, 0xbb, 0xf5, 0x5a, 0xa5, 0xa4,
+	0x6e, 0xab, 0x95, 0x72, 0x3a, 0x22, 0x3e, 0x02, 0xf3, 0x97, 0xea, 0xdb, 0xcd, 0x6a, 0x35, 0x2d,
+	0x88, 0x2b, 0x40, 0xba, 0x54, 0xa8, 0xaa, 0xef, 0x9a, 0x6a, 0x59, 0x6d, 0xec, 0xa5, 0xa3, 0x5b,
+	0x6f, 0x0e, 0x4f, 0x65, 0xe1, 0xe8, 0x54, 0x16, 0x7e, 0x9d, 0xca, 0xc2, 0xd7, 0x33, 0x39, 0x72,
+	0x74, 0x26, 0x47, 0x7e, 0x9c, 0xc9, 0x91, 0xf7, 0xcf, 0x46, 0x12, 0x4a, 0xf4, 0x0d, 0xfd, 0xf2,
+	0xd7, 0x57, 0xb4, 0xfd, 0x80, 0xbe, 0x6b, 0xaf, 0xfe, 0x04, 0x00, 0x00, 0xff, 0xff, 0xab, 0x98,
+	0x2e, 0x96, 0x72, 0x07, 0x00, 0x00,
+}
 
 func (m *PoolPosition) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
@@ -388,7 +443,6 @@ func (m *PoolPosition) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	// field 4: deposit_amount_1 (customtype cosmossdk.io/math.Int)
 	{
 		size := m.DepositAmount1.Size()
 		i -= size
@@ -396,10 +450,9 @@ func (m *PoolPosition) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i = encodeVarintTypes(dAtA, i, uint64(size))
-		i--
-		dAtA[i] = 0x22
 	}
-	// field 3: deposit_amount_0 (customtype cosmossdk.io/math.Int)
+	i--
+	dAtA[i] = 0x22
 	{
 		size := m.DepositAmount0.Size()
 		i -= size
@@ -407,10 +460,9 @@ func (m *PoolPosition) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			return 0, err
 		}
 		i = encodeVarintTypes(dAtA, i, uint64(size))
-		i--
-		dAtA[i] = 0x1a
 	}
-	// field 2: position_id (string)
+	i--
+	dAtA[i] = 0x1a
 	if len(m.PositionId) > 0 {
 		i -= len(m.PositionId)
 		copy(dAtA[i:], m.PositionId)
@@ -418,7 +470,6 @@ func (m *PoolPosition) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x12
 	}
-	// field 1: pool_contract_address (string)
 	if len(m.PoolContractAddress) > 0 {
 		i -= len(m.PoolContractAddress)
 		copy(dAtA[i:], m.PoolContractAddress)
@@ -429,31 +480,372 @@ func (m *PoolPosition) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *Vault) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *Vault) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Vault) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.ValidatorType != 0 {
+		i = encodeVarintTypes(dAtA, i, uint64(m.ValidatorType))
+		i--
+		dAtA[i] = 0x28
+	}
+	if len(m.Positions) > 0 {
+		for iNdEx := len(m.Positions) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Positions[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintTypes(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	{
+		size := m.DelegatorRewardPercent.Size()
+		i -= size
+		if _, err := m.DelegatorRewardPercent.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintTypes(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x1a
+	{
+		size, err := m.TotalDeposited.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintTypes(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x12
+	if len(m.ValidatorAddress) > 0 {
+		i -= len(m.ValidatorAddress)
+		copy(dAtA[i:], m.ValidatorAddress)
+		i = encodeVarintTypes(dAtA, i, uint64(len(m.ValidatorAddress)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *CompositeScore) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *CompositeScore) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CompositeScore) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size := m.VaultValue.Size()
+		i -= size
+		if _, err := m.VaultValue.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintTypes(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x1a
+	{
+		size := m.ChainStake.Size()
+		i -= size
+		if _, err := m.ChainStake.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintTypes(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x12
+	if len(m.ValidatorAddress) > 0 {
+		i -= len(m.ValidatorAddress)
+		copy(dAtA[i:], m.ValidatorAddress)
+		i = encodeVarintTypes(dAtA, i, uint64(len(m.ValidatorAddress)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *ValuePost) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ValuePost) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ValuePost) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.BlockHeight != 0 {
+		i = encodeVarintTypes(dAtA, i, uint64(m.BlockHeight))
+		i--
+		dAtA[i] = 0x18
+	}
+	{
+		size := m.Value.Size()
+		i -= size
+		if _, err := m.Value.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintTypes(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x12
+	if len(m.ValidatorAddress) > 0 {
+		i -= len(m.ValidatorAddress)
+		copy(dAtA[i:], m.ValidatorAddress)
+		i = encodeVarintTypes(dAtA, i, uint64(len(m.ValidatorAddress)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *ValidatorRecord) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ValidatorRecord) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ValidatorRecord) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.CurrentValuePosts) > 0 {
+		for iNdEx := len(m.CurrentValuePosts) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.CurrentValuePosts[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintTypes(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x2a
+		}
+	}
+	if m.CompositeScore != nil {
+		{
+			size, err := m.CompositeScore.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTypes(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.Vault != nil {
+		{
+			size, err := m.Vault.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTypes(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.ValidatorType != 0 {
+		i = encodeVarintTypes(dAtA, i, uint64(m.ValidatorType))
+		i--
+		dAtA[i] = 0x10
+	}
+	if len(m.ValidatorAddress) > 0 {
+		i -= len(m.ValidatorAddress)
+		copy(dAtA[i:], m.ValidatorAddress)
+		i = encodeVarintTypes(dAtA, i, uint64(len(m.ValidatorAddress)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func encodeVarintTypes(dAtA []byte, offset int, v uint64) int {
+	offset -= sovTypes(v)
+	base := offset
+	for v >= 1<<7 {
+		dAtA[offset] = uint8(v&0x7f | 0x80)
+		v >>= 7
+		offset++
+	}
+	dAtA[offset] = uint8(v)
+	return base
+}
 func (m *PoolPosition) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	// field 1: pool_contract_address
 	l = len(m.PoolContractAddress)
 	if l > 0 {
 		n += 1 + l + sovTypes(uint64(l))
 	}
-	// field 2: position_id
 	l = len(m.PositionId)
 	if l > 0 {
 		n += 1 + l + sovTypes(uint64(l))
 	}
-	// field 3: deposit_amount_0
 	l = m.DepositAmount0.Size()
 	n += 1 + l + sovTypes(uint64(l))
-	// field 4: deposit_amount_1
 	l = m.DepositAmount1.Size()
 	n += 1 + l + sovTypes(uint64(l))
 	return n
 }
 
+func (m *Vault) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.ValidatorAddress)
+	if l > 0 {
+		n += 1 + l + sovTypes(uint64(l))
+	}
+	l = m.TotalDeposited.Size()
+	n += 1 + l + sovTypes(uint64(l))
+	l = m.DelegatorRewardPercent.Size()
+	n += 1 + l + sovTypes(uint64(l))
+	if len(m.Positions) > 0 {
+		for _, e := range m.Positions {
+			l = e.Size()
+			n += 1 + l + sovTypes(uint64(l))
+		}
+	}
+	if m.ValidatorType != 0 {
+		n += 1 + sovTypes(uint64(m.ValidatorType))
+	}
+	return n
+}
+
+func (m *CompositeScore) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.ValidatorAddress)
+	if l > 0 {
+		n += 1 + l + sovTypes(uint64(l))
+	}
+	l = m.ChainStake.Size()
+	n += 1 + l + sovTypes(uint64(l))
+	l = m.VaultValue.Size()
+	n += 1 + l + sovTypes(uint64(l))
+	return n
+}
+
+func (m *ValuePost) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.ValidatorAddress)
+	if l > 0 {
+		n += 1 + l + sovTypes(uint64(l))
+	}
+	l = m.Value.Size()
+	n += 1 + l + sovTypes(uint64(l))
+	if m.BlockHeight != 0 {
+		n += 1 + sovTypes(uint64(m.BlockHeight))
+	}
+	return n
+}
+
+func (m *ValidatorRecord) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.ValidatorAddress)
+	if l > 0 {
+		n += 1 + l + sovTypes(uint64(l))
+	}
+	if m.ValidatorType != 0 {
+		n += 1 + sovTypes(uint64(m.ValidatorType))
+	}
+	if m.Vault != nil {
+		l = m.Vault.Size()
+		n += 1 + l + sovTypes(uint64(l))
+	}
+	if m.CompositeScore != nil {
+		l = m.CompositeScore.Size()
+		n += 1 + l + sovTypes(uint64(l))
+	}
+	if len(m.CurrentValuePosts) > 0 {
+		for _, e := range m.CurrentValuePosts {
+			l = e.Size()
+			n += 1 + l + sovTypes(uint64(l))
+		}
+	}
+	return n
+}
+
+func sovTypes(x uint64) (n int) {
+	return (math_bits.Len64(x|1) + 6) / 7
+}
+func sozTypes(x uint64) (n int) {
+	return sovTypes(uint64((x << 1) ^ uint64((int64(x) >> 63))))
+}
 func (m *PoolPosition) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -551,7 +943,7 @@ func (m *PoolPosition) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DepositAmount0", wireType)
 			}
-			var byteLen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTypes
@@ -561,15 +953,16 @@ func (m *PoolPosition) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if byteLen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthTypes
 			}
-			postIndex := iNdEx + byteLen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthTypes
 			}
@@ -584,7 +977,7 @@ func (m *PoolPosition) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DepositAmount1", wireType)
 			}
-			var byteLen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTypes
@@ -594,15 +987,16 @@ func (m *PoolPosition) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if byteLen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthTypes
 			}
-			postIndex := iNdEx + byteLen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthTypes
 			}
@@ -634,114 +1028,6 @@ func (m *PoolPosition) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-
-// Vault marshal/unmarshal
-
-func (m *Vault) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *Vault) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *Vault) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	// field 5: validator_type (varint enum)
-	if m.ValidatorType != 0 {
-		i = encodeVarintTypes(dAtA, i, uint64(m.ValidatorType))
-		i--
-		dAtA[i] = 0x28
-	}
-	// field 4: positions (repeated message)
-	if len(m.Positions) > 0 {
-		for iNdEx := len(m.Positions) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Positions[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintTypes(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x22
-		}
-	}
-	// field 3: delegator_reward_percent (customtype cosmossdk.io/math.LegacyDec)
-	{
-		size := m.DelegatorRewardPercent.Size()
-		i -= size
-		if _, err := m.DelegatorRewardPercent.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintTypes(dAtA, i, uint64(size))
-		i--
-		dAtA[i] = 0x1a
-	}
-	// field 2: total_deposited (embedded message sdk.Coin)
-	{
-		size, err := m.TotalDeposited.MarshalToSizedBuffer(dAtA[:i])
-		if err != nil {
-			return 0, err
-		}
-		i -= size
-		i = encodeVarintTypes(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x12
-	// field 1: validator_address (string)
-	if len(m.ValidatorAddress) > 0 {
-		i -= len(m.ValidatorAddress)
-		copy(dAtA[i:], m.ValidatorAddress)
-		i = encodeVarintTypes(dAtA, i, uint64(len(m.ValidatorAddress)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *Vault) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	// field 1: validator_address
-	l = len(m.ValidatorAddress)
-	if l > 0 {
-		n += 1 + l + sovTypes(uint64(l))
-	}
-	// field 2: total_deposited
-	l = m.TotalDeposited.Size()
-	n += 1 + l + sovTypes(uint64(l))
-	// field 3: delegator_reward_percent
-	l = m.DelegatorRewardPercent.Size()
-	n += 1 + l + sovTypes(uint64(l))
-	// field 4: positions
-	if len(m.Positions) > 0 {
-		for _, e := range m.Positions {
-			l = e.Size()
-			n += 1 + l + sovTypes(uint64(l))
-		}
-	}
-	// field 5: validator_type
-	if m.ValidatorType != 0 {
-		n += 1 + sovTypes(uint64(m.ValidatorType))
-	}
-	return n
-}
-
 func (m *Vault) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -840,7 +1126,7 @@ func (m *Vault) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DelegatorRewardPercent", wireType)
 			}
-			var byteLen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTypes
@@ -850,15 +1136,16 @@ func (m *Vault) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if byteLen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthTypes
 			}
-			postIndex := iNdEx + byteLen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthTypes
 			}
@@ -943,82 +1230,6 @@ func (m *Vault) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-
-// CompositeScore marshal/unmarshal
-
-func (m *CompositeScore) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *CompositeScore) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *CompositeScore) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	// field 3: vault_value (customtype cosmossdk.io/math.Int)
-	{
-		size := m.VaultValue.Size()
-		i -= size
-		if _, err := m.VaultValue.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintTypes(dAtA, i, uint64(size))
-		i--
-		dAtA[i] = 0x1a
-	}
-	// field 2: chain_stake (customtype cosmossdk.io/math.Int)
-	{
-		size := m.ChainStake.Size()
-		i -= size
-		if _, err := m.ChainStake.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintTypes(dAtA, i, uint64(size))
-		i--
-		dAtA[i] = 0x12
-	}
-	// field 1: validator_address (string)
-	if len(m.ValidatorAddress) > 0 {
-		i -= len(m.ValidatorAddress)
-		copy(dAtA[i:], m.ValidatorAddress)
-		i = encodeVarintTypes(dAtA, i, uint64(len(m.ValidatorAddress)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *CompositeScore) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	// field 1: validator_address
-	l = len(m.ValidatorAddress)
-	if l > 0 {
-		n += 1 + l + sovTypes(uint64(l))
-	}
-	// field 2: chain_stake
-	l = m.ChainStake.Size()
-	n += 1 + l + sovTypes(uint64(l))
-	// field 3: vault_value
-	l = m.VaultValue.Size()
-	n += 1 + l + sovTypes(uint64(l))
-	return n
-}
-
 func (m *CompositeScore) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1084,7 +1295,7 @@ func (m *CompositeScore) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ChainStake", wireType)
 			}
-			var byteLen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTypes
@@ -1094,15 +1305,16 @@ func (m *CompositeScore) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if byteLen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthTypes
 			}
-			postIndex := iNdEx + byteLen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthTypes
 			}
@@ -1117,7 +1329,7 @@ func (m *CompositeScore) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field VaultValue", wireType)
 			}
-			var byteLen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTypes
@@ -1127,15 +1339,16 @@ func (m *CompositeScore) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if byteLen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthTypes
 			}
-			postIndex := iNdEx + byteLen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthTypes
 			}
@@ -1167,78 +1380,6 @@ func (m *CompositeScore) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-
-// ValuePost marshal/unmarshal
-
-func (m *ValuePost) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *ValuePost) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *ValuePost) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	// field 3: block_height (varint int64)
-	if m.BlockHeight != 0 {
-		i = encodeVarintTypes(dAtA, i, uint64(m.BlockHeight))
-		i--
-		dAtA[i] = 0x18
-	}
-	// field 2: value (customtype cosmossdk.io/math.Int)
-	{
-		size := m.Value.Size()
-		i -= size
-		if _, err := m.Value.MarshalTo(dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintTypes(dAtA, i, uint64(size))
-		i--
-		dAtA[i] = 0x12
-	}
-	// field 1: validator_address (string)
-	if len(m.ValidatorAddress) > 0 {
-		i -= len(m.ValidatorAddress)
-		copy(dAtA[i:], m.ValidatorAddress)
-		i = encodeVarintTypes(dAtA, i, uint64(len(m.ValidatorAddress)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *ValuePost) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	// field 1: validator_address
-	l = len(m.ValidatorAddress)
-	if l > 0 {
-		n += 1 + l + sovTypes(uint64(l))
-	}
-	// field 2: value
-	l = m.Value.Size()
-	n += 1 + l + sovTypes(uint64(l))
-	// field 3: block_height
-	if m.BlockHeight != 0 {
-		n += 1 + sovTypes(uint64(m.BlockHeight))
-	}
-	return n
-}
-
 func (m *ValuePost) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1304,7 +1445,7 @@ func (m *ValuePost) Unmarshal(dAtA []byte) error {
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Value", wireType)
 			}
-			var byteLen int
+			var stringLen uint64
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowTypes
@@ -1314,15 +1455,16 @@ func (m *ValuePost) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				byteLen |= int(b&0x7F) << shift
+				stringLen |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if byteLen < 0 {
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
 				return ErrInvalidLengthTypes
 			}
-			postIndex := iNdEx + byteLen
+			postIndex := iNdEx + intStringLen
 			if postIndex < 0 {
 				return ErrInvalidLengthTypes
 			}
@@ -1373,122 +1515,6 @@ func (m *ValuePost) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-
-// ValidatorRecord marshal/unmarshal
-
-func (m *ValidatorRecord) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *ValidatorRecord) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *ValidatorRecord) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	// field 5: current_value_posts (repeated message)
-	if len(m.CurrentValuePosts) > 0 {
-		for iNdEx := len(m.CurrentValuePosts) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.CurrentValuePosts[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintTypes(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x2a
-		}
-	}
-	// field 4: composite_score (optional message)
-	if m.CompositeScore != nil {
-		{
-			size, err := m.CompositeScore.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintTypes(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x22
-	}
-	// field 3: vault (optional message)
-	if m.Vault != nil {
-		{
-			size, err := m.Vault.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintTypes(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x1a
-	}
-	// field 2: validator_type (varint enum)
-	if m.ValidatorType != 0 {
-		i = encodeVarintTypes(dAtA, i, uint64(m.ValidatorType))
-		i--
-		dAtA[i] = 0x10
-	}
-	// field 1: validator_address (string)
-	if len(m.ValidatorAddress) > 0 {
-		i -= len(m.ValidatorAddress)
-		copy(dAtA[i:], m.ValidatorAddress)
-		i = encodeVarintTypes(dAtA, i, uint64(len(m.ValidatorAddress)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *ValidatorRecord) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	// field 1: validator_address
-	l = len(m.ValidatorAddress)
-	if l > 0 {
-		n += 1 + l + sovTypes(uint64(l))
-	}
-	// field 2: validator_type
-	if m.ValidatorType != 0 {
-		n += 1 + sovTypes(uint64(m.ValidatorType))
-	}
-	// field 3: vault
-	if m.Vault != nil {
-		l = m.Vault.Size()
-		n += 1 + l + sovTypes(uint64(l))
-	}
-	// field 4: composite_score
-	if m.CompositeScore != nil {
-		l = m.CompositeScore.Size()
-		n += 1 + l + sovTypes(uint64(l))
-	}
-	// field 5: current_value_posts
-	if len(m.CurrentValuePosts) > 0 {
-		for _, e := range m.CurrentValuePosts {
-			l = e.Size()
-			n += 1 + l + sovTypes(uint64(l))
-		}
-	}
-	return n
-}
-
 func (m *ValidatorRecord) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1696,29 +1722,6 @@ func (m *ValidatorRecord) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-
-// Helper functions
-
-func encodeVarintTypes(dAtA []byte, offset int, v uint64) int {
-	offset -= sovTypes(v)
-	base := offset
-	for v >= 1<<7 {
-		dAtA[offset] = uint8(v&0x7f | 0x80)
-		v >>= 7
-		offset++
-	}
-	dAtA[offset] = uint8(v)
-	return base
-}
-
-func sovTypes(x uint64) (n int) {
-	return (math_bits.Len64(x|1) + 6) / 7
-}
-
-func sozTypes(x uint64) (n int) {
-	return sovTypes(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-
 func skipTypes(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0

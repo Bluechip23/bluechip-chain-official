@@ -5,10 +5,10 @@ package types
 
 import (
 	context "context"
-	fmt "fmt"
 	cosmossdk_io_math "cosmossdk.io/math"
+	fmt "fmt"
 	_ "github.com/cosmos/cosmos-proto"
-	github_com_cosmos_cosmos_sdk_types "github.com/cosmos/cosmos-sdk/types"
+	types "github.com/cosmos/cosmos-sdk/types"
 	_ "github.com/cosmos/cosmos-sdk/types/msgservice"
 	_ "github.com/cosmos/cosmos-sdk/types/tx/amino"
 	_ "github.com/cosmos/gogoproto/gogoproto"
@@ -33,21 +33,16 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// MsgUpdateParams is the Msg/UpdateParams request type.
 type MsgUpdateParams struct {
-	// authority is the address that controls the module (defaults to x/gov unless overwritten).
 	Authority string `protobuf:"bytes,1,opt,name=authority,proto3" json:"authority,omitempty"`
-	// params defines the module parameters to update.
-	//
-	// NOTE: All parameters must be supplied.
-	Params Params `protobuf:"bytes,2,opt,name=params,proto3" json:"params"`
+	Params    Params `protobuf:"bytes,2,opt,name=params,proto3" json:"params"`
 }
 
 func (m *MsgUpdateParams) Reset()         { *m = MsgUpdateParams{} }
 func (m *MsgUpdateParams) String() string { return proto.CompactTextString(m) }
 func (*MsgUpdateParams) ProtoMessage()    {}
 func (*MsgUpdateParams) Descriptor() ([]byte, []int) {
-	return nil, nil
+	return fileDescriptor_64efde51fd386adf, []int{0}
 }
 func (m *MsgUpdateParams) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -90,8 +85,6 @@ func (m *MsgUpdateParams) GetParams() Params {
 	return Params{}
 }
 
-// MsgUpdateParamsResponse defines the response structure for executing a
-// MsgUpdateParams message.
 type MsgUpdateParamsResponse struct {
 }
 
@@ -99,7 +92,7 @@ func (m *MsgUpdateParamsResponse) Reset()         { *m = MsgUpdateParamsResponse
 func (m *MsgUpdateParamsResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgUpdateParamsResponse) ProtoMessage()    {}
 func (*MsgUpdateParamsResponse) Descriptor() ([]byte, []int) {
-	return nil, nil
+	return fileDescriptor_64efde51fd386adf, []int{1}
 }
 func (m *MsgUpdateParamsResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -128,7 +121,6 @@ func (m *MsgUpdateParamsResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgUpdateParamsResponse proto.InternalMessageInfo
 
-// MsgRegisterValidator registers a validator in the liquidity vault module.
 type MsgRegisterValidator struct {
 	ValidatorAddress string        `protobuf:"bytes,1,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
 	ValidatorType    ValidatorType `protobuf:"varint,2,opt,name=validator_type,json=validatorType,proto3,enum=bluechipchain.liquidityvault.ValidatorType" json:"validator_type,omitempty"`
@@ -138,7 +130,7 @@ func (m *MsgRegisterValidator) Reset()         { *m = MsgRegisterValidator{} }
 func (m *MsgRegisterValidator) String() string { return proto.CompactTextString(m) }
 func (*MsgRegisterValidator) ProtoMessage()    {}
 func (*MsgRegisterValidator) Descriptor() ([]byte, []int) {
-	return nil, nil
+	return fileDescriptor_64efde51fd386adf, []int{2}
 }
 func (m *MsgRegisterValidator) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -181,8 +173,6 @@ func (m *MsgRegisterValidator) GetValidatorType() ValidatorType {
 	return ValidatorType_VALIDATOR_TYPE_UNSPECIFIED
 }
 
-// MsgRegisterValidatorResponse defines the response structure for executing a
-// MsgRegisterValidator message.
 type MsgRegisterValidatorResponse struct {
 }
 
@@ -190,7 +180,7 @@ func (m *MsgRegisterValidatorResponse) Reset()         { *m = MsgRegisterValidat
 func (m *MsgRegisterValidatorResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgRegisterValidatorResponse) ProtoMessage()    {}
 func (*MsgRegisterValidatorResponse) Descriptor() ([]byte, []int) {
-	return nil, nil
+	return fileDescriptor_64efde51fd386adf, []int{3}
 }
 func (m *MsgRegisterValidatorResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -219,20 +209,23 @@ func (m *MsgRegisterValidatorResponse) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_MsgRegisterValidatorResponse proto.InternalMessageInfo
 
-// MsgDepositToVault deposits tokens into a validator's liquidity vault.
 type MsgDepositToVault struct {
-	ValidatorAddress    string                                        `protobuf:"bytes,1,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
-	PoolContractAddress string                                        `protobuf:"bytes,2,opt,name=pool_contract_address,json=poolContractAddress,proto3" json:"pool_contract_address,omitempty"`
-	Amount0             github_com_cosmos_cosmos_sdk_types.Coin       `protobuf:"bytes,3,opt,name=amount0,proto3" json:"amount0"`
-	Cw20ContractAddress string                                        `protobuf:"bytes,4,opt,name=cw20_contract_address,json=cw20ContractAddress,proto3" json:"cw20_contract_address,omitempty"`
-	Amount1             cosmossdk_io_math.Int                         `protobuf:"bytes,5,opt,name=amount1,proto3,customtype=cosmossdk.io/math.Int" json:"amount1"`
+	ValidatorAddress string `protobuf:"bytes,1,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
+	// pool_contract_address is the address of the pool to deposit into
+	PoolContractAddress string `protobuf:"bytes,2,opt,name=pool_contract_address,json=poolContractAddress,proto3" json:"pool_contract_address,omitempty"`
+	// amount0 is the ubluechip amount
+	Amount0 types.Coin `protobuf:"bytes,3,opt,name=amount0,proto3" json:"amount0"`
+	// cw20_contract_address is the CW20 creator token contract address
+	Cw20ContractAddress string `protobuf:"bytes,4,opt,name=cw20_contract_address,json=cw20ContractAddress,proto3" json:"cw20_contract_address,omitempty"`
+	// amount1 is the CW20 creator token amount
+	Amount1 cosmossdk_io_math.Int `protobuf:"bytes,5,opt,name=amount1,proto3,customtype=cosmossdk.io/math.Int" json:"amount1"`
 }
 
 func (m *MsgDepositToVault) Reset()         { *m = MsgDepositToVault{} }
 func (m *MsgDepositToVault) String() string { return proto.CompactTextString(m) }
 func (*MsgDepositToVault) ProtoMessage()    {}
 func (*MsgDepositToVault) Descriptor() ([]byte, []int) {
-	return nil, nil
+	return fileDescriptor_64efde51fd386adf, []int{4}
 }
 func (m *MsgDepositToVault) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -275,11 +268,11 @@ func (m *MsgDepositToVault) GetPoolContractAddress() string {
 	return ""
 }
 
-func (m *MsgDepositToVault) GetAmount0() github_com_cosmos_cosmos_sdk_types.Coin {
+func (m *MsgDepositToVault) GetAmount0() types.Coin {
 	if m != nil {
 		return m.Amount0
 	}
-	return github_com_cosmos_cosmos_sdk_types.Coin{}
+	return types.Coin{}
 }
 
 func (m *MsgDepositToVault) GetCw20ContractAddress() string {
@@ -289,8 +282,6 @@ func (m *MsgDepositToVault) GetCw20ContractAddress() string {
 	return ""
 }
 
-// MsgDepositToVaultResponse defines the response structure for executing a
-// MsgDepositToVault message.
 type MsgDepositToVaultResponse struct {
 	PositionId string `protobuf:"bytes,1,opt,name=position_id,json=positionId,proto3" json:"position_id,omitempty"`
 }
@@ -299,7 +290,7 @@ func (m *MsgDepositToVaultResponse) Reset()         { *m = MsgDepositToVaultResp
 func (m *MsgDepositToVaultResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgDepositToVaultResponse) ProtoMessage()    {}
 func (*MsgDepositToVaultResponse) Descriptor() ([]byte, []int) {
-	return nil, nil
+	return fileDescriptor_64efde51fd386adf, []int{5}
 }
 func (m *MsgDepositToVaultResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -335,9 +326,8 @@ func (m *MsgDepositToVaultResponse) GetPositionId() string {
 	return ""
 }
 
-// MsgSetDelegatorRewardPercent sets the delegator reward percentage for a validator's vault.
 type MsgSetDelegatorRewardPercent struct {
-	ValidatorAddress string                  `protobuf:"bytes,1,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
+	ValidatorAddress string                      `protobuf:"bytes,1,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
 	Percent          cosmossdk_io_math.LegacyDec `protobuf:"bytes,2,opt,name=percent,proto3,customtype=cosmossdk.io/math.LegacyDec" json:"percent"`
 }
 
@@ -345,7 +335,7 @@ func (m *MsgSetDelegatorRewardPercent) Reset()         { *m = MsgSetDelegatorRew
 func (m *MsgSetDelegatorRewardPercent) String() string { return proto.CompactTextString(m) }
 func (*MsgSetDelegatorRewardPercent) ProtoMessage()    {}
 func (*MsgSetDelegatorRewardPercent) Descriptor() ([]byte, []int) {
-	return nil, nil
+	return fileDescriptor_64efde51fd386adf, []int{6}
 }
 func (m *MsgSetDelegatorRewardPercent) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -381,18 +371,14 @@ func (m *MsgSetDelegatorRewardPercent) GetValidatorAddress() string {
 	return ""
 }
 
-// MsgSetDelegatorRewardPercentResponse defines the response structure for executing a
-// MsgSetDelegatorRewardPercent message.
 type MsgSetDelegatorRewardPercentResponse struct {
 }
 
-func (m *MsgSetDelegatorRewardPercentResponse) Reset() {
-	*m = MsgSetDelegatorRewardPercentResponse{}
-}
+func (m *MsgSetDelegatorRewardPercentResponse) Reset()         { *m = MsgSetDelegatorRewardPercentResponse{} }
 func (m *MsgSetDelegatorRewardPercentResponse) String() string { return proto.CompactTextString(m) }
 func (*MsgSetDelegatorRewardPercentResponse) ProtoMessage()    {}
 func (*MsgSetDelegatorRewardPercentResponse) Descriptor() ([]byte, []int) {
-	return nil, nil
+	return fileDescriptor_64efde51fd386adf, []int{7}
 }
 func (m *MsgSetDelegatorRewardPercentResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -432,6 +418,61 @@ func init() {
 	proto.RegisterType((*MsgSetDelegatorRewardPercentResponse)(nil), "bluechipchain.liquidityvault.MsgSetDelegatorRewardPercentResponse")
 }
 
+func init() {
+	proto.RegisterFile("bluechipchain/liquidityvault/tx.proto", fileDescriptor_64efde51fd386adf)
+}
+
+var fileDescriptor_64efde51fd386adf = []byte{
+	// 740 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x55, 0x4f, 0x4f, 0x13, 0x4f,
+	0x18, 0xee, 0xf2, 0x37, 0x0c, 0xbf, 0x1f, 0xda, 0x15, 0xa4, 0x5d, 0xc9, 0x42, 0x1a, 0x34, 0x08,
+	0x61, 0x97, 0xd6, 0xa8, 0x91, 0x18, 0x13, 0x4a, 0x89, 0x21, 0xd2, 0x84, 0x2c, 0xc8, 0xc1, 0x4b,
+	0x33, 0xdd, 0x9d, 0x6c, 0x27, 0xb6, 0x3b, 0xeb, 0xce, 0xb4, 0x50, 0x4f, 0x46, 0x6f, 0x9e, 0xb8,
+	0x7b, 0xf3, 0xe4, 0x91, 0x03, 0x1f, 0x02, 0x3d, 0x11, 0x12, 0x13, 0xe3, 0x81, 0x18, 0x38, 0xf0,
+	0x35, 0xcc, 0xee, 0xce, 0x2c, 0xb4, 0xa5, 0x6d, 0x6a, 0xb8, 0x40, 0xe7, 0x9d, 0xf7, 0x79, 0xde,
+	0xe7, 0x79, 0xdf, 0x9d, 0x19, 0x70, 0xbf, 0x58, 0xae, 0x22, 0xb3, 0x84, 0x5d, 0xb3, 0x04, 0xb1,
+	0xa3, 0x97, 0xf1, 0xbb, 0x2a, 0xb6, 0x30, 0xab, 0xd7, 0x60, 0xb5, 0xcc, 0x74, 0xb6, 0xa7, 0xb9,
+	0x1e, 0x61, 0x44, 0x9e, 0x6a, 0x48, 0xd3, 0x1a, 0xd3, 0x94, 0x38, 0xac, 0x60, 0x87, 0xe8, 0xc1,
+	0xdf, 0x10, 0xa0, 0x4c, 0x9a, 0x84, 0x56, 0x08, 0xd5, 0x2b, 0xd4, 0xd6, 0x6b, 0x69, 0xff, 0x1f,
+	0xdf, 0x48, 0x86, 0x1b, 0x85, 0x60, 0xa5, 0x87, 0x0b, 0xbe, 0x35, 0x6e, 0x13, 0x9b, 0x84, 0x71,
+	0xff, 0x17, 0x8f, 0xaa, 0x9c, 0xa9, 0x08, 0x29, 0xd2, 0x6b, 0xe9, 0x22, 0x62, 0x30, 0xad, 0x9b,
+	0x04, 0x3b, 0x7c, 0xff, 0x61, 0x47, 0x07, 0x2e, 0xf4, 0x60, 0x45, 0x14, 0x98, 0xeb, 0x6c, 0xb6,
+	0xee, 0x22, 0x9e, 0x99, 0xfa, 0x29, 0x81, 0x5b, 0x79, 0x6a, 0xbf, 0x76, 0x2d, 0xc8, 0xd0, 0x66,
+	0xc0, 0x21, 0x3f, 0x01, 0x23, 0xb0, 0xca, 0x4a, 0xc4, 0xc3, 0xac, 0x9e, 0x90, 0x66, 0xa4, 0xb9,
+	0x91, 0x6c, 0xe2, 0xe4, 0x70, 0x71, 0x9c, 0x7b, 0x58, 0xb1, 0x2c, 0x0f, 0x51, 0xba, 0xc5, 0x3c,
+	0xec, 0xd8, 0xc6, 0x65, 0xaa, 0xfc, 0x12, 0x0c, 0x85, 0x2a, 0x12, 0x7d, 0x33, 0xd2, 0xdc, 0x68,
+	0x66, 0x56, 0xeb, 0xd4, 0x4c, 0x2d, 0xac, 0x96, 0x1d, 0x39, 0x3a, 0x9d, 0x8e, 0x7d, 0xbb, 0x38,
+	0x98, 0x97, 0x0c, 0x0e, 0x5f, 0x5e, 0xf9, 0x78, 0x71, 0x30, 0x7f, 0x49, 0xfc, 0xf9, 0xe2, 0x60,
+	0xbe, 0x91, 0x4a, 0xdf, 0x6b, 0xf6, 0xd4, 0xe4, 0x21, 0x95, 0x04, 0x93, 0x4d, 0x21, 0x03, 0x51,
+	0x97, 0x38, 0x14, 0xa5, 0xbe, 0x4b, 0x60, 0x3c, 0x4f, 0x6d, 0x03, 0xd9, 0x98, 0x32, 0xe4, 0xed,
+	0xc0, 0x32, 0xb6, 0x20, 0x23, 0x9e, 0xbc, 0x06, 0xe2, 0x35, 0xb1, 0x28, 0xc0, 0xd0, 0x65, 0x57,
+	0xff, 0xb7, 0x23, 0x08, 0x8f, 0xcb, 0x06, 0x18, 0xbb, 0xa4, 0xf1, 0x7b, 0x1d, 0xb4, 0x63, 0x2c,
+	0xb3, 0xd0, 0xb9, 0x1d, 0x91, 0x8e, 0xed, 0xba, 0x8b, 0x8c, 0xff, 0x6b, 0x57, 0x97, 0xcb, 0x77,
+	0xfd, 0x8e, 0xb4, 0xaa, 0x4b, 0xa9, 0x60, 0xea, 0x3a, 0x2b, 0x91, 0xd7, 0xfd, 0x7e, 0x10, 0xcf,
+	0x53, 0x3b, 0x87, 0x5c, 0x42, 0x31, 0xdb, 0x26, 0x3b, 0x7e, 0xa9, 0x9b, 0x32, 0xba, 0x01, 0x26,
+	0x5c, 0x42, 0xca, 0x05, 0x93, 0x38, 0xcc, 0x83, 0x26, 0x8b, 0xa8, 0xfa, 0xba, 0x50, 0xdd, 0xf1,
+	0x61, 0xab, 0x1c, 0x25, 0xd8, 0x9e, 0x81, 0x61, 0x58, 0x21, 0x55, 0x87, 0x2d, 0x25, 0xfa, 0x83,
+	0xcf, 0x27, 0xa9, 0x71, 0xb0, 0x7f, 0x20, 0x34, 0x7e, 0x20, 0xb4, 0x55, 0x82, 0x9d, 0xec, 0x80,
+	0xff, 0xcd, 0x18, 0x22, 0xdf, 0x17, 0x62, 0xee, 0x66, 0x96, 0x5a, 0x85, 0x0c, 0x74, 0x13, 0xe2,
+	0xc3, 0x9a, 0x85, 0xac, 0x09, 0x21, 0xe9, 0xc4, 0x60, 0x80, 0x5f, 0xf0, 0xab, 0xfd, 0x3e, 0x9d,
+	0x9e, 0x08, 0x39, 0xa8, 0xf5, 0x56, 0xc3, 0x44, 0xaf, 0x40, 0x56, 0xd2, 0xd6, 0x1d, 0x76, 0x72,
+	0xb8, 0x08, 0x38, 0xf9, 0xba, 0xc3, 0x84, 0xa8, 0x74, 0xdb, 0x91, 0x3d, 0x07, 0xc9, 0x96, 0x89,
+	0x88, 0x79, 0xc9, 0xd3, 0x60, 0x34, 0x88, 0x63, 0xe2, 0x14, 0xb0, 0x15, 0xce, 0xc4, 0x00, 0x22,
+	0xb4, 0x6e, 0xa5, 0x7e, 0x48, 0xc1, 0xc4, 0xb7, 0x10, 0xcb, 0xa1, 0x32, 0xb2, 0xc3, 0x61, 0xef,
+	0x42, 0xcf, 0xda, 0x44, 0x9e, 0x89, 0x9c, 0x1b, 0x9b, 0xed, 0x2b, 0x30, 0xec, 0x86, 0x8c, 0x7c,
+	0x9a, 0x69, 0xde, 0x84, 0x7b, 0xad, 0x4d, 0xd8, 0x40, 0x36, 0x34, 0xeb, 0x39, 0x64, 0x5e, 0x69,
+	0x45, 0x0e, 0x99, 0x86, 0x60, 0x68, 0xdb, 0x8a, 0x07, 0x60, 0xb6, 0x93, 0x17, 0xd1, 0x95, 0xcc,
+	0xd7, 0x01, 0xd0, 0x9f, 0xa7, 0xb6, 0xcc, 0xc0, 0x7f, 0x0d, 0x17, 0xd5, 0x62, 0xe7, 0x13, 0xd5,
+	0x74, 0x01, 0x28, 0x8f, 0x7b, 0x4a, 0x8f, 0x66, 0xf2, 0x49, 0x02, 0xf1, 0xd6, 0xcb, 0x22, 0xd3,
+	0x95, 0xac, 0x05, 0xa3, 0x2c, 0xf7, 0x8e, 0x89, 0x54, 0xbc, 0x07, 0x63, 0x4d, 0xa7, 0x58, 0xef,
+	0xca, 0xd6, 0x08, 0x50, 0x9e, 0xf6, 0x08, 0x88, 0x6a, 0x7f, 0x91, 0x40, 0xb2, 0xfd, 0x17, 0xd7,
+	0xdd, 0x55, 0x5b, 0xac, 0x92, 0xfd, 0x77, 0xac, 0x50, 0xa7, 0x0c, 0x7e, 0xf0, 0x1f, 0x8f, 0xec,
+	0x8b, 0xa3, 0x33, 0x55, 0x3a, 0x3e, 0x53, 0xa5, 0x3f, 0x67, 0xaa, 0xb4, 0x7f, 0xae, 0xc6, 0x8e,
+	0xcf, 0xd5, 0xd8, 0xaf, 0x73, 0x35, 0xf6, 0x66, 0x56, 0xd4, 0x58, 0xbd, 0xfe, 0xed, 0x08, 0xde,
+	0xc3, 0xe2, 0x50, 0xf0, 0x20, 0x3e, 0xfa, 0x1b, 0x00, 0x00, 0xff, 0xff, 0xd1, 0x35, 0x48, 0xce,
+	0x29, 0x08, 0x00, 0x00,
+}
+
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
 var _ grpc.ClientConn
@@ -444,14 +485,9 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type MsgClient interface {
-	// UpdateParams defines a (governance) operation for updating the module
-	// parameters. The authority defaults to the x/gov module account.
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
-	// RegisterValidator registers a validator in the liquidity vault module.
 	RegisterValidator(ctx context.Context, in *MsgRegisterValidator, opts ...grpc.CallOption) (*MsgRegisterValidatorResponse, error)
-	// DepositToVault deposits tokens into a validator's liquidity vault.
 	DepositToVault(ctx context.Context, in *MsgDepositToVault, opts ...grpc.CallOption) (*MsgDepositToVaultResponse, error)
-	// SetDelegatorRewardPercent sets the delegator reward percentage for a validator's vault.
 	SetDelegatorRewardPercent(ctx context.Context, in *MsgSetDelegatorRewardPercent, opts ...grpc.CallOption) (*MsgSetDelegatorRewardPercentResponse, error)
 }
 
@@ -501,14 +537,9 @@ func (c *msgClient) SetDelegatorRewardPercent(ctx context.Context, in *MsgSetDel
 
 // MsgServer is the server API for Msg service.
 type MsgServer interface {
-	// UpdateParams defines a (governance) operation for updating the module
-	// parameters. The authority defaults to the x/gov module account.
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
-	// RegisterValidator registers a validator in the liquidity vault module.
 	RegisterValidator(context.Context, *MsgRegisterValidator) (*MsgRegisterValidatorResponse, error)
-	// DepositToVault deposits tokens into a validator's liquidity vault.
 	DepositToVault(context.Context, *MsgDepositToVault) (*MsgDepositToVaultResponse, error)
-	// SetDelegatorRewardPercent sets the delegator reward percentage for a validator's vault.
 	SetDelegatorRewardPercent(context.Context, *MsgSetDelegatorRewardPercent) (*MsgSetDelegatorRewardPercentResponse, error)
 }
 
@@ -519,15 +550,12 @@ type UnimplementedMsgServer struct {
 func (*UnimplementedMsgServer) UpdateParams(ctx context.Context, req *MsgUpdateParams) (*MsgUpdateParamsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateParams not implemented")
 }
-
 func (*UnimplementedMsgServer) RegisterValidator(ctx context.Context, req *MsgRegisterValidator) (*MsgRegisterValidatorResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterValidator not implemented")
 }
-
 func (*UnimplementedMsgServer) DepositToVault(ctx context.Context, req *MsgDepositToVault) (*MsgDepositToVaultResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DepositToVault not implemented")
 }
-
 func (*UnimplementedMsgServer) SetDelegatorRewardPercent(ctx context.Context, req *MsgSetDelegatorRewardPercent) (*MsgSetDelegatorRewardPercentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetDelegatorRewardPercent not implemented")
 }
@@ -634,8 +662,6 @@ var _Msg_serviceDesc = grpc.ServiceDesc{
 	Metadata: "bluechipchain/liquidityvault/tx.proto",
 }
 
-// Marshal/MarshalTo/MarshalToSizedBuffer for MsgUpdateParams
-
 func (m *MsgUpdateParams) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -676,8 +702,6 @@ func (m *MsgUpdateParams) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-// Marshal/MarshalTo/MarshalToSizedBuffer for MsgUpdateParamsResponse
-
 func (m *MsgUpdateParamsResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -700,8 +724,6 @@ func (m *MsgUpdateParamsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	_ = l
 	return len(dAtA) - i, nil
 }
-
-// Marshal/MarshalTo/MarshalToSizedBuffer for MsgRegisterValidator
 
 func (m *MsgRegisterValidator) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
@@ -738,8 +760,6 @@ func (m *MsgRegisterValidator) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-// Marshal/MarshalTo/MarshalToSizedBuffer for MsgRegisterValidatorResponse
-
 func (m *MsgRegisterValidatorResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -762,8 +782,6 @@ func (m *MsgRegisterValidatorResponse) MarshalToSizedBuffer(dAtA []byte) (int, e
 	_ = l
 	return len(dAtA) - i, nil
 }
-
-// Marshal/MarshalTo/MarshalToSizedBuffer for MsgDepositToVault
 
 func (m *MsgDepositToVault) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
@@ -829,8 +847,6 @@ func (m *MsgDepositToVault) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-// Marshal/MarshalTo/MarshalToSizedBuffer for MsgDepositToVaultResponse
-
 func (m *MsgDepositToVaultResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -860,8 +876,6 @@ func (m *MsgDepositToVaultResponse) MarshalToSizedBuffer(dAtA []byte) (int, erro
 	}
 	return len(dAtA) - i, nil
 }
-
-// Marshal/MarshalTo/MarshalToSizedBuffer for MsgSetDelegatorRewardPercent
 
 func (m *MsgSetDelegatorRewardPercent) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
@@ -903,8 +917,6 @@ func (m *MsgSetDelegatorRewardPercent) MarshalToSizedBuffer(dAtA []byte) (int, e
 	return len(dAtA) - i, nil
 }
 
-// Marshal/MarshalTo/MarshalToSizedBuffer for MsgSetDelegatorRewardPercentResponse
-
 func (m *MsgSetDelegatorRewardPercentResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -939,9 +951,6 @@ func encodeVarintTx(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-
-// Size methods
-
 func (m *MsgUpdateParams) Size() (n int) {
 	if m == nil {
 		return 0
@@ -1059,9 +1068,6 @@ func sovTx(x uint64) (n int) {
 func sozTx(x uint64) (n int) {
 	return sovTx(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-
-// Unmarshal methods
-
 func (m *MsgUpdateParams) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1177,7 +1183,6 @@ func (m *MsgUpdateParams) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-
 func (m *MsgUpdateParamsResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1228,7 +1233,6 @@ func (m *MsgUpdateParamsResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-
 func (m *MsgRegisterValidator) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1330,7 +1334,6 @@ func (m *MsgRegisterValidator) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-
 func (m *MsgRegisterValidatorResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1381,7 +1384,6 @@ func (m *MsgRegisterValidatorResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-
 func (m *MsgDepositToVault) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1595,7 +1597,6 @@ func (m *MsgDepositToVault) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-
 func (m *MsgDepositToVaultResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1678,7 +1679,6 @@ func (m *MsgDepositToVaultResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-
 func (m *MsgSetDelegatorRewardPercent) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1795,7 +1795,6 @@ func (m *MsgSetDelegatorRewardPercent) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-
 func (m *MsgSetDelegatorRewardPercentResponse) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1846,7 +1845,6 @@ func (m *MsgSetDelegatorRewardPercentResponse) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-
 func skipTx(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0

@@ -29,8 +29,8 @@ func TestGenesis_DefaultState(t *testing.T) {
 	require.True(t, defaultGenesis.Params.DefaultDelegatorRewardPercent.Equal(exported.Params.DefaultDelegatorRewardPercent))
 
 	// Verify check heights are zero
-	require.Equal(t, uint64(0), exported.LastSimpleCheckHeight)
-	require.Equal(t, uint64(0), exported.LastComplexCheckHeight)
+	require.Equal(t, int64(0), exported.LastSimpleCheckHeight)
+	require.Equal(t, int64(0), exported.LastComplexCheckHeight)
 
 	// Verify no validator records
 	require.Empty(t, exported.ValidatorRecords)
@@ -101,8 +101,8 @@ func TestGenesis_CustomState(t *testing.T) {
 				CompositeScore:   &score2,
 			},
 		},
-		LastSimpleCheckHeight:  uint64(10000),
-		LastComplexCheckHeight: uint64(5000),
+		LastSimpleCheckHeight:  int64(10000),
+		LastComplexCheckHeight: int64(5000),
 	}
 
 	liquidityvault.InitGenesis(ctx, k, genesisState)
@@ -118,8 +118,8 @@ func TestGenesis_CustomState(t *testing.T) {
 	require.True(t, customParams.DefaultDelegatorRewardPercent.Equal(exported.Params.DefaultDelegatorRewardPercent))
 
 	// Verify check heights
-	require.Equal(t, uint64(10000), exported.LastSimpleCheckHeight)
-	require.Equal(t, uint64(5000), exported.LastComplexCheckHeight)
+	require.Equal(t, int64(10000), exported.LastSimpleCheckHeight)
+	require.Equal(t, int64(5000), exported.LastComplexCheckHeight)
 
 	// Verify validator records count
 	require.Len(t, exported.ValidatorRecords, 2)
@@ -197,8 +197,8 @@ func TestGenesis_EmptyValidatorRecords(t *testing.T) {
 	require.Empty(t, exported.ValidatorRecords)
 
 	// Verify zero check heights
-	require.Equal(t, uint64(0), exported.LastSimpleCheckHeight)
-	require.Equal(t, uint64(0), exported.LastComplexCheckHeight)
+	require.Equal(t, int64(0), exported.LastSimpleCheckHeight)
+	require.Equal(t, int64(0), exported.LastComplexCheckHeight)
 }
 
 func TestGenesis_Validation(t *testing.T) {
