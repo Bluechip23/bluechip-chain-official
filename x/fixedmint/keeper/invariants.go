@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"bluechipChain/x/fixedmint/types"
 )
@@ -17,7 +18,8 @@ func RegisterInvariants(ir sdk.InvariantRegistry, k Keeper) {
 // no residual balance (all minted coins should be forwarded to the fee collector).
 func ModuleAccountInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		coins := k.bankKeeper.SpendableCoins(ctx, sdk.AccAddress([]byte(types.ModuleName)))
+		moduleAddr := authtypes.NewModuleAddress(types.ModuleName)
+		coins := k.bankKeeper.SpendableCoins(ctx, moduleAddr)
 		broken := !coins.IsZero()
 
 		return sdk.FormatInvariant(
