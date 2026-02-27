@@ -301,6 +301,9 @@ func New(
 		return app.App.InitChainer(ctx, req)
 	})
 
+	// Register upgrade handlers for coordinated chain upgrades.
+	app.RegisterUpgradeHandlers()
+
 	if err := app.Load(loadLatest); err != nil {
 		return nil, err
 	}

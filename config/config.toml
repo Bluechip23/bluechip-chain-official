@@ -19,7 +19,7 @@ version = "0.38.17"
 proxy_app = "tcp://127.0.0.1:26658"
 
 # A custom human readable name for this node
-moniker = "jeremywhitepc2"
+moniker = "Yavanna"
 
 # Database backend: goleveldb | cleveldb | boltdb | rocksdb | badgerdb
 # * goleveldb (github.com/syndtr/goleveldb - most popular implementation)
@@ -195,7 +195,7 @@ tls_cert_file = ""
 tls_key_file = ""
 
 # pprof listen address (https://golang.org/pkg/net/http/pprof)
-pprof_laddr = "localhost:6060"
+pprof_laddr = ""
 
 #######################################################
 ###           P2P Configuration Options             ###
@@ -429,7 +429,7 @@ timeout_commit = "5s"
 # When non-zero, the node will panic upon restart
 # if the same consensus key was used to sign {double_sign_check_height} last blocks.
 # So, validators should stop the state machine, wait for some blocks, and then restart the state machine to avoid panic.
-double_sign_check_height = 0
+double_sign_check_height = 10
 
 # Make progress as soon as we have all the precommits (as if TimeoutCommit = 0)
 skip_timeout_commit = false
@@ -483,7 +483,7 @@ psql-conn = ""
 # When true, Prometheus metrics are served under /metrics on
 # PrometheusListenAddr.
 # Check out the documentation for the list of available metrics.
-prometheus = false
+prometheus = true
 
 # Address to listen for Prometheus collector(s) connections
 prometheus_listen_addr = ":26660"

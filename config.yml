@@ -47,6 +47,11 @@ genesis:
         min_deposit:
         - amount: "10000000"
           denom: "ubluechip"
+    fixedmint:
+      params:
+        mint_denom: "ubluechip"
+        mint_amount: "1000000"
+        mint_enabled: true
     ibc:
       client_genesis:
         params:

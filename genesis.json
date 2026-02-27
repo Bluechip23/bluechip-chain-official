@@ -10,7 +10,7 @@
       },
       "evidence": {
         "max_age_num_blocks": "100000",
-        "max_age_duration": "172800000000000",
+        "max_age_duration": "1814400000000000",
         "max_bytes": "1048576"
       },
       "validator": {
@@ -170,7 +170,7 @@
         "quorum": "0.334000000000000000",
         "threshold": "0.500000000000000000",
         "veto_threshold": "0.334000000000000000",
-        "min_initial_deposit_ratio": "0.000000000000000000",
+        "min_initial_deposit_ratio": "0.100000000000000000",
         "proposal_cancel_ratio": "0.500000000000000000",
         "proposal_cancel_dest": "",
         "expedited_voting_period": "86400s",
@@ -207,7 +207,7 @@
         "min_signed_per_window": "0.500000000000000000",
         "downtime_jail_duration": "600s",
         "slash_fraction_double_sign": "0.050000000000000000",
-        "slash_fraction_downtime": "0.010000000000000000"
+        "slash_fraction_downtime": "0.000100000000000000"
       },
       "signing_infos": [],
       "missed_blocks": []
@@ -233,7 +233,11 @@
       "gen_txs": []
     },
     "fixedmint": {
-      "params": {}
+      "params": {
+        "mint_denom": "ubluechip",
+        "mint_amount": "1000000",
+        "mint_enabled": true
+      }
     },
     "ibc": {
       "client_genesis": {
@@ -322,7 +326,12 @@
         "params": {
           "host_enabled": true,
           "allow_messages": [
-            "*"
+            "/cosmos.bank.v1beta1.MsgSend",
+            "/cosmos.staking.v1beta1.MsgDelegate",
+            "/cosmos.staking.v1beta1.MsgUndelegate",
+            "/cosmos.staking.v1beta1.MsgBeginRedelegate",
+            "/cosmos.distribution.v1beta1.MsgWithdrawDelegatorReward",
+            "/ibc.applications.transfer.v1.MsgTransfer"
           ]
         }
       }
