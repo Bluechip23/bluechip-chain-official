@@ -56,6 +56,10 @@ import (
 	fixedmintmodulev1 "bluechipChain/api/bluechipchain/fixedmint/module"
 _ "bluechipChain/x/fixedmint/module" // import for side-effects
 fixedmintmoduletypes "bluechipChain/x/fixedmint/types"
+
+	liquidityvaultmodulev1 "bluechipChain/api/bluechipchain/liquidityvault/module"
+	_ "bluechipChain/x/liquidityvault/module" // import for side-effects
+	liquidityvaultmoduletypes "bluechipChain/x/liquidityvault/types"
 // this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
@@ -95,6 +99,7 @@ var (
 		// chain modules
 		wasmtypes.ModuleName,
 		fixedmintmoduletypes.ModuleName,
+		liquidityvaultmoduletypes.ModuleName,
 // this line is used by starport scaffolding # stargate/app/initGenesis
 	}
 
@@ -121,6 +126,7 @@ var (
 		// chain modules
 		wasmtypes.ModuleName,
 		fixedmintmoduletypes.ModuleName,
+		liquidityvaultmoduletypes.ModuleName,
 // this line is used by starport scaffolding # stargate/app/beginBlockers
 	}
 
@@ -141,6 +147,7 @@ var (
 		// chain modules
 		wasmtypes.ModuleName,
 		fixedmintmoduletypes.ModuleName,
+		liquidityvaultmoduletypes.ModuleName,
 // this line is used by starport scaffolding # stargate/app/endBlockers
 	}
 
@@ -163,6 +170,7 @@ var (
 		{Account: icatypes.ModuleName},
 		{Account: wasmtypes.ModuleName, Permissions: []string{authtypes.Burner}},
 		{Account: fixedmintmoduletypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner, authtypes.Staking}},
+		{Account: liquidityvaultmoduletypes.ModuleName, Permissions: []string{authtypes.Burner}},
 // this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 
@@ -301,6 +309,10 @@ var (
 			{
 				Name:   fixedmintmoduletypes.ModuleName,
 				Config: appconfig.WrapAny(&fixedmintmodulev1.Module{}),
+			},
+			{
+				Name:   liquidityvaultmoduletypes.ModuleName,
+				Config: appconfig.WrapAny(&liquidityvaultmodulev1.Module{}),
 			},
 // this line is used by starport scaffolding # stargate/app/moduleConfig
 		},

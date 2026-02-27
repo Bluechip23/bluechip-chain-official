@@ -1,0 +1,57 @@
+syntax = "proto3";
+package bluechipchain.liquidityvault;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "bluechipchain/liquidityvault/params.proto";
+import "bluechipchain/liquidityvault/types.proto";
+
+option go_package = "bluechipChain/x/liquidityvault/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/bluechipChain/liquidityvault/params";
+  }
+  rpc Vault(QueryVaultRequest) returns (QueryVaultResponse) {
+    option (google.api.http).get = "/bluechipChain/liquidityvault/vault/{validator_address}";
+  }
+  rpc AllVaults(QueryAllVaultsRequest) returns (QueryAllVaultsResponse) {
+    option (google.api.http).get = "/bluechipChain/liquidityvault/vaults";
+  }
+  rpc CompositeScore(QueryCompositeScoreRequest) returns (QueryCompositeScoreResponse) {
+    option (google.api.http).get = "/bluechipChain/liquidityvault/composite_score/{validator_address}";
+  }
+  rpc ValidatorRankings(QueryValidatorRankingsRequest) returns (QueryValidatorRankingsResponse) {
+    option (google.api.http).get = "/bluechipChain/liquidityvault/rankings";
+  }
+}
+
+message QueryParamsRequest {}
+message QueryParamsResponse {
+  Params params = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+}
+
+message QueryVaultRequest { string validator_address = 1; }
+message QueryVaultResponse { Vault vault = 1; }
+
+message QueryAllVaultsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+message QueryAllVaultsResponse {
+  repeated Vault vaults = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+message QueryCompositeScoreRequest { string validator_address = 1; }
+message QueryCompositeScoreResponse { CompositeScore score = 1; }
+
+message QueryValidatorRankingsRequest {
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+message QueryValidatorRankingsResponse {
+  repeated CompositeScore scores = 1 [(gogoproto.nullable) = false];
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}

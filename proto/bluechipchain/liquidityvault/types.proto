@@ -1,0 +1,79 @@
+syntax = "proto3";
+package bluechipchain.liquidityvault;
+
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "bluechipChain/x/liquidityvault/types";
+
+// ValidatorType distinguishes Full Validators from Liquidity-only Validators.
+enum ValidatorType {
+  VALIDATOR_TYPE_UNSPECIFIED = 0;
+  VALIDATOR_TYPE_FULL = 1;
+  VALIDATOR_TYPE_LIQUIDITY = 2;
+}
+
+// PoolPosition represents a single LP position in a specific pool.
+message PoolPosition {
+  string pool_contract_address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string position_id = 2;
+  string deposit_amount0 = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string deposit_amount1 = 4 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// Vault represents a validator's liquidity vault.
+message Vault {
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  cosmos.base.v1beta1.Coin total_deposited = 2 [(gogoproto.nullable) = false];
+  string delegator_reward_percent = 3 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+  repeated PoolPosition positions = 4 [(gogoproto.nullable) = false];
+  ValidatorType validator_type = 5;
+}
+
+// CompositeScore represents a validator's composite score for ranking.
+message CompositeScore {
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string chain_stake = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  string vault_value = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// ValuePost represents a single value posting for a vault.
+message ValuePost {
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string value = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+  int64 block_height = 3;
+}
+
+// ValidatorRecord stores the combined information about a validator in this module.
+message ValidatorRecord {
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  ValidatorType validator_type = 2;
+  Vault vault = 3;
+  CompositeScore composite_score = 4;
+  repeated ValuePost current_value_posts = 5 [(gogoproto.nullable) = false];
+}

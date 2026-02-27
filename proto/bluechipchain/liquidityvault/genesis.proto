@@ -1,0 +1,17 @@
+syntax = "proto3";
+package bluechipchain.liquidityvault;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "bluechipchain/liquidityvault/params.proto";
+import "bluechipchain/liquidityvault/types.proto";
+
+option go_package = "bluechipChain/x/liquidityvault/types";
+
+// GenesisState defines the liquidityvault module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false, (amino.dont_omitempty) = true];
+  repeated ValidatorRecord validator_records = 2 [(gogoproto.nullable) = false];
+  int64 last_simple_check_height = 3;
+  int64 last_complex_check_height = 4;
+}

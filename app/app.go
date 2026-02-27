@@ -76,10 +76,12 @@ import (
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 
 	fixedmintmodulekeeper "bluechipChain/x/fixedmint/keeper"
+	liquidityvaultmodulekeeper "bluechipChain/x/liquidityvault/keeper"
 // this line is used by starport scaffolding # stargate/app/moduleImport
 
 	"bluechipChain/docs"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
+	"context"
 
 	// Name is the name of the application.
 	tmproto "github.com/cometbft/cometbft/proto/tendermint/types"
@@ -102,6 +104,21 @@ var (
 	_ runtime.AppI            = (*App)(nil)
 	_ servertypes.Application = (*App)(nil)
 )
+
+// wasmKeeperAdapter combines PermissionedKeeper (for Execute) and Keeper (for QuerySmart)
+// to satisfy the liquidityvault WasmKeeper interface.
+type wasmKeeperAdapter struct {
+	perm   wasmkeeper.PermissionedKeeper
+	keeper *wasmkeeper.Keeper
+}
+
+func (w wasmKeeperAdapter) Execute(ctx sdk.Context, contractAddress, caller sdk.AccAddress, msg []byte, coins sdk.Coins) ([]byte, error) {
+	return w.perm.Execute(ctx, contractAddress, caller, msg, coins)
+}
+
+func (w wasmKeeperAdapter) QuerySmart(ctx context.Context, contractAddr sdk.AccAddress, queryMsg []byte) ([]byte, error) {
+	return w.keeper.QuerySmart(ctx, contractAddr, queryMsg)
+}
 
 // App extends an ABCI application, but with most of its parameters exported.
 // They are exported for convenience in creating helper functions, as object
@@ -152,7 +169,8 @@ type App struct {
 	WasmKeeper       wasmkeeper.Keeper
 	ScopedWasmKeeper capabilitykeeper.ScopedKeeper
 
-	FixedmintKeeper fixedmintmodulekeeper.Keeper
+	FixedmintKeeper      fixedmintmodulekeeper.Keeper
+	LiquidityvaultKeeper liquidityvaultmodulekeeper.Keeper
 // this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// simulation manager
@@ -257,6 +275,7 @@ func New(
 		&app.GroupKeeper,
 		&app.CircuitBreakerKeeper,
 		&app.FixedmintKeeper,
+		&app.LiquidityvaultKeeper,
 		// this line is used by starport scaffolding # stargate/app/keeperDefinition
 	); err != nil {
 		panic(err)
@@ -273,6 +292,14 @@ func New(
 	if err := app.registerIBCModules(appOpts); err != nil {
 		return nil, err
 	}
+
+	// Set WasmKeeper on liquidityvault keeper (WasmKeeper is created in registerWasmModules,
+	// which is called by registerIBCModules, so it's available here).
+	// We use an adapter that combines PermissionedKeeper (for Execute) with Keeper (for QuerySmart).
+	app.LiquidityvaultKeeper.SetWasmKeeper(wasmKeeperAdapter{
+		perm:   *wasmkeeper.NewDefaultPermissionKeeper(&app.WasmKeeper),
+		keeper: &app.WasmKeeper,
+	})
 
 	// register streaming services
 	if err := app.RegisterStreamingServices(appOpts, app.kvStoreKeys()); err != nil {

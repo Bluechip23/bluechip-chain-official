@@ -1,0 +1,37 @@
+syntax = "proto3";
+package bluechipchain.liquidityvault;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "cosmos_proto/cosmos.proto";
+
+option go_package = "bluechipChain/x/liquidityvault/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (amino.name) = "bluechipchain/x/liquidityvault/Params";
+  option (gogoproto.equal) = true;
+
+  // stake_cap is the maximum ubluechip a single validator can stake directly
+  string stake_cap = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // simple_check_interval is block count between simple checks (default 14400 = ~24h)
+  uint64 simple_check_interval = 2;
+
+  // complex_check_interval is block count between complex checks (default 72000 = ~5d)
+  uint64 complex_check_interval = 3;
+
+  // value_posts_per_complex_interval is the number of pseudo-random value posts (default 6)
+  uint64 value_posts_per_complex_interval = 4;
+
+  // default_delegator_reward_percent is the default % of LP rewards passed to delegators (0-100)
+  string default_delegator_reward_percent = 5 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+}
