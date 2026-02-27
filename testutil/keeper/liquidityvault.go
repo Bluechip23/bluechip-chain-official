@@ -214,6 +214,7 @@ func LiquidityvaultKeeper(t testing.TB) (keeper.Keeper, sdk.Context, *MockBankKe
 		&types.MsgRegisterValidator{},
 		&types.MsgDepositToVault{},
 		&types.MsgSetDelegatorRewardPercent{},
+		&types.MsgWithdrawFromVault{},
 	)
 	cdc := codec.NewProtoCodec(registry)
 	authority := authtypes.NewModuleAddress(govtypes.ModuleName)

@@ -166,9 +166,10 @@ func TestMsgUpdateParams_InvalidParams(t *testing.T) {
 
 func TestMsgRegisterValidator_LiquidityType(t *testing.T) {
 	// LIQUIDITY type does not require a staking validator
-	k, msgServer, ctx, _, _ := setupMsgServer(t)
+	k, msgServer, ctx, _, sk := setupMsgServer(t)
 
 	valAddr := sdk.ValAddress([]byte("validator1________")).String()
+	sk.AddValidator(sdk.ValAddress([]byte("validator1________")), math.NewInt(1000000))
 
 	resp, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{
 		ValidatorAddress: valAddr,
@@ -215,7 +216,7 @@ func TestMsgRegisterValidator_FullType_NotAStakingValidator(t *testing.T) {
 	})
 	require.Error(t, err)
 	require.Nil(t, resp)
-	require.ErrorContains(t, err, "not a staking validator")
+	require.ErrorContains(t, err, "not a registered staking validator")
 }
 
 func TestMsgRegisterValidator_UnspecifiedType(t *testing.T) {
@@ -233,9 +234,10 @@ func TestMsgRegisterValidator_UnspecifiedType(t *testing.T) {
 }
 
 func TestMsgRegisterValidator_Duplicate(t *testing.T) {
-	_, msgServer, ctx, _, _ := setupMsgServer(t)
+	_, msgServer, ctx, _, sk := setupMsgServer(t)
 
 	valAddr := sdk.ValAddress([]byte("validator_dup_____")).String()
+	sk.AddValidator(sdk.ValAddress([]byte("validator_dup_____")), math.NewInt(1000000))
 
 	// First registration succeeds
 	resp, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{
@@ -260,6 +262,7 @@ func TestMsgRegisterValidator_MultipleTypes(t *testing.T) {
 
 	// Register a LIQUIDITY type validator
 	liquidityValAddr := sdk.ValAddress([]byte("val_liquidity_____")).String()
+	sk.AddValidator(sdk.ValAddress([]byte("val_liquidity_____")), math.NewInt(1000000))
 	resp, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{
 		ValidatorAddress: liquidityValAddr,
 		ValidatorType:    types.ValidatorType_VALIDATOR_TYPE_LIQUIDITY,
@@ -292,9 +295,10 @@ func TestMsgRegisterValidator_MultipleTypes(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestMsgSetDelegatorRewardPercent_ValidUpdates(t *testing.T) {
-	k, msgServer, ctx, _, _ := setupMsgServer(t)
+	k, msgServer, ctx, _, sk := setupMsgServer(t)
 
 	valAddr := sdk.ValAddress([]byte("validator_reward__")).String()
+	sk.AddValidator(sdk.ValAddress([]byte("validator_reward__")), math.NewInt(1000000))
 
 	// Register the validator first
 	_, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{
@@ -345,9 +349,10 @@ func TestMsgSetDelegatorRewardPercent_NotRegistered(t *testing.T) {
 }
 
 func TestMsgSetDelegatorRewardPercent_NegativePercent(t *testing.T) {
-	_, msgServer, ctx, _, _ := setupMsgServer(t)
+	_, msgServer, ctx, _, sk := setupMsgServer(t)
 
 	valAddr := sdk.ValAddress([]byte("validator_neg_____")).String()
+	sk.AddValidator(sdk.ValAddress([]byte("validator_neg_____")), math.NewInt(1000000))
 
 	// Register first
 	_, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{
@@ -366,9 +371,10 @@ func TestMsgSetDelegatorRewardPercent_NegativePercent(t *testing.T) {
 }
 
 func TestMsgSetDelegatorRewardPercent_OverHundred(t *testing.T) {
-	_, msgServer, ctx, _, _ := setupMsgServer(t)
+	_, msgServer, ctx, _, sk := setupMsgServer(t)
 
 	valAddr := sdk.ValAddress([]byte("validator_over____")).String()
+	sk.AddValidator(sdk.ValAddress([]byte("validator_over____")), math.NewInt(1000000))
 
 	// Register first
 	_, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{
@@ -387,9 +393,10 @@ func TestMsgSetDelegatorRewardPercent_OverHundred(t *testing.T) {
 }
 
 func TestMsgSetDelegatorRewardPercent_VerifyUpdate(t *testing.T) {
-	k, msgServer, ctx, _, _ := setupMsgServer(t)
+	k, msgServer, ctx, _, sk := setupMsgServer(t)
 
 	valAddr := sdk.ValAddress([]byte("val_verify_update_")).String()
+	sk.AddValidator(sdk.ValAddress([]byte("val_verify_update_")), math.NewInt(1000000))
 
 	// Register
 	_, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{
@@ -440,9 +447,10 @@ func TestMsgDepositToVault_NotRegistered(t *testing.T) {
 }
 
 func TestMsgDepositToVault_ZeroAmount0(t *testing.T) {
-	_, msgServer, ctx, _, _ := setupMsgServer(t)
+	_, msgServer, ctx, _, sk := setupMsgServer(t)
 
 	valAddr := sdk.ValAddress([]byte("val_zero_amount0__")).String()
+	sk.AddValidator(sdk.ValAddress([]byte("val_zero_amount0__")), math.NewInt(1000000))
 
 	// Register first
 	_, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{
@@ -464,9 +472,10 @@ func TestMsgDepositToVault_ZeroAmount0(t *testing.T) {
 }
 
 func TestMsgDepositToVault_ZeroAmount1(t *testing.T) {
-	_, msgServer, ctx, _, _ := setupMsgServer(t)
+	_, msgServer, ctx, _, sk := setupMsgServer(t)
 
 	valAddr := sdk.ValAddress([]byte("val_zero_amount1__")).String()
+	sk.AddValidator(sdk.ValAddress([]byte("val_zero_amount1__")), math.NewInt(1000000))
 
 	// Register first
 	_, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{

@@ -117,9 +117,10 @@ func TestStakeCapEnforcement(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestDoubleRegistration(t *testing.T) {
-	_, msgServer, ctx, _, _ := setupSecurityMsgServer(t)
+	_, msgServer, ctx, _, sk := setupSecurityMsgServer(t)
 
 	valAddr := sdk.ValAddress([]byte("val_double_reg____")).String()
+	sk.AddValidator(sdk.ValAddress([]byte("val_double_reg____")), math.NewInt(1000000))
 
 	// First registration succeeds
 	resp, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{
@@ -153,9 +154,10 @@ func TestDoubleRegistration(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestDelegatorRewardPercentBoundaries(t *testing.T) {
-	k, msgServer, ctx, _, _ := setupSecurityMsgServer(t)
+	k, msgServer, ctx, _, sk := setupSecurityMsgServer(t)
 
 	valAddr := sdk.ValAddress([]byte("val_boundary______")).String()
+	sk.AddValidator(sdk.ValAddress([]byte("val_boundary______")), math.NewInt(1000000))
 
 	// Register the validator
 	_, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{
@@ -225,10 +227,12 @@ func TestDelegatorRewardPercentBoundaries(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestVaultIsolation(t *testing.T) {
-	k, msgServer, ctx, _, _ := setupSecurityMsgServer(t)
+	k, msgServer, ctx, _, sk := setupSecurityMsgServer(t)
 
 	valAddr1 := sdk.ValAddress([]byte("val_isolated_1____")).String()
 	valAddr2 := sdk.ValAddress([]byte("val_isolated_2____")).String()
+	sk.AddValidator(sdk.ValAddress([]byte("val_isolated_1____")), math.NewInt(1000000))
+	sk.AddValidator(sdk.ValAddress([]byte("val_isolated_2____")), math.NewInt(1000000))
 
 	// Register two validators
 	_, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{

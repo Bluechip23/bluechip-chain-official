@@ -301,12 +301,17 @@ func TestQueryTotalVaultValue_WasmKeeperNotSet(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestMsgDepositToVault_FullFlow(t *testing.T) {
-	k, msgServer, ctx, _, _, wk := setupMsgServerWithWasm(t)
+	k, msgServer, ctx, _, sk, wk := setupMsgServerWithWasm(t)
 
 	// Use AccAddress because DepositToVault calls AccAddressFromBech32
 	valAddr := accAddrStr("val_deposit_flow")
 
-	// Register as LIQUIDITY type (doesn't need staking module validation)
+	// Add validator to staking module (padded to 20 bytes to match accAddrStr)
+	valBytes := make([]byte, 20)
+	copy(valBytes, "val_deposit_flow")
+	sk.AddValidator(sdk.ValAddress(valBytes), math.NewInt(1000000))
+
+	// Register as LIQUIDITY type
 	_, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{
 		ValidatorAddress: valAddr,
 		ValidatorType:    types.ValidatorType_VALIDATOR_TYPE_LIQUIDITY,
@@ -355,9 +360,14 @@ func TestMsgDepositToVault_FullFlow(t *testing.T) {
 }
 
 func TestMsgDepositToVault_MultipleDeposits(t *testing.T) {
-	k, msgServer, ctx, _, _, wk := setupMsgServerWithWasm(t)
+	k, msgServer, ctx, _, sk, wk := setupMsgServerWithWasm(t)
 
 	valAddr := accAddrStr("val_multi_dep")
+
+	// Add validator to staking module (padded to 20 bytes to match accAddrStr)
+	valBytes := make([]byte, 20)
+	copy(valBytes, "val_multi_dep")
+	sk.AddValidator(sdk.ValAddress(valBytes), math.NewInt(1000000))
 
 	// Register
 	_, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{
@@ -411,9 +421,14 @@ func TestMsgDepositToVault_MultipleDeposits(t *testing.T) {
 }
 
 func TestMsgDepositToVault_BankSendRecorded(t *testing.T) {
-	_, msgServer, ctx, bk, _, wk := setupMsgServerWithWasm(t)
+	_, msgServer, ctx, bk, sk, wk := setupMsgServerWithWasm(t)
 
 	valAddr := accAddrStr("val_bank_send")
+
+	// Add validator to staking module (padded to 20 bytes to match accAddrStr)
+	valBytes := make([]byte, 20)
+	copy(valBytes, "val_bank_send")
+	sk.AddValidator(sdk.ValAddress(valBytes), math.NewInt(1000000))
 
 	// Register
 	_, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{
@@ -448,9 +463,14 @@ func TestMsgDepositToVault_BankSendRecorded(t *testing.T) {
 }
 
 func TestMsgDepositToVault_BankSendFails(t *testing.T) {
-	_, msgServer, ctx, bk, _, _ := setupMsgServerWithWasm(t)
+	_, msgServer, ctx, bk, sk, _ := setupMsgServerWithWasm(t)
 
 	valAddr := accAddrStr("val_bank_fail")
+
+	// Add validator to staking module (padded to 20 bytes to match accAddrStr)
+	valBytes := make([]byte, 20)
+	copy(valBytes, "val_bank_fail")
+	sk.AddValidator(sdk.ValAddress(valBytes), math.NewInt(1000000))
 
 	// Register
 	_, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{
@@ -477,9 +497,14 @@ func TestMsgDepositToVault_BankSendFails(t *testing.T) {
 }
 
 func TestMsgDepositToVault_WasmExecuteFails(t *testing.T) {
-	k, msgServer, ctx, _, _, wk := setupMsgServerWithWasm(t)
+	k, msgServer, ctx, _, sk, wk := setupMsgServerWithWasm(t)
 
 	valAddr := accAddrStr("val_wasm_fail")
+
+	// Add validator to staking module (padded to 20 bytes to match accAddrStr)
+	valBytes := make([]byte, 20)
+	copy(valBytes, "val_wasm_fail")
+	sk.AddValidator(sdk.ValAddress(valBytes), math.NewInt(1000000))
 
 	// Register
 	_, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{
@@ -863,9 +888,14 @@ func TestRanking_ChainStakeDominates(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestMsgDepositToVault_MultiplePools(t *testing.T) {
-	k, msgServer, ctx, _, _, wk := setupMsgServerWithWasm(t)
+	k, msgServer, ctx, _, sk, wk := setupMsgServerWithWasm(t)
 
 	valAddr := accAddrStr("val_multi_pool")
+
+	// Add validator to staking module (padded to 20 bytes to match accAddrStr)
+	valBytes := make([]byte, 20)
+	copy(valBytes, "val_multi_pool")
+	sk.AddValidator(sdk.ValAddress(valBytes), math.NewInt(1000000))
 
 	_, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{
 		ValidatorAddress: valAddr,
@@ -1066,11 +1096,16 @@ func TestPositionValueCalculation_Manual(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestQueryVault_AfterDeposit(t *testing.T) {
-	k, msgServer, ctx, _, _, wk := setupMsgServerWithWasm(t)
+	k, msgServer, ctx, _, sk, wk := setupMsgServerWithWasm(t)
 
 	valAddr := accAddrStr("val_query_dep")
 	poolAddr := sdk.AccAddress([]byte("pool_contract_____"))
 	cw20Addr := sdk.AccAddress([]byte("cw20_contract_____"))
+
+	// Add validator to staking module (padded to 20 bytes to match accAddrStr)
+	valBytes := make([]byte, 20)
+	copy(valBytes, "val_query_dep")
+	sk.AddValidator(sdk.ValAddress(valBytes), math.NewInt(1000000))
 
 	// Register
 	_, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{
@@ -1107,15 +1142,19 @@ func TestQueryVault_AfterDeposit(t *testing.T) {
 }
 
 func TestQueryAllVaults_AfterMultipleDeposits(t *testing.T) {
-	k, msgServer, ctx, _, _, wk := setupMsgServerWithWasm(t)
+	k, msgServer, ctx, _, sk, wk := setupMsgServerWithWasm(t)
 
 	poolAddr := sdk.AccAddress([]byte("pool_contract_____"))
 	cw20Addr := sdk.AccAddress([]byte("cw20_contract_____"))
 
-	valAddrs := []string{
-		accAddrStr("val_all_1"),
-		accAddrStr("val_all_2"),
-		accAddrStr("val_all_3"),
+	valLabels := []string{"val_all_1", "val_all_2", "val_all_3"}
+	valAddrs := make([]string, len(valLabels))
+	for i, label := range valLabels {
+		valAddrs[i] = accAddrStr(label)
+		// Add validator to staking module (padded to 20 bytes to match accAddrStr)
+		valBytes := make([]byte, 20)
+		copy(valBytes, label)
+		sk.AddValidator(sdk.ValAddress(valBytes), math.NewInt(1000000))
 	}
 
 	for i, valAddr := range valAddrs {

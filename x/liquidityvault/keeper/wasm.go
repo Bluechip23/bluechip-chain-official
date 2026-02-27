@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 
@@ -50,7 +51,7 @@ func (k Keeper) DepositLiquidityToPool(
 		Send: &types.Cw20SendInner{
 			Contract: poolContractAddr,
 			Amount:   amount1.String(),
-			Msg:      encodeBase64(innerMsgBz),
+			Msg:      base64.StdEncoding.EncodeToString(innerMsgBz),
 		},
 	}
 	cw20SendBz, err := json.Marshal(cw20SendMsg)
@@ -71,6 +72,56 @@ func (k Keeper) DepositLiquidityToPool(
 	}
 
 	return positionId, nil
+}
+
+// WithdrawLiquidityFromPool withdraws an LP position from a pool contract via WasmKeeper.
+// Returns the amount of ubluechip recovered from the withdrawal.
+func (k Keeper) WithdrawLiquidityFromPool(
+	ctx context.Context,
+	poolContractAddr string,
+	positionId string,
+) (math.Int, error) {
+	if k.wasmKeeper == nil {
+		return math.ZeroInt(), types.ErrWasmKeeperNotSet
+	}
+
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	moduleAddr := k.GetModuleAddress()
+
+	poolAddr, err := sdk.AccAddressFromBech32(poolContractAddr)
+	if err != nil {
+		return math.ZeroInt(), fmt.Errorf("invalid pool contract address: %w", err)
+	}
+
+	// Query current position value before withdrawal for logging
+	preValue, _ := k.QueryPositionValue(ctx, poolContractAddr, positionId)
+
+	// Build withdraw message
+	withdrawMsg := types.WasmWithdrawLiquidityMsg{
+		WithdrawLiquidity: &types.WithdrawLiquidityInner{
+			PositionId: positionId,
+		},
+	}
+	withdrawBz, err := json.Marshal(withdrawMsg)
+	if err != nil {
+		return math.ZeroInt(), fmt.Errorf("failed to marshal withdraw msg: %w", err)
+	}
+
+	// Execute withdrawal on pool contract
+	_, err = k.wasmKeeper.Execute(sdkCtx, poolAddr, moduleAddr, withdrawBz, sdk.Coins{})
+	if err != nil {
+		return math.ZeroInt(), fmt.Errorf("%w: %v", types.ErrWasmExecutionFailed, err)
+	}
+
+	// Check the module's ubluechip balance increase from the withdrawal
+	// The position value before withdrawal is our best estimate of recovered amount
+	k.Logger().Info("withdrew liquidity from pool",
+		"pool", poolContractAddr,
+		"position_id", positionId,
+		"estimated_value", preValue,
+	)
+
+	return preValue, nil
 }
 
 // QueryPositionValue queries the value of an LP position from the pool contract.
@@ -215,38 +266,4 @@ func (k Keeper) QueryTotalVaultValue(ctx context.Context, vault types.Vault) (ma
 	}
 
 	return totalValue, nil
-}
-
-// encodeBase64 encodes bytes to base64 string
-func encodeBase64(data []byte) string {
-	const encodeStd = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
-	if len(data) == 0 {
-		return ""
-	}
-
-	result := make([]byte, 0, ((len(data)+2)/3)*4)
-	for i := 0; i < len(data); i += 3 {
-		var b0, b1, b2 byte
-		b0 = data[i]
-		if i+1 < len(data) {
-			b1 = data[i+1]
-		}
-		if i+2 < len(data) {
-			b2 = data[i+2]
-		}
-
-		result = append(result, encodeStd[(b0>>2)&0x3F])
-		result = append(result, encodeStd[((b0<<4)|(b1>>4))&0x3F])
-		if i+1 < len(data) {
-			result = append(result, encodeStd[((b1<<2)|(b2>>6))&0x3F])
-		} else {
-			result = append(result, '=')
-		}
-		if i+2 < len(data) {
-			result = append(result, encodeStd[b2&0x3F])
-		} else {
-			result = append(result, '=')
-		}
-	}
-	return string(result)
 }

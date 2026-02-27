@@ -19,6 +19,7 @@ service Msg {
   rpc RegisterValidator(MsgRegisterValidator) returns (MsgRegisterValidatorResponse);
   rpc DepositToVault(MsgDepositToVault) returns (MsgDepositToVaultResponse);
   rpc SetDelegatorRewardPercent(MsgSetDelegatorRewardPercent) returns (MsgSetDelegatorRewardPercentResponse);
+  rpc WithdrawFromVault(MsgWithdrawFromVault) returns (MsgWithdrawFromVaultResponse);
 }
 
 message MsgUpdateParams {
@@ -66,3 +67,15 @@ message MsgSetDelegatorRewardPercent {
   ];
 }
 message MsgSetDelegatorRewardPercentResponse {}
+
+message MsgWithdrawFromVault {
+  option (cosmos.msg.v1.signer) = "validator_address";
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  // pool_contract_address is the address of the pool to withdraw from
+  string pool_contract_address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  // position_id is the LP position to withdraw
+  string position_id = 3;
+}
+message MsgWithdrawFromVaultResponse {
+  cosmos.base.v1beta1.Coin withdrawn_amount = 1 [(gogoproto.nullable) = false];
+}

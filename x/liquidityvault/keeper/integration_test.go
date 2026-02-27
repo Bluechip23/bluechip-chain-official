@@ -330,10 +330,15 @@ func TestE2E_RegisterDepositQueryScoreRanking(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestE2E_DepositAndQueryTotalVaultValue(t *testing.T) {
-	k, ctx, _, _, wk := setupKeeperWithSequentialWasm(t)
+	k, ctx, _, sk, wk := setupKeeperWithSequentialWasm(t)
 	msgServer := keeper.NewMsgServerImpl(k)
 
 	valAddr := accAddrStr("val_e2e_value")
+
+	// Add validator to staking module (padded to 20 bytes to match accAddrStr)
+	valBytes := make([]byte, 20)
+	copy(valBytes, "val_e2e_value")
+	sk.AddValidator(sdk.ValAddress(valBytes), math.NewInt(1000000))
 
 	// Register
 	_, err := msgServer.RegisterValidator(ctx, &types.MsgRegisterValidator{

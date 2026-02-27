@@ -77,3 +77,12 @@ type WasmPoolStateResponse struct {
 	Reserve1       string `json:"reserve1"`
 	TotalLiquidity string `json:"total_liquidity"`
 }
+
+// WasmWithdrawLiquidityMsg is the JSON message sent to the pool contract to withdraw liquidity.
+type WasmWithdrawLiquidityMsg struct {
+	WithdrawLiquidity *WithdrawLiquidityInner `json:"withdraw_liquidity"`
+}
+
+type WithdrawLiquidityInner struct {
+	PositionId string `json:"position_id"`
+}

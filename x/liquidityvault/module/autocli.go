@@ -83,6 +83,16 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 						{ProtoField: "percent"},
 					},
 				},
+				{
+					RpcMethod: "WithdrawFromVault",
+					Use:       "withdraw-from-vault [validator-address] [pool-contract] [position-id]",
+					Short:     "Withdraw an LP position from a validator's liquidity vault",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "validator_address"},
+						{ProtoField: "pool_contract_address"},
+						{ProtoField: "position_id"},
+					},
+				},
 			},
 		},
 	}
