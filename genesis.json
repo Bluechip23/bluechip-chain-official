@@ -1,6 +1,6 @@
 {
   "genesis_time": "2026-02-01T00:00:00.000000000Z",
-  "chain_id": "bluechip-1",
+  "chain_id": "bluechip-3",
   "initial_height": "1",
   "consensus": {
     "params": {
@@ -78,7 +78,7 @@
           ]
         },
         {
-          "address": "bluechip1fwdm563h39zk34cp7kqv77syldlmk6x88vyydy",
+          "address": "bluechip13x4pynlp86prhcmtns742kgsgu7pjtzjvzhymd",
           "coins": [
             {
               "denom": "ubluechip",
@@ -120,7 +120,7 @@
           "base": "ubluechip",
           "display": "bluechip",
           "name": "Bluechip",
-          "symbol": "BLUE"
+          "symbol": "BCP"
         }
       ],
       "send_enabled": []
