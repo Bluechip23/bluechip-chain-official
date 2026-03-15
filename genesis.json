@@ -55,7 +55,7 @@
         },
         {
           "@type": "/cosmos.auth.v1beta1.BaseAccount",
-          "address": "bluechip1fwdm563h39zk34cp7kqv77syldlmk6x88vyydy",
+          "address": "bluechip13x4pynlp86prhcmtns742kgsgu7pjtzjvzhymd",
           "pub_key": null,
           "account_number": "1",
           "sequence": "0"
