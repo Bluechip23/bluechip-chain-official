@@ -2,8 +2,8 @@
   "chainId": "bluechip-3",
   "chainName": "Bluechip",
   "chainSymbolImageUrl": "",
-  "rpc": "",
-  "rest": "",
+  "rpc": "https://bluechip.rpc.bluechip.link",
+  "rest": "https://bluechip.api.bluechip.link",
   "bip44": {
     "coinType": 118
   },

@@ -60,8 +60,18 @@
     "persistent_peers": []
   },
   "apis": {
-    "rpc": [],
-    "rest": [],
+    "rpc": [
+      {
+        "address": "https://bluechip.rpc.bluechip.link",
+        "provider": "Bluechip"
+      }
+    ],
+    "rest": [
+      {
+        "address": "https://bluechip.api.bluechip.link",
+        "provider": "Bluechip"
+      }
+    ],
     "grpc": []
   },
   "explorers": [],
