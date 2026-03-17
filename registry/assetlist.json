@@ -1,0 +1,39 @@
+{
+  "$schema": "../assetlist.schema.json",
+  "chain_name": "bluechip",
+  "assets": [
+    {
+      "description": "The native staking and governance token of the Bluechip blockchain.",
+      "denom_units": [
+        {
+          "denom": "ubluechip",
+          "exponent": 0,
+          "aliases": [
+            "microbluechip"
+          ]
+        },
+        {
+          "denom": "mbluechip",
+          "exponent": 3,
+          "aliases": [
+            "millibluechip"
+          ]
+        },
+        {
+          "denom": "bluechip",
+          "exponent": 6
+        }
+      ],
+      "base": "ubluechip",
+      "name": "Bluechip",
+      "display": "bluechip",
+      "symbol": "BCP",
+      "logo_URIs": {
+        "png": "",
+        "svg": ""
+      },
+      "coingecko_id": "",
+      "type_asset": "sdk.coin"
+    }
+  ]
+}

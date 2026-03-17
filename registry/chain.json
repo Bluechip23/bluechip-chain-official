@@ -1,0 +1,84 @@
+{
+  "$schema": "../chain.schema.json",
+  "chain_name": "bluechip",
+  "status": "live",
+  "network_type": "mainnet",
+  "website": "https://bluechip.link",
+  "pretty_name": "Bluechip",
+  "chain_type": "cosmos",
+  "chain_id": "bluechip-3",
+  "bech32_prefix": "bluechip",
+  "daemon_name": "bluechipd",
+  "node_home": "$HOME/.bluechipChain",
+  "key_algos": [
+    "secp256k1"
+  ],
+  "slip44": 118,
+  "fees": {
+    "fee_tokens": [
+      {
+        "denom": "ubluechip",
+        "fixed_min_gas_price": 0.025,
+        "low_gas_price": 0.025,
+        "average_gas_price": 0.05,
+        "high_gas_price": 0.1
+      }
+    ]
+  },
+  "staking": {
+    "staking_tokens": [
+      {
+        "denom": "ubluechip"
+      }
+    ]
+  },
+  "codebase": {
+    "git_repo": "https://github.com/Bluechip23/bluechip-chain-official",
+    "recommended_version": "v1.0.0",
+    "compatible_versions": [
+      "v1.0.0"
+    ],
+    "cosmos_sdk_version": "v0.50.13",
+    "ibc_go_version": "v8.5.2",
+    "consensus": {
+      "type": "cometbft",
+      "version": "v0.38.17"
+    },
+    "cosmwasm_version": "v0.54.0",
+    "cosmwasm_enabled": true,
+    "genesis": {
+      "genesis_url": "https://raw.githubusercontent.com/Bluechip23/bluechip-chain-official/main/genesis.json"
+    }
+  },
+  "logo_URIs": {
+    "png": "",
+    "svg": ""
+  },
+  "description": "Bluechip is a Cosmos SDK-based blockchain with CosmWasm smart contract support, IBC interoperability, and a custom fixed minting module.",
+  "peers": {
+    "seeds": [],
+    "persistent_peers": []
+  },
+  "apis": {
+    "rpc": [
+      {
+        "address": "https://bluechip.rpc.bluechip.link",
+        "provider": "Bluechip"
+      }
+    ],
+    "rest": [
+      {
+        "address": "https://bluechip.api.bluechip.link",
+        "provider": "Bluechip"
+      }
+    ],
+    "grpc": []
+  },
+  "explorers": [],
+  "keywords": [
+    "bluechip",
+    "cosmos",
+    "cosmwasm",
+    "ibc"
+  ]
+}
