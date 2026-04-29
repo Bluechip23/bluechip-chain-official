@@ -162,7 +162,7 @@ var (
 		{Account: ibcfeetypes.ModuleName},
 		{Account: icatypes.ModuleName},
 		{Account: wasmtypes.ModuleName, Permissions: []string{authtypes.Burner}},
-		{Account: fixedmintmoduletypes.ModuleName, Permissions: []string{authtypes.Minter, authtypes.Burner, authtypes.Staking}},
+		{Account: fixedmintmoduletypes.ModuleName, Permissions: []string{authtypes.Minter}},
 // this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 

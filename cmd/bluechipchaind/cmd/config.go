@@ -39,9 +39,8 @@ func initAppConfig() (string, interface{}) {
 	// - if you set srvCfg.MinGasPrices non-empty, validators CAN tweak their
 	//   own app.toml to override, or use this default value.
 	//
-	// In tests, we set the min gas prices to 0.
-	// srvCfg.MinGasPrices = "0stake"
-	// srvCfg.BaseConfig.IAVLDisableFastNode = true // disable fastnode by default
+	// Set a default minimum gas price for validators.
+	srvCfg.MinGasPrices = "0.025ubluechip"
 
 	customAppConfig := CustomAppConfig{
 		Config: *srvCfg,

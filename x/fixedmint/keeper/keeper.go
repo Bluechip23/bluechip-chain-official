@@ -3,22 +3,29 @@ package keeper
 import (
 	"context"
 	"fmt"
-    
-    "cosmossdk.io/math"
+
 	"cosmossdk.io/core/store"
 	"cosmossdk.io/log"
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-    authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
 	"bluechipChain/x/fixedmint/types"
 )
 
 // ...
 
-// MintFixedBlockReward mints the fixed amount of tokens and sends them to the fee collector.
+// MintFixedBlockReward mints the configured amount of tokens and sends them to the fee collector.
+// The mint amount and denom are read from module params, allowing governance to adjust them.
 func (k Keeper) MintFixedBlockReward(ctx context.Context) error {
-    amount := sdk.NewCoins(sdk.NewCoin("ubluechip", math.NewInt(1000000)))
+    params := k.GetParams(ctx)
+
+    // Skip minting if disabled or amount is zero
+    if !params.MintEnabled || params.MintAmount.IsZero() {
+        return nil
+    }
+
+    amount := sdk.NewCoins(sdk.NewCoin(params.MintDenom, params.MintAmount))
 
     // Mint coins to the fixedmint module account
     if err := k.bankKeeper.MintCoins(ctx, types.ModuleName, amount); err != nil {
@@ -29,7 +36,7 @@ func (k Keeper) MintFixedBlockReward(ctx context.Context) error {
     if err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.ModuleName, authtypes.FeeCollectorName, amount); err != nil {
         return err
     }
-    
+
     k.Logger().Info("Minted fixed block reward", "amount", amount)
     return nil
 }

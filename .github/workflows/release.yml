@@ -12,7 +12,12 @@
 #
 # The workflow will not run if there is no tag pushed with a "v" prefix and no change pushed to your
 # default branch.
-on: push
+on:
+  push:
+    tags:
+      - 'v*'
+    branches:
+      - main
 
 jobs:
   might_release:

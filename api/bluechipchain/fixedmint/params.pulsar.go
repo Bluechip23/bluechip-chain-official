@@ -4,6 +4,7 @@ package fixedmint
 import (
 	_ "cosmossdk.io/api/amino"
 	fmt "fmt"
+	_ "github.com/cosmos/cosmos-proto"
 	runtime "github.com/cosmos/cosmos-proto/runtime"
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -15,12 +16,18 @@ import (
 )
 
 var (
-	md_Params protoreflect.MessageDescriptor
+	md_Params              protoreflect.MessageDescriptor
+	fd_Params_mint_denom   protoreflect.FieldDescriptor
+	fd_Params_mint_amount  protoreflect.FieldDescriptor
+	fd_Params_mint_enabled protoreflect.FieldDescriptor
 )
 
 func init() {
 	file_bluechipchain_fixedmint_params_proto_init()
 	md_Params = File_bluechipchain_fixedmint_params_proto.Messages().ByName("Params")
+	fd_Params_mint_denom = md_Params.Fields().ByName("mint_denom")
+	fd_Params_mint_amount = md_Params.Fields().ByName("mint_amount")
+	fd_Params_mint_enabled = md_Params.Fields().ByName("mint_enabled")
 }
 
 var _ protoreflect.Message = (*fastReflection_Params)(nil)
@@ -88,6 +95,24 @@ func (x *fastReflection_Params) Interface() protoreflect.ProtoMessage {
 // While iterating, mutating operations may only be performed
 // on the current field descriptor.
 func (x *fastReflection_Params) Range(f func(protoreflect.FieldDescriptor, protoreflect.Value) bool) {
+	if x.MintDenom != "" {
+		value := protoreflect.ValueOfString(x.MintDenom)
+		if !f(fd_Params_mint_denom, value) {
+			return
+		}
+	}
+	if x.MintAmount != "" {
+		value := protoreflect.ValueOfString(x.MintAmount)
+		if !f(fd_Params_mint_amount, value) {
+			return
+		}
+	}
+	if x.MintEnabled != false {
+		value := protoreflect.ValueOfBool(x.MintEnabled)
+		if !f(fd_Params_mint_enabled, value) {
+			return
+		}
+	}
 }
 
 // Has reports whether a field is populated.
@@ -103,6 +128,12 @@ func (x *fastReflection_Params) Range(f func(protoreflect.FieldDescriptor, proto
 // a repeated field is populated if it is non-empty.
 func (x *fastReflection_Params) Has(fd protoreflect.FieldDescriptor) bool {
 	switch fd.FullName() {
+	case "bluechipchain.fixedmint.Params.mint_denom":
+		return x.MintDenom != ""
+	case "bluechipchain.fixedmint.Params.mint_amount":
+		return x.MintAmount != ""
+	case "bluechipchain.fixedmint.Params.mint_enabled":
+		return x.MintEnabled != false
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.fixedmint.Params"))
@@ -119,6 +150,12 @@ func (x *fastReflection_Params) Has(fd protoreflect.FieldDescriptor) bool {
 // Clear is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_Params) Clear(fd protoreflect.FieldDescriptor) {
 	switch fd.FullName() {
+	case "bluechipchain.fixedmint.Params.mint_denom":
+		x.MintDenom = ""
+	case "bluechipchain.fixedmint.Params.mint_amount":
+		x.MintAmount = ""
+	case "bluechipchain.fixedmint.Params.mint_enabled":
+		x.MintEnabled = false
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.fixedmint.Params"))
@@ -135,6 +172,15 @@ func (x *fastReflection_Params) Clear(fd protoreflect.FieldDescriptor) {
 // of the value; to obtain a mutable reference, use Mutable.
 func (x *fastReflection_Params) Get(descriptor protoreflect.FieldDescriptor) protoreflect.Value {
 	switch descriptor.FullName() {
+	case "bluechipchain.fixedmint.Params.mint_denom":
+		value := x.MintDenom
+		return protoreflect.ValueOfString(value)
+	case "bluechipchain.fixedmint.Params.mint_amount":
+		value := x.MintAmount
+		return protoreflect.ValueOfString(value)
+	case "bluechipchain.fixedmint.Params.mint_enabled":
+		value := x.MintEnabled
+		return protoreflect.ValueOfBool(value)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.fixedmint.Params"))
@@ -155,6 +201,12 @@ func (x *fastReflection_Params) Get(descriptor protoreflect.FieldDescriptor) pro
 // Set is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_Params) Set(fd protoreflect.FieldDescriptor, value protoreflect.Value) {
 	switch fd.FullName() {
+	case "bluechipchain.fixedmint.Params.mint_denom":
+		x.MintDenom = value.Interface().(string)
+	case "bluechipchain.fixedmint.Params.mint_amount":
+		x.MintAmount = value.Interface().(string)
+	case "bluechipchain.fixedmint.Params.mint_enabled":
+		x.MintEnabled = value.Bool()
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.fixedmint.Params"))
@@ -175,6 +227,12 @@ func (x *fastReflection_Params) Set(fd protoreflect.FieldDescriptor, value proto
 // Mutable is a mutating operation and unsafe for concurrent use.
 func (x *fastReflection_Params) Mutable(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
+	case "bluechipchain.fixedmint.Params.mint_denom":
+		panic(fmt.Errorf("field mint_denom of message bluechipchain.fixedmint.Params is not mutable"))
+	case "bluechipchain.fixedmint.Params.mint_amount":
+		panic(fmt.Errorf("field mint_amount of message bluechipchain.fixedmint.Params is not mutable"))
+	case "bluechipchain.fixedmint.Params.mint_enabled":
+		panic(fmt.Errorf("field mint_enabled of message bluechipchain.fixedmint.Params is not mutable"))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.fixedmint.Params"))
@@ -188,6 +246,12 @@ func (x *fastReflection_Params) Mutable(fd protoreflect.FieldDescriptor) protore
 // For lists, maps, and messages, this returns a new, empty, mutable value.
 func (x *fastReflection_Params) NewField(fd protoreflect.FieldDescriptor) protoreflect.Value {
 	switch fd.FullName() {
+	case "bluechipchain.fixedmint.Params.mint_denom":
+		return protoreflect.ValueOfString("")
+	case "bluechipchain.fixedmint.Params.mint_amount":
+		return protoreflect.ValueOfString("")
+	case "bluechipchain.fixedmint.Params.mint_enabled":
+		return protoreflect.ValueOfBool(false)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.fixedmint.Params"))
@@ -257,6 +321,17 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 		var n int
 		var l int
 		_ = l
+		l = len(x.MintDenom)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		l = len(x.MintAmount)
+		if l > 0 {
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
+		if x.MintEnabled {
+			n += 2
+		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
 		}
@@ -285,6 +360,30 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 		if x.unknownFields != nil {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.MintEnabled {
+			i--
+			if x.MintEnabled {
+				dAtA[i] = 1
+			} else {
+				dAtA[i] = 0
+			}
+			i--
+			dAtA[i] = 0x18
+		}
+		if len(x.MintAmount) > 0 {
+			i -= len(x.MintAmount)
+			copy(dAtA[i:], x.MintAmount)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MintAmount)))
+			i--
+			dAtA[i] = 0x12
+		}
+		if len(x.MintDenom) > 0 {
+			i -= len(x.MintDenom)
+			copy(dAtA[i:], x.MintDenom)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(x.MintDenom)))
+			i--
+			dAtA[i] = 0xa
 		}
 		if input.Buf != nil {
 			input.Buf = append(input.Buf, dAtA...)
@@ -335,6 +434,90 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 				return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: Params: illegal tag %d (wire type %d)", fieldNum, wire)
 			}
 			switch fieldNum {
+			case 1:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MintDenom", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.MintDenom = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 2:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MintAmount", wireType)
+				}
+				var stringLen uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					stringLen |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				intStringLen := int(stringLen)
+				if intStringLen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + intStringLen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.MintAmount = string(dAtA[iNdEx:postIndex])
+				iNdEx = postIndex
+			case 3:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field MintEnabled", wireType)
+				}
+				var v int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				x.MintEnabled = bool(v != 0)
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -388,6 +571,13 @@ type Params struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
+
+	// mint_denom is the denomination of the coin to mint.
+	MintDenom string `protobuf:"bytes,1,opt,name=mint_denom,json=mintDenom,proto3" json:"mint_denom,omitempty"`
+	// mint_amount is the amount of coins (in base denom) to mint per block.
+	MintAmount string `protobuf:"bytes,2,opt,name=mint_amount,json=mintAmount,proto3" json:"mint_amount,omitempty"`
+	// mint_enabled indicates whether fixed minting is active.
+	MintEnabled bool `protobuf:"varint,3,opt,name=mint_enabled,json=mintEnabled,proto3" json:"mint_enabled,omitempty"`
 }
 
 func (x *Params) Reset() {
@@ -410,6 +600,27 @@ func (*Params) Descriptor() ([]byte, []int) {
 	return file_bluechipchain_fixedmint_params_proto_rawDescGZIP(), []int{0}
 }
 
+func (x *Params) GetMintDenom() string {
+	if x != nil {
+		return x.MintDenom
+	}
+	return ""
+}
+
+func (x *Params) GetMintAmount() string {
+	if x != nil {
+		return x.MintAmount
+	}
+	return ""
+}
+
+func (x *Params) GetMintEnabled() bool {
+	if x != nil {
+		return x.MintEnabled
+	}
+	return false
+}
+
 var File_bluechipchain_fixedmint_params_proto protoreflect.FileDescriptor
 
 var file_bluechipchain_fixedmint_params_proto_rawDesc = []byte{
@@ -418,25 +629,36 @@ var file_bluechipchain_fixedmint_params_proto_rawDesc = []byte{
 	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x17, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70,
 	0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x66, 0x69, 0x78, 0x65, 0x64, 0x6d, 0x69, 0x6e, 0x74, 0x1a,
 	0x11, 0x61, 0x6d, 0x69, 0x6e, 0x6f, 0x2f, 0x61, 0x6d, 0x69, 0x6e, 0x6f, 0x2e, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x1a, 0x14, 0x67, 0x6f, 0x67, 0x6f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x67, 0x6f,
-	0x67, 0x6f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x33, 0x0a, 0x06, 0x50, 0x61, 0x72, 0x61,
-	0x6d, 0x73, 0x3a, 0x29, 0xe8, 0xa0, 0x1f, 0x01, 0x8a, 0xe7, 0xb0, 0x2a, 0x20, 0x62, 0x6c, 0x75,
-	0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x78, 0x2f, 0x66, 0x69, 0x78,
-	0x65, 0x64, 0x6d, 0x69, 0x6e, 0x74, 0x2f, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x42, 0xd2, 0x01,
-	0x0a, 0x1b, 0x63, 0x6f, 0x6d, 0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68,
-	0x61, 0x69, 0x6e, 0x2e, 0x66, 0x69, 0x78, 0x65, 0x64, 0x6d, 0x69, 0x6e, 0x74, 0x42, 0x0b, 0x50,
-	0x61, 0x72, 0x61, 0x6d, 0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x29, 0x62, 0x6c,
-	0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x61, 0x70, 0x69, 0x2f,
-	0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x66, 0x69,
-	0x78, 0x65, 0x64, 0x6d, 0x69, 0x6e, 0x74, 0xa2, 0x02, 0x03, 0x42, 0x46, 0x58, 0xaa, 0x02, 0x17,
-	0x42, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x46, 0x69,
-	0x78, 0x65, 0x64, 0x6d, 0x69, 0x6e, 0x74, 0xca, 0x02, 0x17, 0x42, 0x6c, 0x75, 0x65, 0x63, 0x68,
-	0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x5c, 0x46, 0x69, 0x78, 0x65, 0x64, 0x6d, 0x69, 0x6e,
-	0x74, 0xe2, 0x02, 0x23, 0x42, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69,
-	0x6e, 0x5c, 0x46, 0x69, 0x78, 0x65, 0x64, 0x6d, 0x69, 0x6e, 0x74, 0x5c, 0x47, 0x50, 0x42, 0x4d,
-	0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0xea, 0x02, 0x18, 0x42, 0x6c, 0x75, 0x65, 0x63, 0x68,
-	0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x3a, 0x3a, 0x46, 0x69, 0x78, 0x65, 0x64, 0x6d, 0x69,
-	0x6e, 0x74, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x74, 0x6f, 0x1a, 0x19, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x5f, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x2f, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x14, 0x67,
+	0x6f, 0x67, 0x6f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x67, 0x6f, 0x67, 0x6f, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x22, 0xc3, 0x01, 0x0a, 0x06, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x1d,
+	0x0a, 0x0a, 0x6d, 0x69, 0x6e, 0x74, 0x5f, 0x64, 0x65, 0x6e, 0x6f, 0x6d, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x09, 0x52, 0x09, 0x6d, 0x69, 0x6e, 0x74, 0x44, 0x65, 0x6e, 0x6f, 0x6d, 0x12, 0x4c, 0x0a,
+	0x0b, 0x6d, 0x69, 0x6e, 0x74, 0x5f, 0x61, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x09, 0x42, 0x2b, 0xc8, 0xde, 0x1f, 0x00, 0xda, 0xde, 0x1f, 0x15, 0x63, 0x6f, 0x73, 0x6d,
+	0x6f, 0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69, 0x6f, 0x2f, 0x6d, 0x61, 0x74, 0x68, 0x2e, 0x49, 0x6e,
+	0x74, 0xd2, 0xb4, 0x2d, 0x0a, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x2e, 0x49, 0x6e, 0x74, 0x52,
+	0x0a, 0x6d, 0x69, 0x6e, 0x74, 0x41, 0x6d, 0x6f, 0x75, 0x6e, 0x74, 0x12, 0x21, 0x0a, 0x0c, 0x6d,
+	0x69, 0x6e, 0x74, 0x5f, 0x65, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x08, 0x52, 0x0b, 0x6d, 0x69, 0x6e, 0x74, 0x45, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x64, 0x3a, 0x29,
+	0xe8, 0xa0, 0x1f, 0x01, 0x8a, 0xe7, 0xb0, 0x2a, 0x20, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69,
+	0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x78, 0x2f, 0x66, 0x69, 0x78, 0x65, 0x64, 0x6d, 0x69,
+	0x6e, 0x74, 0x2f, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x42, 0xd2, 0x01, 0x0a, 0x1b, 0x63, 0x6f,
+	0x6d, 0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e,
+	0x66, 0x69, 0x78, 0x65, 0x64, 0x6d, 0x69, 0x6e, 0x74, 0x42, 0x0b, 0x50, 0x61, 0x72, 0x61, 0x6d,
+	0x73, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x29, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68,
+	0x69, 0x70, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x61, 0x70, 0x69, 0x2f, 0x62, 0x6c, 0x75, 0x65,
+	0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x66, 0x69, 0x78, 0x65, 0x64, 0x6d,
+	0x69, 0x6e, 0x74, 0xa2, 0x02, 0x03, 0x42, 0x46, 0x58, 0xaa, 0x02, 0x17, 0x42, 0x6c, 0x75, 0x65,
+	0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x46, 0x69, 0x78, 0x65, 0x64, 0x6d,
+	0x69, 0x6e, 0x74, 0xca, 0x02, 0x17, 0x42, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68,
+	0x61, 0x69, 0x6e, 0x5c, 0x46, 0x69, 0x78, 0x65, 0x64, 0x6d, 0x69, 0x6e, 0x74, 0xe2, 0x02, 0x23,
+	0x42, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x5c, 0x46, 0x69,
+	0x78, 0x65, 0x64, 0x6d, 0x69, 0x6e, 0x74, 0x5c, 0x47, 0x50, 0x42, 0x4d, 0x65, 0x74, 0x61, 0x64,
+	0x61, 0x74, 0x61, 0xea, 0x02, 0x18, 0x42, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68,
+	0x61, 0x69, 0x6e, 0x3a, 0x3a, 0x46, 0x69, 0x78, 0x65, 0x64, 0x6d, 0x69, 0x6e, 0x74, 0x62, 0x06,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
