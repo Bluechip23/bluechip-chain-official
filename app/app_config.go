@@ -174,6 +174,9 @@ var (
 		stakingtypes.BondedPoolName,
 		stakingtypes.NotBondedPoolName,
 		nft.ModuleName,
+		// fixedmint must be blocked so stray sends can't trip the
+		// zero-balance invariant and halt the chain via x/crisis.
+		fixedmintmoduletypes.ModuleName,
 		// We allow the following module accounts to receive funds:
 		// govtypes.ModuleName
 	}
