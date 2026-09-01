@@ -5,9 +5,8 @@ import (
 
 	"github.com/cosmos/cosmos-sdk/runtime"
 
-    "bluechipChain/x/fixedmint/types"
+	"bluechipChain/x/fixedmint/types"
 )
-
 
 // GetParams get all parameters as types.Params
 func (k Keeper) GetParams(ctx context.Context) (params types.Params) {

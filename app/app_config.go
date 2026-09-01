@@ -3,6 +3,9 @@ package app
 import (
 	"time"
 
+	fixedmintmodulev1 "bluechipChain/api/bluechipchain/fixedmint/module"
+	_ "bluechipChain/x/fixedmint/module" // import for side-effects
+	fixedmintmoduletypes "bluechipChain/x/fixedmint/types"
 	runtimev1alpha1 "cosmossdk.io/api/cosmos/app/runtime/v1alpha1"
 	appv1alpha1 "cosmossdk.io/api/cosmos/app/v1alpha1"
 	authmodulev1 "cosmossdk.io/api/cosmos/auth/module/v1"
@@ -53,10 +56,7 @@ import (
 	ibctransfertypes "github.com/cosmos/ibc-go/v8/modules/apps/transfer/types"
 	ibcexported "github.com/cosmos/ibc-go/v8/modules/core/exported"
 	"google.golang.org/protobuf/types/known/durationpb"
-	fixedmintmodulev1 "bluechipChain/api/bluechipchain/fixedmint/module"
-_ "bluechipChain/x/fixedmint/module" // import for side-effects
-fixedmintmoduletypes "bluechipChain/x/fixedmint/types"
-// this line is used by starport scaffolding # stargate/app/moduleImport
+	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
 var (
@@ -95,7 +95,7 @@ var (
 		// chain modules
 		wasmtypes.ModuleName,
 		fixedmintmoduletypes.ModuleName,
-// this line is used by starport scaffolding # stargate/app/initGenesis
+		// this line is used by starport scaffolding # stargate/app/initGenesis
 	}
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -121,7 +121,7 @@ var (
 		// chain modules
 		wasmtypes.ModuleName,
 		fixedmintmoduletypes.ModuleName,
-// this line is used by starport scaffolding # stargate/app/beginBlockers
+		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	}
 
 	endBlockers = []string{
@@ -141,7 +141,7 @@ var (
 		// chain modules
 		wasmtypes.ModuleName,
 		fixedmintmoduletypes.ModuleName,
-// this line is used by starport scaffolding # stargate/app/endBlockers
+		// this line is used by starport scaffolding # stargate/app/endBlockers
 	}
 
 	preBlockers = []string{
@@ -163,7 +163,7 @@ var (
 		{Account: icatypes.ModuleName},
 		{Account: wasmtypes.ModuleName, Permissions: []string{authtypes.Burner}},
 		{Account: fixedmintmoduletypes.ModuleName, Permissions: []string{authtypes.Minter}},
-// this line is used by starport scaffolding # stargate/app/maccPerms
+		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 
 	// blocked account addresses
@@ -305,7 +305,7 @@ var (
 				Name:   fixedmintmoduletypes.ModuleName,
 				Config: appconfig.WrapAny(&fixedmintmodulev1.Module{}),
 			},
-// this line is used by starport scaffolding # stargate/app/moduleConfig
+			// this line is used by starport scaffolding # stargate/app/moduleConfig
 		},
 	})
 )

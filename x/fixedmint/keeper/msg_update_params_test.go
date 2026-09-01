@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/require"
 
-    "bluechipChain/x/fixedmint/types"
+	"bluechipChain/x/fixedmint/types"
 )
 
 func TestMsgUpdateParams(t *testing.T) {

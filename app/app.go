@@ -76,7 +76,7 @@ import (
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 
 	fixedmintmodulekeeper "bluechipChain/x/fixedmint/keeper"
-// this line is used by starport scaffolding # stargate/app/moduleImport
+	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	"bluechipChain/docs"
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
@@ -153,7 +153,7 @@ type App struct {
 	ScopedWasmKeeper capabilitykeeper.ScopedKeeper
 
 	FixedmintKeeper fixedmintmodulekeeper.Keeper
-// this line is used by starport scaffolding # stargate/app/keeperDeclaration
+	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// simulation manager
 	sm *module.SimulationManager

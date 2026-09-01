@@ -6,7 +6,7 @@ Once everything is installed, you will need to build the BlueChip binary:
 # from $HOME dir
 git clone https://github.com/Bluechip23/bluechip-chain-official.git
 
-cd bluechip
+cd bluechip-chain-official
 
 git fetch
 
@@ -14,7 +14,7 @@ git checkout <version-tag>
 
 Once you find the correct tag, you can then complete installation.
 
-# Make you are in the bluechip directory
+# Make sure you are in the bluechip-chain-official directory
 
 make install
 

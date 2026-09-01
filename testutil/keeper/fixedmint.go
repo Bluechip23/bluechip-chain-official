@@ -34,11 +34,11 @@ func FixedmintKeeper(t testing.TB) (keeper.Keeper, sdk.Context) {
 	authority := authtypes.NewModuleAddress(govtypes.ModuleName)
 
 	k := keeper.NewKeeper(
-	    cdc,
-	    runtime.NewKVStoreService(storeKey),
-        log.NewNopLogger(),
-	    authority.String(), 
-        nil,
+		cdc,
+		runtime.NewKVStoreService(storeKey),
+		log.NewNopLogger(),
+		authority.String(),
+		nil,
 	)
 
 	ctx := sdk.NewContext(stateStore, cmtproto.Header{}, false, log.NewNopLogger())

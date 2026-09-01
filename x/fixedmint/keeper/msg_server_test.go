@@ -6,9 +6,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-    keepertest "bluechipChain/testutil/keeper"
-    "bluechipChain/x/fixedmint/types"
-    "bluechipChain/x/fixedmint/keeper"
+	keepertest "bluechipChain/testutil/keeper"
+	"bluechipChain/x/fixedmint/keeper"
+	"bluechipChain/x/fixedmint/types"
 )
 
 func setupMsgServer(t testing.TB) (keeper.Keeper, types.MsgServer, context.Context) {

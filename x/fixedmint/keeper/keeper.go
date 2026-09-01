@@ -13,56 +13,24 @@ import (
 	"bluechipChain/x/fixedmint/types"
 )
 
-// ...
+type Keeper struct {
+	cdc          codec.BinaryCodec
+	storeService store.KVStoreService
+	logger       log.Logger
 
-// MintFixedBlockReward mints the configured amount of tokens and sends them to the fee collector.
-// The mint amount and denom are read from module params, allowing governance to adjust them.
-func (k Keeper) MintFixedBlockReward(ctx context.Context) error {
-    params := k.GetParams(ctx)
+	// the address capable of executing a MsgUpdateParams message. Typically, this
+	// should be the x/gov module account.
+	authority string
 
-    // Skip minting if disabled or amount is zero
-    if !params.MintEnabled || params.MintAmount.IsZero() {
-        return nil
-    }
-
-    amount := sdk.NewCoins(sdk.NewCoin(params.MintDenom, params.MintAmount))
-
-    // Mint coins to the fixedmint module account
-    if err := k.bankKeeper.MintCoins(ctx, types.ModuleName, amount); err != nil {
-        return err
-    }
-
-    // Send the minted coins to the fee_collector module account
-    if err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.ModuleName, authtypes.FeeCollectorName, amount); err != nil {
-        return err
-    }
-
-    k.Logger().Info("Minted fixed block reward", "amount", amount)
-    return nil
+	bankKeeper types.BankKeeper
 }
 
-type (
-	Keeper struct {
-		cdc          codec.BinaryCodec
-		storeService store.KVStoreService
-		logger       log.Logger
-
-        // the address capable of executing a MsgUpdateParams message. Typically, this
-        // should be the x/gov module account.
-        authority string
-        
-		
-        bankKeeper types.BankKeeper
-	}
-)
-
 func NewKeeper(
-    cdc codec.BinaryCodec,
+	cdc codec.BinaryCodec,
 	storeService store.KVStoreService,
-    logger log.Logger,
+	logger log.Logger,
 	authority string,
-    
-    bankKeeper types.BankKeeper,
+	bankKeeper types.BankKeeper,
 ) Keeper {
 	if _, err := sdk.AccAddressFromBech32(authority); err != nil {
 		panic(fmt.Sprintf("invalid authority address: %s", authority))
@@ -73,8 +41,7 @@ func NewKeeper(
 		storeService: storeService,
 		authority:    authority,
 		logger:       logger,
-		
-		bankKeeper: bankKeeper,
+		bankKeeper:   bankKeeper,
 	}
 }
 
@@ -88,4 +55,28 @@ func (k Keeper) Logger() log.Logger {
 	return k.logger.With("module", fmt.Sprintf("x/%s", types.ModuleName))
 }
 
+// MintFixedBlockReward mints the configured amount of tokens and sends them to the fee collector.
+// The mint amount and denom are read from module params, allowing governance to adjust them.
+func (k Keeper) MintFixedBlockReward(ctx context.Context) error {
+	params := k.GetParams(ctx)
 
+	// Skip minting if disabled or amount is zero
+	if !params.MintEnabled || params.MintAmount.IsZero() {
+		return nil
+	}
+
+	amount := sdk.NewCoins(sdk.NewCoin(params.MintDenom, params.MintAmount))
+
+	// Mint coins to the fixedmint module account
+	if err := k.bankKeeper.MintCoins(ctx, types.ModuleName, amount); err != nil {
+		return err
+	}
+
+	// Send the minted coins to the fee_collector module account
+	if err := k.bankKeeper.SendCoinsFromModuleToModule(ctx, types.ModuleName, authtypes.FeeCollectorName, amount); err != nil {
+		return err
+	}
+
+	k.Logger().Info("Minted fixed block reward", "amount", amount)
+	return nil
+}

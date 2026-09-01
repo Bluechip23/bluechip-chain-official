@@ -5,8 +5,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-    keepertest "bluechipChain/testutil/keeper"
-    "bluechipChain/x/fixedmint/types"
+	keepertest "bluechipChain/testutil/keeper"
+	"bluechipChain/x/fixedmint/types"
 )
 
 func TestParamsQuery(t *testing.T) {
