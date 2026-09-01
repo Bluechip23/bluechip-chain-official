@@ -1,0 +1,115 @@
+syntax = "proto3";
+package bluechipchain.liquidityvault;
+
+import "amino/amino.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "bluechipchain/liquidityvault/params.proto";
+import "bluechipchain/liquidityvault/vault.proto";
+
+option go_package = "bluechipChain/x/liquidityvault/types";
+
+// Query defines the gRPC querier service.
+service Query {
+  // Parameters queries the parameters of the module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/bluechipChain/liquidityvault/params";
+  }
+
+  // Vault queries a validator's Liquidity Vault, including any withdrawals
+  // waiting out the grace period.
+  rpc Vault(QueryVaultRequest) returns (QueryVaultResponse) {
+    option (google.api.http).get = "/bluechipChain/liquidityvault/vault/{validator_address}";
+  }
+
+  // Vaults queries all Liquidity Vaults.
+  rpc Vaults(QueryVaultsRequest) returns (QueryVaultsResponse) {
+    option (google.api.http).get = "/bluechipChain/liquidityvault/vaults";
+  }
+
+  // CompositeScore queries a validator's composite score: its tokens staked
+  // directly to the chain plus its active vault balance.
+  rpc CompositeScore(QueryCompositeScoreRequest) returns (QueryCompositeScoreResponse) {
+    option (google.api.http).get = "/bluechipChain/liquidityvault/composite_score/{validator_address}";
+  }
+}
+
+// QueryParamsRequest is request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params holds all the parameters of this module.
+  Params params = 1 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// QueryVaultRequest is request type for the Query/Vault RPC method.
+message QueryVaultRequest {
+  // validator_address is the operator address of the validator whose vault is
+  // queried.
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.ValidatorAddressString"];
+}
+
+// QueryVaultResponse is response type for the Query/Vault RPC method.
+message QueryVaultResponse {
+  // vault is the validator's Liquidity Vault.
+  Vault vault = 1 [(gogoproto.nullable) = false];
+
+  // pending_withdrawals are the vault's withdrawals still waiting out the
+  // grace period.
+  repeated PendingWithdrawal pending_withdrawals = 2 [(gogoproto.nullable) = false];
+}
+
+// QueryVaultsRequest is request type for the Query/Vaults RPC method.
+message QueryVaultsRequest {
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+// QueryVaultsResponse is response type for the Query/Vaults RPC method.
+message QueryVaultsResponse {
+  // vaults are the Liquidity Vaults of all validators.
+  repeated Vault vaults = 1 [(gogoproto.nullable) = false];
+
+  // pagination defines the pagination in the response.
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryCompositeScoreRequest is request type for the Query/CompositeScore RPC
+// method.
+message QueryCompositeScoreRequest {
+  // validator_address is the operator address of the validator whose
+  // composite score is queried.
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.ValidatorAddressString"];
+}
+
+// QueryCompositeScoreResponse is response type for the Query/CompositeScore
+// RPC method.
+message QueryCompositeScoreResponse {
+  // staked_tokens are the tokens delegated directly to the validator on the
+  // chain.
+  string staked_tokens = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // vault_balance is the validator's active Liquidity Vault balance.
+  string vault_balance = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // composite_score is staked_tokens + vault_balance.
+  string composite_score = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}

@@ -1,0 +1,125 @@
+syntax = "proto3";
+package bluechipchain.liquidityvault;
+
+import "amino/amino.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "cosmos/msg/v1/msg.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+import "bluechipchain/liquidityvault/params.proto";
+
+option go_package = "bluechipChain/x/liquidityvault/types";
+
+// Msg defines the Msg service.
+service Msg {
+  option (cosmos.msg.v1.service) = true;
+
+  // Deposit moves bond-denom tokens from the validator's own account into
+  // its Liquidity Vault. The deposit counts toward the validator's composite
+  // score.
+  rpc Deposit(MsgDeposit) returns (MsgDepositResponse);
+
+  // InitiateWithdrawal starts a withdrawal from the validator's vault. The
+  // amount immediately stops counting toward the composite score and is
+  // released to the validator's account after the universal grace period.
+  rpc InitiateWithdrawal(MsgInitiateWithdrawal) returns (MsgInitiateWithdrawalResponse);
+
+  // SetRewardShare sets the fraction of vault liquidity rewards passed
+  // through to delegators. This is the only vault parameter a validator can
+  // change in stage 1 of the LPV rollout.
+  rpc SetRewardShare(MsgSetRewardShare) returns (MsgSetRewardShareResponse);
+
+  // UpdateParams defines a (governance) operation for updating the module
+  // parameters. The authority defaults to the x/gov module account.
+  rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
+}
+
+// MsgDeposit is the Msg/Deposit request type.
+message MsgDeposit {
+  option (cosmos.msg.v1.signer) = "validator_address";
+  option (amino.name) = "bluechipchain/x/liquidityvault/MsgDeposit";
+
+  // validator_address is the operator address of the depositing validator.
+  // The tx must be signed by the account behind this operator address.
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.ValidatorAddressString"];
+
+  // amount is the bond-denom coin to move into the vault.
+  cosmos.base.v1beta1.Coin amount = 2 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// MsgDepositResponse defines the response structure for executing a
+// MsgDeposit message.
+message MsgDepositResponse {}
+
+// MsgInitiateWithdrawal is the Msg/InitiateWithdrawal request type.
+message MsgInitiateWithdrawal {
+  option (cosmos.msg.v1.signer) = "validator_address";
+  option (amino.name) = "bluechipchain/x/liquidityvault/MsgInitiateWithdrawal";
+
+  // validator_address is the operator address of the withdrawing validator.
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.ValidatorAddressString"];
+
+  // amount is the bond-denom coin to withdraw from the vault's active
+  // balance.
+  cosmos.base.v1beta1.Coin amount = 2 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// MsgInitiateWithdrawalResponse defines the response structure for executing
+// a MsgInitiateWithdrawal message.
+message MsgInitiateWithdrawalResponse {
+  // complete_time is when the grace period ends and the funds are released.
+  google.protobuf.Timestamp complete_time = 1 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false
+  ];
+}
+
+// MsgSetRewardShare is the Msg/SetRewardShare request type.
+message MsgSetRewardShare {
+  option (cosmos.msg.v1.signer) = "validator_address";
+  option (amino.name) = "bluechipchain/x/liquidityvault/MsgSetRewardShare";
+
+  // validator_address is the operator address of the validator whose reward
+  // share is being set.
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.ValidatorAddressString"];
+
+  // delegator_reward_share is the fraction (in [0, 1]) of vault liquidity
+  // rewards passed through to delegators.
+  string delegator_reward_share = 2 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// MsgSetRewardShareResponse defines the response structure for executing a
+// MsgSetRewardShare message.
+message MsgSetRewardShareResponse {}
+
+// MsgUpdateParams is the Msg/UpdateParams request type.
+message MsgUpdateParams {
+  option (cosmos.msg.v1.signer) = "authority";
+  option (amino.name) = "bluechipchain/x/liquidityvault/MsgUpdateParams";
+
+  // authority is the address that controls the module (defaults to x/gov unless overwritten).
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // params defines the module parameters to update.
+  //
+  // NOTE: All parameters must be supplied.
+  Params params = 2 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// MsgUpdateParamsResponse defines the response structure for executing a
+// MsgUpdateParams message.
+message MsgUpdateParamsResponse {}

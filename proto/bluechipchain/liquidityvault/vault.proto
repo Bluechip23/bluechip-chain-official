@@ -1,0 +1,58 @@
+syntax = "proto3";
+package bluechipchain.liquidityvault;
+
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "bluechipChain/x/liquidityvault/types";
+
+// Vault is a validator's Liquidity Vault. It holds capital the validator has
+// committed to providing liquidity to pools in the BlueChip network. The
+// active balance counts toward the validator's composite score.
+message Vault {
+  // validator_address is the operator address of the validator that owns the
+  // vault. Only this validator may deposit into or withdraw from it.
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.ValidatorAddressString"];
+
+  // balance is the active vault balance in the chain's bond denom. It counts
+  // toward the validator's composite score.
+  string balance = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // delegator_reward_share is the fraction (in [0, 1]) of vault liquidity
+  // rewards passed through to the validator's delegators; the remainder is
+  // kept by the validator. This is the only vault parameter a validator can
+  // change in stage 1 of the LPV rollout.
+  string delegator_reward_share = 3 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// PendingWithdrawal is a vault withdrawal waiting out the universal grace
+// period. The amount has already been removed from the vault's active balance
+// (it no longer counts toward the composite score) but remains held by the
+// module until complete_time.
+message PendingWithdrawal {
+  // validator_address is the operator address of the withdrawing validator.
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.ValidatorAddressString"];
+
+  // amount is the withdrawal amount in the chain's bond denom.
+  string amount = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // complete_time is when the grace period ends and the funds are released to
+  // the validator's account.
+  google.protobuf.Timestamp complete_time = 3 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false
+  ];
+}

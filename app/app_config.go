@@ -4,8 +4,11 @@ import (
 	"time"
 
 	fixedmintmodulev1 "bluechipChain/api/bluechipchain/fixedmint/module"
+	liquidityvaultmodulev1 "bluechipChain/api/bluechipchain/liquidityvault/module"
 	_ "bluechipChain/x/fixedmint/module" // import for side-effects
 	fixedmintmoduletypes "bluechipChain/x/fixedmint/types"
+	_ "bluechipChain/x/liquidityvault/module" // import for side-effects
+	liquidityvaultmoduletypes "bluechipChain/x/liquidityvault/types"
 	runtimev1alpha1 "cosmossdk.io/api/cosmos/app/runtime/v1alpha1"
 	appv1alpha1 "cosmossdk.io/api/cosmos/app/v1alpha1"
 	authmodulev1 "cosmossdk.io/api/cosmos/auth/module/v1"
@@ -95,6 +98,7 @@ var (
 		// chain modules
 		wasmtypes.ModuleName,
 		fixedmintmoduletypes.ModuleName,
+		liquidityvaultmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 	}
 
@@ -141,6 +145,8 @@ var (
 		// chain modules
 		wasmtypes.ModuleName,
 		fixedmintmoduletypes.ModuleName,
+		// liquidityvault releases matured vault withdrawals in its end blocker.
+		liquidityvaultmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 	}
 
@@ -163,6 +169,8 @@ var (
 		{Account: icatypes.ModuleName},
 		{Account: wasmtypes.ModuleName, Permissions: []string{authtypes.Burner}},
 		{Account: fixedmintmoduletypes.ModuleName, Permissions: []string{authtypes.Minter}},
+		// liquidityvault only holds deposited vault funds; it never mints or burns.
+		{Account: liquidityvaultmoduletypes.ModuleName},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 
@@ -177,6 +185,9 @@ var (
 		// fixedmint must be blocked so stray sends can't trip the
 		// zero-balance invariant and halt the chain via x/crisis.
 		fixedmintmoduletypes.ModuleName,
+		// liquidityvault is blocked so users can't send funds into the vault
+		// pool outside of MsgDeposit and lose them.
+		liquidityvaultmoduletypes.ModuleName,
 		// We allow the following module accounts to receive funds:
 		// govtypes.ModuleName
 	}
@@ -304,6 +315,10 @@ var (
 			{
 				Name:   fixedmintmoduletypes.ModuleName,
 				Config: appconfig.WrapAny(&fixedmintmodulev1.Module{}),
+			},
+			{
+				Name:   liquidityvaultmoduletypes.ModuleName,
+				Config: appconfig.WrapAny(&liquidityvaultmodulev1.Module{}),
 			},
 			// this line is used by starport scaffolding # stargate/app/moduleConfig
 		},

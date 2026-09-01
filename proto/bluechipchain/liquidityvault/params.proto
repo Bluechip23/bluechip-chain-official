@@ -1,0 +1,35 @@
+syntax = "proto3";
+package bluechipchain.liquidityvault;
+
+import "amino/amino.proto";
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "google/protobuf/duration.proto";
+
+option go_package = "bluechipChain/x/liquidityvault/types";
+
+// Params defines the parameters for the liquidityvault module.
+message Params {
+  option (amino.name) = "bluechipchain/x/liquidityvault/Params";
+  option (gogoproto.equal) = true;
+
+  // stake_cap is the maximum number of bond-denom tokens a validator may have
+  // bonded directly to the chain. Delegations that would push a validator's
+  // tokens above this cap are rejected; capital above the cap is expected to
+  // flow into the validator's Liquidity Vault instead. A value of zero
+  // disables the cap.
+  string stake_cap = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // withdrawal_grace_period is the universal delay between a vault withdrawal
+  // request and the release of the funds. It protects pools against sudden
+  // liquidity swings and is set protocol-wide, not per validator.
+  google.protobuf.Duration withdrawal_grace_period = 2 [
+    (gogoproto.stdduration) = true,
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}

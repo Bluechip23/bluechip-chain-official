@@ -76,6 +76,7 @@ import (
 	ibckeeper "github.com/cosmos/ibc-go/v8/modules/core/keeper"
 
 	fixedmintmodulekeeper "bluechipChain/x/fixedmint/keeper"
+	liquidityvaultmodulekeeper "bluechipChain/x/liquidityvault/keeper"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 
 	"bluechipChain/docs"
@@ -152,7 +153,8 @@ type App struct {
 	WasmKeeper       wasmkeeper.Keeper
 	ScopedWasmKeeper capabilitykeeper.ScopedKeeper
 
-	FixedmintKeeper fixedmintmodulekeeper.Keeper
+	FixedmintKeeper      fixedmintmodulekeeper.Keeper
+	LiquidityvaultKeeper liquidityvaultmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	// simulation manager
@@ -257,6 +259,7 @@ func New(
 		&app.GroupKeeper,
 		&app.CircuitBreakerKeeper,
 		&app.FixedmintKeeper,
+		&app.LiquidityvaultKeeper,
 		// this line is used by starport scaffolding # stargate/app/keeperDefinition
 	); err != nil {
 		panic(err)

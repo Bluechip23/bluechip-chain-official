@@ -1,0 +1,25 @@
+syntax = "proto3";
+package bluechipchain.liquidityvault;
+
+import "amino/amino.proto";
+import "gogoproto/gogo.proto";
+import "bluechipchain/liquidityvault/params.proto";
+import "bluechipchain/liquidityvault/vault.proto";
+
+option go_package = "bluechipChain/x/liquidityvault/types";
+
+// GenesisState defines the liquidityvault module's genesis state.
+message GenesisState {
+  // params defines all the parameters of the module.
+  Params params = 1 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+
+  // vaults are the Liquidity Vaults of all validators.
+  repeated Vault vaults = 2 [(gogoproto.nullable) = false];
+
+  // pending_withdrawals are vault withdrawals still waiting out the grace
+  // period.
+  repeated PendingWithdrawal pending_withdrawals = 3 [(gogoproto.nullable) = false];
+}
