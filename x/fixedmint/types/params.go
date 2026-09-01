@@ -1,14 +1,13 @@
 package types
 
-// NOTE: After modifying params.proto, you must regenerate protobuf files by running:
+// NOTE: After modifying params.proto, regenerate the protobuf files with:
 //   ignite generate proto-go --yes
-// The Params struct in params.pb.go will then include MintDenom, MintAmount, and MintEnabled fields.
-// Until proto is regenerated, this file will not compile.
 
 import (
 	"fmt"
 
 	"cosmossdk.io/math"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 )
 
@@ -60,10 +59,16 @@ func validateMintDenom(denom string) error {
 	if denom == "" {
 		return fmt.Errorf("mint denom cannot be empty")
 	}
+	if err := sdk.ValidateDenom(denom); err != nil {
+		return fmt.Errorf("invalid mint denom: %w", err)
+	}
 	return nil
 }
 
 func validateMintAmount(amount math.Int) error {
+	if amount.IsNil() {
+		return fmt.Errorf("mint amount cannot be nil")
+	}
 	if amount.IsNegative() {
 		return fmt.Errorf("mint amount cannot be negative: %s", amount)
 	}
