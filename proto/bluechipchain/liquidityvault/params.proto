@@ -32,4 +32,14 @@ message Params {
     (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true
   ];
+
+  // deallocation_grace_period is the universal delay ("Liquidity Providing
+  // Change" in the LPV design document) between a validator requesting to
+  // remove liquidity from a pool and the liquidity actually being removed.
+  // Set protocol-wide, not per validator.
+  google.protobuf.Duration deallocation_grace_period = 3 [
+    (gogoproto.stdduration) = true,
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
 }

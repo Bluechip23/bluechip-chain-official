@@ -13,7 +13,7 @@ import (
 )
 
 func TestMsgUpdateParams(t *testing.T) {
-	k, ctx, _, _ := keepertest.LiquidityvaultKeeper(t)
+	k, ctx, _, _, _ := keepertest.LiquidityvaultKeeper(t)
 	ms := keeper.NewMsgServerImpl(k)
 	params := types.DefaultParams()
 
@@ -45,7 +45,7 @@ func TestMsgUpdateParams(t *testing.T) {
 			name: "all good",
 			input: &types.MsgUpdateParams{
 				Authority: k.GetAuthority(),
-				Params:    types.NewParams(math.NewInt(1_000_000), types.DefaultWithdrawalGracePeriod),
+				Params:    types.NewParams(math.NewInt(1_000_000), types.DefaultWithdrawalGracePeriod, types.DefaultDeallocationGracePeriod),
 			},
 		},
 	}
@@ -64,7 +64,7 @@ func TestMsgUpdateParams(t *testing.T) {
 }
 
 func TestMsgDepositAndWithdraw(t *testing.T) {
-	k, ctx, stakingKeeper, bankKeeper := keepertest.LiquidityvaultKeeper(t)
+	k, ctx, stakingKeeper, bankKeeper, _ := keepertest.LiquidityvaultKeeper(t)
 	ms := keeper.NewMsgServerImpl(k)
 
 	stakingKeeper.SetValidatorTokens(valAddr, math.NewInt(1))
@@ -106,7 +106,7 @@ func TestMsgDepositAndWithdraw(t *testing.T) {
 }
 
 func TestQueryServer(t *testing.T) {
-	k, ctx, stakingKeeper, bankKeeper := keepertest.LiquidityvaultKeeper(t)
+	k, ctx, stakingKeeper, bankKeeper, _ := keepertest.LiquidityvaultKeeper(t)
 
 	stakingKeeper.SetValidatorTokens(valAddr, math.NewInt(1_000))
 	bankKeeper.SetBalance(valAccAddr, sdk.NewCoins(coin(500)))
@@ -137,7 +137,7 @@ func TestQueryServer(t *testing.T) {
 }
 
 func TestModuleAccountInvariant(t *testing.T) {
-	k, ctx, stakingKeeper, bankKeeper := keepertest.LiquidityvaultKeeper(t)
+	k, ctx, stakingKeeper, bankKeeper, _ := keepertest.LiquidityvaultKeeper(t)
 	stakingKeeper.SetValidatorTokens(valAddr, math.NewInt(1))
 	bankKeeper.SetBalance(valAccAddr, sdk.NewCoins(coin(500)))
 	require.NoError(t, k.Deposit(ctx, valAddr, coin(500)))

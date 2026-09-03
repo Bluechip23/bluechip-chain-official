@@ -24,3 +24,14 @@ type StakingKeeper interface {
 	GetValidator(ctx context.Context, addr sdk.ValAddress) (stakingtypes.Validator, error)
 	BondDenom(ctx context.Context) (string, error)
 }
+
+// WasmKeeper defines the expected interface for interacting with pool
+// contracts through x/wasm. It is satisfied by an adapter combining the
+// wasmd permissioned keeper (Execute) with the plain keeper (QuerySmart,
+// HasContractInfo); see app/wasm.go. Wired after depinject via
+// Keeper.SetWasmKeeper because wasmd is not depinject-enabled in this app.
+type WasmKeeper interface {
+	Execute(ctx sdk.Context, contractAddress, caller sdk.AccAddress, msg []byte, coins sdk.Coins) ([]byte, error)
+	QuerySmart(ctx context.Context, contractAddr sdk.AccAddress, req []byte) ([]byte, error)
+	HasContractInfo(ctx context.Context, contractAddress sdk.AccAddress) bool
+}

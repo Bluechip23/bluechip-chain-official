@@ -70,8 +70,8 @@ func TestStakeCapHooks(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.desc, func(t *testing.T) {
-			k, ctx, stakingKeeper, _ := keepertest.LiquidityvaultKeeper(t)
-			require.NoError(t, k.SetParams(ctx, types.NewParams(math.NewInt(tc.stakeCap), types.DefaultWithdrawalGracePeriod)))
+			k, ctx, stakingKeeper, _, _ := keepertest.LiquidityvaultKeeper(t)
+			require.NoError(t, k.SetParams(ctx, types.NewParams(math.NewInt(tc.stakeCap), types.DefaultWithdrawalGracePeriod, types.DefaultDeallocationGracePeriod)))
 			hooks := k.StakingHooks()
 
 			if tc.tokensBefore > 0 {
@@ -96,8 +96,8 @@ func TestStakeCapHooks(t *testing.T) {
 func TestStakeCapWithoutSnapshotIsNotEnforced(t *testing.T) {
 	// Paths that skip the Before hooks (e.g. genesis import) must not be
 	// blocked by the cap.
-	k, ctx, stakingKeeper, _ := keepertest.LiquidityvaultKeeper(t)
-	require.NoError(t, k.SetParams(ctx, types.NewParams(math.NewInt(100), types.DefaultWithdrawalGracePeriod)))
+	k, ctx, stakingKeeper, _, _ := keepertest.LiquidityvaultKeeper(t)
+	require.NoError(t, k.SetParams(ctx, types.NewParams(math.NewInt(100), types.DefaultWithdrawalGracePeriod, types.DefaultDeallocationGracePeriod)))
 
 	stakingKeeper.SetValidatorTokens(valAddr, math.NewInt(1_000_000))
 	require.NoError(t, k.StakingHooks().AfterDelegationModified(ctx, delAddr, valAddr))
@@ -107,8 +107,8 @@ func TestStakeCapSnapshotIsConsumed(t *testing.T) {
 	// The snapshot from one operation must not leak into the next: after a
 	// rejected delegation, a later After hook without a fresh Before must
 	// pass (no snapshot -> no enforcement).
-	k, ctx, stakingKeeper, _ := keepertest.LiquidityvaultKeeper(t)
-	require.NoError(t, k.SetParams(ctx, types.NewParams(math.NewInt(100), types.DefaultWithdrawalGracePeriod)))
+	k, ctx, stakingKeeper, _, _ := keepertest.LiquidityvaultKeeper(t)
+	require.NoError(t, k.SetParams(ctx, types.NewParams(math.NewInt(100), types.DefaultWithdrawalGracePeriod, types.DefaultDeallocationGracePeriod)))
 	hooks := k.StakingHooks()
 
 	stakingKeeper.SetValidatorTokens(valAddr, math.NewInt(50))

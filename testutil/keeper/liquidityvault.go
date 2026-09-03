@@ -96,8 +96,8 @@ func (m *MockBankKeeper) send(from, to sdk.AccAddress, amt sdk.Coins) error {
 }
 
 // LiquidityvaultKeeper builds a liquidityvault keeper over an in-memory store
-// with mock bank and staking keepers, and default params set.
-func LiquidityvaultKeeper(t testing.TB) (keeper.Keeper, sdk.Context, *MockStakingKeeper, *MockBankKeeper) {
+// with mock bank, staking, and wasm keepers, and default params set.
+func LiquidityvaultKeeper(t testing.TB) (keeper.Keeper, sdk.Context, *MockStakingKeeper, *MockBankKeeper, *MockWasmKeeper) {
 	storeKey := storetypes.NewKVStoreKey(types.StoreKey)
 
 	db := dbm.NewMemDB()
@@ -121,9 +121,12 @@ func LiquidityvaultKeeper(t testing.TB) (keeper.Keeper, sdk.Context, *MockStakin
 		stakingKeeper,
 	)
 
+	wasmKeeper := NewMockWasmKeeper(bankKeeper)
+	k.SetWasmKeeper(wasmKeeper)
+
 	ctx := sdk.NewContext(stateStore, cmtproto.Header{}, false, log.NewNopLogger())
 
 	require.NoError(t, k.SetParams(ctx, types.DefaultParams()))
 
-	return k, ctx, stakingKeeper, bankKeeper
+	return k, ctx, stakingKeeper, bankKeeper, wasmKeeper
 }

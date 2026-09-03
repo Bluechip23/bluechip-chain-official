@@ -22,6 +22,10 @@ const (
 	Msg_Deposit_FullMethodName            = "/bluechipchain.liquidityvault.Msg/Deposit"
 	Msg_InitiateWithdrawal_FullMethodName = "/bluechipchain.liquidityvault.Msg/InitiateWithdrawal"
 	Msg_SetRewardShare_FullMethodName     = "/bluechipchain.liquidityvault.Msg/SetRewardShare"
+	Msg_AllocateToPool_FullMethodName     = "/bluechipchain.liquidityvault.Msg/AllocateToPool"
+	Msg_DeallocateFromPool_FullMethodName = "/bluechipchain.liquidityvault.Msg/DeallocateFromPool"
+	Msg_RegisterPool_FullMethodName       = "/bluechipchain.liquidityvault.Msg/RegisterPool"
+	Msg_SetPoolEnabled_FullMethodName     = "/bluechipchain.liquidityvault.Msg/SetPoolEnabled"
 	Msg_UpdateParams_FullMethodName       = "/bluechipchain.liquidityvault.Msg/UpdateParams"
 )
 
@@ -43,6 +47,21 @@ type MsgClient interface {
 	// through to delegators. This is the only vault parameter a validator can
 	// change in stage 1 of the LPV rollout.
 	SetRewardShare(ctx context.Context, in *MsgSetRewardShare, opts ...grpc.CallOption) (*MsgSetRewardShareResponse, error)
+	// AllocateToPool moves active vault balance into a registered liquidity
+	// pool. The resulting pool position counts toward the composite score at
+	// its current value.
+	AllocateToPool(ctx context.Context, in *MsgAllocateToPool, opts ...grpc.CallOption) (*MsgAllocateToPoolResponse, error)
+	// DeallocateFromPool requests removal of liquidity from a pool. The
+	// liquidity keeps earning (and counting toward the composite score) until
+	// the universal deallocation grace period ends; the withdrawn funds then
+	// go to the validator's own account, leaving the vault.
+	DeallocateFromPool(ctx context.Context, in *MsgDeallocateFromPool, opts ...grpc.CallOption) (*MsgDeallocateFromPoolResponse, error)
+	// RegisterPool registers a liquidity pool contract that vaults may supply
+	// liquidity to. Governance gated.
+	RegisterPool(ctx context.Context, in *MsgRegisterPool, opts ...grpc.CallOption) (*MsgRegisterPoolResponse, error)
+	// SetPoolEnabled enables or disables new allocations to a registered
+	// pool. Governance gated. Deallocations are always allowed.
+	SetPoolEnabled(ctx context.Context, in *MsgSetPoolEnabled, opts ...grpc.CallOption) (*MsgSetPoolEnabledResponse, error)
 	// UpdateParams defines a (governance) operation for updating the module
 	// parameters. The authority defaults to the x/gov module account.
 	UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error)
@@ -86,6 +105,46 @@ func (c *msgClient) SetRewardShare(ctx context.Context, in *MsgSetRewardShare, o
 	return out, nil
 }
 
+func (c *msgClient) AllocateToPool(ctx context.Context, in *MsgAllocateToPool, opts ...grpc.CallOption) (*MsgAllocateToPoolResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgAllocateToPoolResponse)
+	err := c.cc.Invoke(ctx, Msg_AllocateToPool_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) DeallocateFromPool(ctx context.Context, in *MsgDeallocateFromPool, opts ...grpc.CallOption) (*MsgDeallocateFromPoolResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgDeallocateFromPoolResponse)
+	err := c.cc.Invoke(ctx, Msg_DeallocateFromPool_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) RegisterPool(ctx context.Context, in *MsgRegisterPool, opts ...grpc.CallOption) (*MsgRegisterPoolResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgRegisterPoolResponse)
+	err := c.cc.Invoke(ctx, Msg_RegisterPool_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) SetPoolEnabled(ctx context.Context, in *MsgSetPoolEnabled, opts ...grpc.CallOption) (*MsgSetPoolEnabledResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgSetPoolEnabledResponse)
+	err := c.cc.Invoke(ctx, Msg_SetPoolEnabled_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *msgClient) UpdateParams(ctx context.Context, in *MsgUpdateParams, opts ...grpc.CallOption) (*MsgUpdateParamsResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(MsgUpdateParamsResponse)
@@ -114,6 +173,21 @@ type MsgServer interface {
 	// through to delegators. This is the only vault parameter a validator can
 	// change in stage 1 of the LPV rollout.
 	SetRewardShare(context.Context, *MsgSetRewardShare) (*MsgSetRewardShareResponse, error)
+	// AllocateToPool moves active vault balance into a registered liquidity
+	// pool. The resulting pool position counts toward the composite score at
+	// its current value.
+	AllocateToPool(context.Context, *MsgAllocateToPool) (*MsgAllocateToPoolResponse, error)
+	// DeallocateFromPool requests removal of liquidity from a pool. The
+	// liquidity keeps earning (and counting toward the composite score) until
+	// the universal deallocation grace period ends; the withdrawn funds then
+	// go to the validator's own account, leaving the vault.
+	DeallocateFromPool(context.Context, *MsgDeallocateFromPool) (*MsgDeallocateFromPoolResponse, error)
+	// RegisterPool registers a liquidity pool contract that vaults may supply
+	// liquidity to. Governance gated.
+	RegisterPool(context.Context, *MsgRegisterPool) (*MsgRegisterPoolResponse, error)
+	// SetPoolEnabled enables or disables new allocations to a registered
+	// pool. Governance gated. Deallocations are always allowed.
+	SetPoolEnabled(context.Context, *MsgSetPoolEnabled) (*MsgSetPoolEnabledResponse, error)
 	// UpdateParams defines a (governance) operation for updating the module
 	// parameters. The authority defaults to the x/gov module account.
 	UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error)
@@ -135,6 +209,18 @@ func (UnimplementedMsgServer) InitiateWithdrawal(context.Context, *MsgInitiateWi
 }
 func (UnimplementedMsgServer) SetRewardShare(context.Context, *MsgSetRewardShare) (*MsgSetRewardShareResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetRewardShare not implemented")
+}
+func (UnimplementedMsgServer) AllocateToPool(context.Context, *MsgAllocateToPool) (*MsgAllocateToPoolResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AllocateToPool not implemented")
+}
+func (UnimplementedMsgServer) DeallocateFromPool(context.Context, *MsgDeallocateFromPool) (*MsgDeallocateFromPoolResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeallocateFromPool not implemented")
+}
+func (UnimplementedMsgServer) RegisterPool(context.Context, *MsgRegisterPool) (*MsgRegisterPoolResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RegisterPool not implemented")
+}
+func (UnimplementedMsgServer) SetPoolEnabled(context.Context, *MsgSetPoolEnabled) (*MsgSetPoolEnabledResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetPoolEnabled not implemented")
 }
 func (UnimplementedMsgServer) UpdateParams(context.Context, *MsgUpdateParams) (*MsgUpdateParamsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method UpdateParams not implemented")
@@ -214,6 +300,78 @@ func _Msg_SetRewardShare_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_AllocateToPool_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgAllocateToPool)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).AllocateToPool(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_AllocateToPool_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).AllocateToPool(ctx, req.(*MsgAllocateToPool))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_DeallocateFromPool_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgDeallocateFromPool)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).DeallocateFromPool(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_DeallocateFromPool_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).DeallocateFromPool(ctx, req.(*MsgDeallocateFromPool))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_RegisterPool_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgRegisterPool)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).RegisterPool(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_RegisterPool_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).RegisterPool(ctx, req.(*MsgRegisterPool))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_SetPoolEnabled_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgSetPoolEnabled)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).SetPoolEnabled(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_SetPoolEnabled_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).SetPoolEnabled(ctx, req.(*MsgSetPoolEnabled))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Msg_UpdateParams_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MsgUpdateParams)
 	if err := dec(in); err != nil {
@@ -250,6 +408,22 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetRewardShare",
 			Handler:    _Msg_SetRewardShare_Handler,
+		},
+		{
+			MethodName: "AllocateToPool",
+			Handler:    _Msg_AllocateToPool_Handler,
+		},
+		{
+			MethodName: "DeallocateFromPool",
+			Handler:    _Msg_DeallocateFromPool_Handler,
+		},
+		{
+			MethodName: "RegisterPool",
+			Handler:    _Msg_RegisterPool_Handler,
+		},
+		{
+			MethodName: "SetPoolEnabled",
+			Handler:    _Msg_SetPoolEnabled_Handler,
 		},
 		{
 			MethodName: "UpdateParams",

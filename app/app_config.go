@@ -185,9 +185,12 @@ var (
 		// fixedmint must be blocked so stray sends can't trip the
 		// zero-balance invariant and halt the chain via x/crisis.
 		fixedmintmoduletypes.ModuleName,
-		// liquidityvault is blocked so users can't send funds into the vault
-		// pool outside of MsgDeposit and lose them.
-		liquidityvaultmoduletypes.ModuleName,
+		// NOTE: the liquidityvault module account is deliberately NOT
+		// blocked: pool contracts return withdrawn liquidity to it via
+		// BankMsg::Send, which is routed through the bank msg server and
+		// would be rejected for a blocked address. Its invariant tolerates
+		// stray sends (it requires the balance to be at least, not exactly,
+		// the tracked total).
 		// We allow the following module accounts to receive funds:
 		// govtypes.ModuleName
 	}

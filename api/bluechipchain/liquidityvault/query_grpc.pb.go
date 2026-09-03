@@ -23,6 +23,8 @@ const (
 	Query_Vault_FullMethodName          = "/bluechipchain.liquidityvault.Query/Vault"
 	Query_Vaults_FullMethodName         = "/bluechipchain.liquidityvault.Query/Vaults"
 	Query_CompositeScore_FullMethodName = "/bluechipchain.liquidityvault.Query/CompositeScore"
+	Query_Pools_FullMethodName          = "/bluechipchain.liquidityvault.Query/Pools"
+	Query_Positions_FullMethodName      = "/bluechipchain.liquidityvault.Query/Positions"
 )
 
 // QueryClient is the client API for Query service.
@@ -39,8 +41,14 @@ type QueryClient interface {
 	// Vaults queries all Liquidity Vaults.
 	Vaults(ctx context.Context, in *QueryVaultsRequest, opts ...grpc.CallOption) (*QueryVaultsResponse, error)
 	// CompositeScore queries a validator's composite score: its tokens staked
-	// directly to the chain plus its active vault balance.
+	// directly to the chain plus its vault value (active balance and valued
+	// pool positions).
 	CompositeScore(ctx context.Context, in *QueryCompositeScoreRequest, opts ...grpc.CallOption) (*QueryCompositeScoreResponse, error)
+	// Pools queries all registered liquidity pools.
+	Pools(ctx context.Context, in *QueryPoolsRequest, opts ...grpc.CallOption) (*QueryPoolsResponse, error)
+	// Positions queries a validator's pool positions, valued at current pool
+	// prices, including pending deallocations.
+	Positions(ctx context.Context, in *QueryPositionsRequest, opts ...grpc.CallOption) (*QueryPositionsResponse, error)
 }
 
 type queryClient struct {
@@ -91,6 +99,26 @@ func (c *queryClient) CompositeScore(ctx context.Context, in *QueryCompositeScor
 	return out, nil
 }
 
+func (c *queryClient) Pools(ctx context.Context, in *QueryPoolsRequest, opts ...grpc.CallOption) (*QueryPoolsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryPoolsResponse)
+	err := c.cc.Invoke(ctx, Query_Pools_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) Positions(ctx context.Context, in *QueryPositionsRequest, opts ...grpc.CallOption) (*QueryPositionsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryPositionsResponse)
+	err := c.cc.Invoke(ctx, Query_Positions_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility.
@@ -105,8 +133,14 @@ type QueryServer interface {
 	// Vaults queries all Liquidity Vaults.
 	Vaults(context.Context, *QueryVaultsRequest) (*QueryVaultsResponse, error)
 	// CompositeScore queries a validator's composite score: its tokens staked
-	// directly to the chain plus its active vault balance.
+	// directly to the chain plus its vault value (active balance and valued
+	// pool positions).
 	CompositeScore(context.Context, *QueryCompositeScoreRequest) (*QueryCompositeScoreResponse, error)
+	// Pools queries all registered liquidity pools.
+	Pools(context.Context, *QueryPoolsRequest) (*QueryPoolsResponse, error)
+	// Positions queries a validator's pool positions, valued at current pool
+	// prices, including pending deallocations.
+	Positions(context.Context, *QueryPositionsRequest) (*QueryPositionsResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -128,6 +162,12 @@ func (UnimplementedQueryServer) Vaults(context.Context, *QueryVaultsRequest) (*Q
 }
 func (UnimplementedQueryServer) CompositeScore(context.Context, *QueryCompositeScoreRequest) (*QueryCompositeScoreResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method CompositeScore not implemented")
+}
+func (UnimplementedQueryServer) Pools(context.Context, *QueryPoolsRequest) (*QueryPoolsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Pools not implemented")
+}
+func (UnimplementedQueryServer) Positions(context.Context, *QueryPositionsRequest) (*QueryPositionsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Positions not implemented")
 }
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 func (UnimplementedQueryServer) testEmbeddedByValue()               {}
@@ -222,6 +262,42 @@ func _Query_CompositeScore_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_Pools_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryPoolsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).Pools(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_Pools_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).Pools(ctx, req.(*QueryPoolsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_Positions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryPositionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).Positions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_Positions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).Positions(ctx, req.(*QueryPositionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -244,6 +320,14 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CompositeScore",
 			Handler:    _Query_CompositeScore_Handler,
+		},
+		{
+			MethodName: "Pools",
+			Handler:    _Query_Pools_Handler,
+		},
+		{
+			MethodName: "Positions",
+			Handler:    _Query_Positions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

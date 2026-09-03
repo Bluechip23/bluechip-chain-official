@@ -22,6 +22,31 @@ type Keeper struct {
 
 	bankKeeper    types.BankKeeper
 	stakingKeeper types.StakingKeeper
+
+	// wasmRef holds the pool-contract bridge. It is a pointer so that
+	// SetWasmKeeper, called from app.go after the wasm module is wired
+	// (wasmd is not depinject-enabled), reaches every copy of the Keeper —
+	// including the one already embedded in the AppModule.
+	wasmRef *wasmRef
+}
+
+type wasmRef struct {
+	keeper types.WasmKeeper
+}
+
+// SetWasmKeeper wires the pool-contract bridge. Called once from app.go
+// after the wasm keeper exists.
+func (k Keeper) SetWasmKeeper(wk types.WasmKeeper) {
+	k.wasmRef.keeper = wk
+}
+
+// wasmKeeper returns the pool-contract bridge, or an error if the app has
+// not wired it.
+func (k Keeper) wasmKeeper() (types.WasmKeeper, error) {
+	if k.wasmRef == nil || k.wasmRef.keeper == nil {
+		return nil, types.ErrPoolBridgeUnavailable
+	}
+	return k.wasmRef.keeper, nil
 }
 
 func NewKeeper(
@@ -43,6 +68,7 @@ func NewKeeper(
 		authority:     authority,
 		bankKeeper:    bankKeeper,
 		stakingKeeper: stakingKeeper,
+		wasmRef:       &wasmRef{},
 	}
 }
 

@@ -11,6 +11,10 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgDeposit{},
 		&MsgInitiateWithdrawal{},
 		&MsgSetRewardShare{},
+		&MsgAllocateToPool{},
+		&MsgDeallocateFromPool{},
+		&MsgRegisterPool{},
+		&MsgSetPoolEnabled{},
 		&MsgUpdateParams{},
 	)
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)

@@ -24,7 +24,7 @@ func coin(amount int64) sdk.Coin {
 }
 
 func TestDeposit(t *testing.T) {
-	k, ctx, stakingKeeper, bankKeeper := keepertest.LiquidityvaultKeeper(t)
+	k, ctx, stakingKeeper, bankKeeper, _ := keepertest.LiquidityvaultKeeper(t)
 	stakingKeeper.SetValidatorTokens(valAddr, math.NewInt(1_000_000))
 	bankKeeper.SetBalance(valAccAddr, sdk.NewCoins(coin(500)))
 
@@ -44,7 +44,7 @@ func TestDeposit(t *testing.T) {
 }
 
 func TestDepositRejections(t *testing.T) {
-	k, ctx, stakingKeeper, bankKeeper := keepertest.LiquidityvaultKeeper(t)
+	k, ctx, stakingKeeper, bankKeeper, _ := keepertest.LiquidityvaultKeeper(t)
 
 	// Unknown validator.
 	err := k.Deposit(ctx, valAddr, coin(100))
@@ -65,7 +65,7 @@ func TestDepositRejections(t *testing.T) {
 }
 
 func TestInitiateWithdrawal(t *testing.T) {
-	k, ctx, stakingKeeper, bankKeeper := keepertest.LiquidityvaultKeeper(t)
+	k, ctx, stakingKeeper, bankKeeper, _ := keepertest.LiquidityvaultKeeper(t)
 	stakingKeeper.SetValidatorTokens(valAddr, math.NewInt(1))
 	bankKeeper.SetBalance(valAccAddr, sdk.NewCoins(coin(500)))
 	require.NoError(t, k.Deposit(ctx, valAddr, coin(500)))
@@ -106,7 +106,7 @@ func TestInitiateWithdrawal(t *testing.T) {
 }
 
 func TestProcessMaturedWithdrawals(t *testing.T) {
-	k, ctx, stakingKeeper, bankKeeper := keepertest.LiquidityvaultKeeper(t)
+	k, ctx, stakingKeeper, bankKeeper, _ := keepertest.LiquidityvaultKeeper(t)
 	stakingKeeper.SetValidatorTokens(valAddr, math.NewInt(1))
 	bankKeeper.SetBalance(valAccAddr, sdk.NewCoins(coin(500)))
 	require.NoError(t, k.Deposit(ctx, valAddr, coin(500)))
@@ -131,7 +131,7 @@ func TestProcessMaturedWithdrawals(t *testing.T) {
 }
 
 func TestSetRewardShare(t *testing.T) {
-	k, ctx, stakingKeeper, _ := keepertest.LiquidityvaultKeeper(t)
+	k, ctx, stakingKeeper, _, _ := keepertest.LiquidityvaultKeeper(t)
 	stakingKeeper.SetValidatorTokens(valAddr, math.NewInt(1))
 
 	// Can be set before the first deposit; creates the vault.
@@ -153,12 +153,12 @@ func TestSetRewardShare(t *testing.T) {
 }
 
 func TestCompositeScore(t *testing.T) {
-	k, ctx, stakingKeeper, bankKeeper := keepertest.LiquidityvaultKeeper(t)
+	k, ctx, stakingKeeper, bankKeeper, _ := keepertest.LiquidityvaultKeeper(t)
 	stakingKeeper.SetValidatorTokens(valAddr, math.NewInt(1_000))
 	bankKeeper.SetBalance(valAccAddr, sdk.NewCoins(coin(600)))
 
 	// Without a vault the score is just the staked tokens.
-	staked, vaultBalance, score, err := k.GetCompositeScore(ctx, valAddr)
+	staked, vaultBalance, _, score, err := k.GetCompositeScore(ctx, valAddr)
 	require.NoError(t, err)
 	require.Equal(t, math.NewInt(1_000), staked)
 	require.True(t, vaultBalance.IsZero())
@@ -166,7 +166,7 @@ func TestCompositeScore(t *testing.T) {
 
 	// Deposits raise the score.
 	require.NoError(t, k.Deposit(ctx, valAddr, coin(600)))
-	_, vaultBalance, score, err = k.GetCompositeScore(ctx, valAddr)
+	_, vaultBalance, _, score, err = k.GetCompositeScore(ctx, valAddr)
 	require.NoError(t, err)
 	require.Equal(t, math.NewInt(600), vaultBalance)
 	require.Equal(t, math.NewInt(1_600), score)
@@ -174,12 +174,12 @@ func TestCompositeScore(t *testing.T) {
 	// Pending withdrawals stop counting immediately.
 	_, err = k.InitiateWithdrawal(ctx.WithBlockTime(time.Now().UTC()), valAddr, coin(100))
 	require.NoError(t, err)
-	_, vaultBalance, score, err = k.GetCompositeScore(ctx, valAddr)
+	_, vaultBalance, _, score, err = k.GetCompositeScore(ctx, valAddr)
 	require.NoError(t, err)
 	require.Equal(t, math.NewInt(500), vaultBalance)
 	require.Equal(t, math.NewInt(1_500), score)
 
 	// Unknown validator errors.
-	_, _, _, err = k.GetCompositeScore(ctx, sdk.ValAddress([]byte("validator-operator-2")))
+	_, _, _, _, err = k.GetCompositeScore(ctx, sdk.ValAddress([]byte("validator-operator-2")))
 	require.ErrorIs(t, err, types.ErrValidatorNotFound)
 }

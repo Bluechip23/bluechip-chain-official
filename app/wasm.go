@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"fmt"
 
 	storetypes "cosmossdk.io/store/types"
@@ -10,6 +11,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/runtime"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/msgservice"
 	"github.com/cosmos/cosmos-sdk/x/auth/ante"
 	"github.com/cosmos/cosmos-sdk/x/auth/posthandler"
@@ -112,7 +114,35 @@ func (app *App) registerWasmModules(
 	wasmStack = wasm.NewIBCHandler(app.WasmKeeper, app.IBCKeeper.ChannelKeeper, app.IBCFeeKeeper)
 	wasmStack = ibcfee.NewIBCMiddleware(wasmStack, app.IBCFeeKeeper)
 
+	// Hand the liquidityvault module its pool-contract bridge. wasmd is not
+	// depinject-enabled, so this is wired here rather than through the
+	// module's ProvideModule inputs.
+	app.LiquidityvaultKeeper.SetWasmKeeper(liquidityvaultWasmBridge{
+		ops:    wasmkeeper.NewDefaultPermissionKeeper(app.WasmKeeper),
+		reader: &app.WasmKeeper,
+	})
+
 	return wasmStack, nil
+}
+
+// liquidityvaultWasmBridge satisfies the liquidityvault module's WasmKeeper
+// expectation by combining the wasmd permissioned keeper (contract
+// execution) with the plain keeper (smart queries, contract info).
+type liquidityvaultWasmBridge struct {
+	ops    *wasmkeeper.PermissionedKeeper
+	reader *wasmkeeper.Keeper
+}
+
+func (b liquidityvaultWasmBridge) Execute(ctx sdk.Context, contractAddress, caller sdk.AccAddress, msg []byte, coins sdk.Coins) ([]byte, error) {
+	return b.ops.Execute(ctx, contractAddress, caller, msg, coins)
+}
+
+func (b liquidityvaultWasmBridge) QuerySmart(ctx context.Context, contractAddr sdk.AccAddress, req []byte) ([]byte, error) {
+	return b.reader.QuerySmart(ctx, contractAddr, req)
+}
+
+func (b liquidityvaultWasmBridge) HasContractInfo(ctx context.Context, contractAddress sdk.AccAddress) bool {
+	return b.reader.HasContractInfo(ctx, contractAddress)
 }
 
 func (app *App) setPostHandler() error {

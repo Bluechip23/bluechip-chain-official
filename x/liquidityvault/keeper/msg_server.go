@@ -75,6 +75,77 @@ func (k msgServer) SetRewardShare(goCtx context.Context, msg *types.MsgSetReward
 	return &types.MsgSetRewardShareResponse{}, nil
 }
 
+// AllocateToPool moves active vault balance into a registered pool.
+func (k msgServer) AllocateToPool(goCtx context.Context, msg *types.MsgAllocateToPool) (*types.MsgAllocateToPoolResponse, error) {
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+	valAddr, err := sdk.ValAddressFromBech32(msg.ValidatorAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	shares, err := k.Keeper.AllocateToPool(goCtx, valAddr, msg.PoolId, msg.Amount)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.MsgAllocateToPoolResponse{Shares: shares}, nil
+}
+
+// DeallocateFromPool queues removal of liquidity from a pool.
+func (k msgServer) DeallocateFromPool(goCtx context.Context, msg *types.MsgDeallocateFromPool) (*types.MsgDeallocateFromPoolResponse, error) {
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+	valAddr, err := sdk.ValAddressFromBech32(msg.ValidatorAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	deallocation, err := k.Keeper.DeallocateFromPool(goCtx, valAddr, msg.PoolId, msg.Shares)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.MsgDeallocateFromPoolResponse{CompleteTime: deallocation.CompleteTime}, nil
+}
+
+// RegisterPool registers a pool contract. Only the governance authority may
+// execute it.
+func (k msgServer) RegisterPool(goCtx context.Context, msg *types.MsgRegisterPool) (*types.MsgRegisterPoolResponse, error) {
+	if k.GetAuthority() != msg.Authority {
+		return nil, errorsmod.Wrapf(types.ErrInvalidSigner, "invalid authority; expected %s, got %s", k.GetAuthority(), msg.Authority)
+	}
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
+	poolID, err := k.Keeper.RegisterPool(goCtx, msg.ContractAddress, msg.Description)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.MsgRegisterPoolResponse{PoolId: poolID}, nil
+}
+
+// SetPoolEnabled toggles a pool's allocation switch. Only the governance
+// authority may execute it.
+func (k msgServer) SetPoolEnabled(goCtx context.Context, msg *types.MsgSetPoolEnabled) (*types.MsgSetPoolEnabledResponse, error) {
+	if k.GetAuthority() != msg.Authority {
+		return nil, errorsmod.Wrapf(types.ErrInvalidSigner, "invalid authority; expected %s, got %s", k.GetAuthority(), msg.Authority)
+	}
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+
+	if err := k.Keeper.SetPoolEnabled(goCtx, msg.PoolId, msg.Enabled); err != nil {
+		return nil, err
+	}
+
+	return &types.MsgSetPoolEnabledResponse{}, nil
+}
+
 // UpdateParams updates the module parameters. Only the governance authority
 // may execute it.
 func (k msgServer) UpdateParams(goCtx context.Context, req *types.MsgUpdateParams) (*types.MsgUpdateParamsResponse, error) {

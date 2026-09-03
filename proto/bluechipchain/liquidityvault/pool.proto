@@ -1,0 +1,97 @@
+syntax = "proto3";
+package bluechipchain.liquidityvault;
+
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "bluechipChain/x/liquidityvault/types";
+
+// RegisteredPool is a liquidity pool contract that vaults may supply
+// liquidity to. Pools are registered by governance and must implement the
+// Vault Adapter Interface (see the module README): single-sided bond-denom
+// liquidity provision, ratio-based withdrawal, and a position value query.
+message RegisteredPool {
+  // pool_id is the module-assigned identifier of the pool.
+  uint64 pool_id = 1;
+
+  // contract_address is the CosmWasm contract implementing the Vault Adapter
+  // Interface for this pool.
+  string contract_address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // description is a short human-readable label (e.g. the creator pool's
+  // name).
+  string description = 3;
+
+  // enabled controls whether new allocations to this pool are accepted.
+  // Deallocations are always allowed.
+  bool enabled = 4;
+}
+
+// PoolPosition tracks one validator's share of the module's aggregate
+// position in one pool. The module account holds a single position per pool
+// at the contract; validators own internal shares of it. Shares follow vault
+// accounting: the first allocation mints shares 1:1 with the deposited
+// amount, later allocations mint amount * total_shares / position_value.
+message PoolPosition {
+  // validator_address is the operator address of the owning validator.
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.ValidatorAddressString"];
+
+  // pool_id is the pool the shares belong to.
+  uint64 pool_id = 2;
+
+  // shares is the validator's internal share count.
+  string shares = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// PoolTotalShares tracks the total internal shares outstanding for one pool.
+// It always equals the sum of all PoolPosition shares for the pool (enforced
+// by the module invariant).
+message PoolTotalShares {
+  // pool_id is the pool the total belongs to.
+  uint64 pool_id = 1;
+
+  // total_shares is the sum of all validators' internal shares in the pool.
+  string total_shares = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// PendingDeallocation is a request to remove liquidity from a pool, waiting
+// out the universal "Liquidity Providing Change" period. The shares keep
+// earning (and keep counting toward the composite score) until the
+// deallocation executes; on execution the withdrawn funds go to the
+// validator's own account, leaving the vault entirely, per the LPV design
+// document.
+message PendingDeallocation {
+  // validator_address is the operator address of the deallocating validator.
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.ValidatorAddressString"];
+
+  // pool_id is the pool the shares are removed from.
+  uint64 pool_id = 2;
+
+  // shares is the number of internal shares to redeem.
+  string shares = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // complete_time is when the waiting period ends and the liquidity is
+  // removed from the pool.
+  google.protobuf.Timestamp complete_time = 4 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false
+  ];
+
+  // retries counts failed settlement attempts. After too many failures the
+  // entry is abandoned and the shares stay in the validator's position, so a
+  // permanently broken pool cannot wedge the queue forever.
+  uint32 retries = 5;
+}

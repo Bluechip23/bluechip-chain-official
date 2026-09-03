@@ -116,11 +116,168 @@ func (x *_GenesisState_3_list) IsValid() bool {
 	return x.list != nil
 }
 
+var _ protoreflect.List = (*_GenesisState_4_list)(nil)
+
+type _GenesisState_4_list struct {
+	list *[]*RegisteredPool
+}
+
+func (x *_GenesisState_4_list) Len() int {
+	if x.list == nil {
+		return 0
+	}
+	return len(*x.list)
+}
+
+func (x *_GenesisState_4_list) Get(i int) protoreflect.Value {
+	return protoreflect.ValueOfMessage((*x.list)[i].ProtoReflect())
+}
+
+func (x *_GenesisState_4_list) Set(i int, value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*RegisteredPool)
+	(*x.list)[i] = concreteValue
+}
+
+func (x *_GenesisState_4_list) Append(value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*RegisteredPool)
+	*x.list = append(*x.list, concreteValue)
+}
+
+func (x *_GenesisState_4_list) AppendMutable() protoreflect.Value {
+	v := new(RegisteredPool)
+	*x.list = append(*x.list, v)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_4_list) Truncate(n int) {
+	for i := n; i < len(*x.list); i++ {
+		(*x.list)[i] = nil
+	}
+	*x.list = (*x.list)[:n]
+}
+
+func (x *_GenesisState_4_list) NewElement() protoreflect.Value {
+	v := new(RegisteredPool)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_4_list) IsValid() bool {
+	return x.list != nil
+}
+
+var _ protoreflect.List = (*_GenesisState_6_list)(nil)
+
+type _GenesisState_6_list struct {
+	list *[]*PoolPosition
+}
+
+func (x *_GenesisState_6_list) Len() int {
+	if x.list == nil {
+		return 0
+	}
+	return len(*x.list)
+}
+
+func (x *_GenesisState_6_list) Get(i int) protoreflect.Value {
+	return protoreflect.ValueOfMessage((*x.list)[i].ProtoReflect())
+}
+
+func (x *_GenesisState_6_list) Set(i int, value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*PoolPosition)
+	(*x.list)[i] = concreteValue
+}
+
+func (x *_GenesisState_6_list) Append(value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*PoolPosition)
+	*x.list = append(*x.list, concreteValue)
+}
+
+func (x *_GenesisState_6_list) AppendMutable() protoreflect.Value {
+	v := new(PoolPosition)
+	*x.list = append(*x.list, v)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_6_list) Truncate(n int) {
+	for i := n; i < len(*x.list); i++ {
+		(*x.list)[i] = nil
+	}
+	*x.list = (*x.list)[:n]
+}
+
+func (x *_GenesisState_6_list) NewElement() protoreflect.Value {
+	v := new(PoolPosition)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_6_list) IsValid() bool {
+	return x.list != nil
+}
+
+var _ protoreflect.List = (*_GenesisState_7_list)(nil)
+
+type _GenesisState_7_list struct {
+	list *[]*PendingDeallocation
+}
+
+func (x *_GenesisState_7_list) Len() int {
+	if x.list == nil {
+		return 0
+	}
+	return len(*x.list)
+}
+
+func (x *_GenesisState_7_list) Get(i int) protoreflect.Value {
+	return protoreflect.ValueOfMessage((*x.list)[i].ProtoReflect())
+}
+
+func (x *_GenesisState_7_list) Set(i int, value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*PendingDeallocation)
+	(*x.list)[i] = concreteValue
+}
+
+func (x *_GenesisState_7_list) Append(value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*PendingDeallocation)
+	*x.list = append(*x.list, concreteValue)
+}
+
+func (x *_GenesisState_7_list) AppendMutable() protoreflect.Value {
+	v := new(PendingDeallocation)
+	*x.list = append(*x.list, v)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_7_list) Truncate(n int) {
+	for i := n; i < len(*x.list); i++ {
+		(*x.list)[i] = nil
+	}
+	*x.list = (*x.list)[:n]
+}
+
+func (x *_GenesisState_7_list) NewElement() protoreflect.Value {
+	v := new(PendingDeallocation)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_7_list) IsValid() bool {
+	return x.list != nil
+}
+
 var (
-	md_GenesisState                     protoreflect.MessageDescriptor
-	fd_GenesisState_params              protoreflect.FieldDescriptor
-	fd_GenesisState_vaults              protoreflect.FieldDescriptor
-	fd_GenesisState_pending_withdrawals protoreflect.FieldDescriptor
+	md_GenesisState                       protoreflect.MessageDescriptor
+	fd_GenesisState_params                protoreflect.FieldDescriptor
+	fd_GenesisState_vaults                protoreflect.FieldDescriptor
+	fd_GenesisState_pending_withdrawals   protoreflect.FieldDescriptor
+	fd_GenesisState_pools                 protoreflect.FieldDescriptor
+	fd_GenesisState_next_pool_id          protoreflect.FieldDescriptor
+	fd_GenesisState_positions             protoreflect.FieldDescriptor
+	fd_GenesisState_pending_deallocations protoreflect.FieldDescriptor
 )
 
 func init() {
@@ -129,6 +286,10 @@ func init() {
 	fd_GenesisState_params = md_GenesisState.Fields().ByName("params")
 	fd_GenesisState_vaults = md_GenesisState.Fields().ByName("vaults")
 	fd_GenesisState_pending_withdrawals = md_GenesisState.Fields().ByName("pending_withdrawals")
+	fd_GenesisState_pools = md_GenesisState.Fields().ByName("pools")
+	fd_GenesisState_next_pool_id = md_GenesisState.Fields().ByName("next_pool_id")
+	fd_GenesisState_positions = md_GenesisState.Fields().ByName("positions")
+	fd_GenesisState_pending_deallocations = md_GenesisState.Fields().ByName("pending_deallocations")
 }
 
 var _ protoreflect.Message = (*fastReflection_GenesisState)(nil)
@@ -214,6 +375,30 @@ func (x *fastReflection_GenesisState) Range(f func(protoreflect.FieldDescriptor,
 			return
 		}
 	}
+	if len(x.Pools) != 0 {
+		value := protoreflect.ValueOfList(&_GenesisState_4_list{list: &x.Pools})
+		if !f(fd_GenesisState_pools, value) {
+			return
+		}
+	}
+	if x.NextPoolId != uint64(0) {
+		value := protoreflect.ValueOfUint64(x.NextPoolId)
+		if !f(fd_GenesisState_next_pool_id, value) {
+			return
+		}
+	}
+	if len(x.Positions) != 0 {
+		value := protoreflect.ValueOfList(&_GenesisState_6_list{list: &x.Positions})
+		if !f(fd_GenesisState_positions, value) {
+			return
+		}
+	}
+	if len(x.PendingDeallocations) != 0 {
+		value := protoreflect.ValueOfList(&_GenesisState_7_list{list: &x.PendingDeallocations})
+		if !f(fd_GenesisState_pending_deallocations, value) {
+			return
+		}
+	}
 }
 
 // Has reports whether a field is populated.
@@ -235,6 +420,14 @@ func (x *fastReflection_GenesisState) Has(fd protoreflect.FieldDescriptor) bool 
 		return len(x.Vaults) != 0
 	case "bluechipchain.liquidityvault.GenesisState.pending_withdrawals":
 		return len(x.PendingWithdrawals) != 0
+	case "bluechipchain.liquidityvault.GenesisState.pools":
+		return len(x.Pools) != 0
+	case "bluechipchain.liquidityvault.GenesisState.next_pool_id":
+		return x.NextPoolId != uint64(0)
+	case "bluechipchain.liquidityvault.GenesisState.positions":
+		return len(x.Positions) != 0
+	case "bluechipchain.liquidityvault.GenesisState.pending_deallocations":
+		return len(x.PendingDeallocations) != 0
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.liquidityvault.GenesisState"))
@@ -257,6 +450,14 @@ func (x *fastReflection_GenesisState) Clear(fd protoreflect.FieldDescriptor) {
 		x.Vaults = nil
 	case "bluechipchain.liquidityvault.GenesisState.pending_withdrawals":
 		x.PendingWithdrawals = nil
+	case "bluechipchain.liquidityvault.GenesisState.pools":
+		x.Pools = nil
+	case "bluechipchain.liquidityvault.GenesisState.next_pool_id":
+		x.NextPoolId = uint64(0)
+	case "bluechipchain.liquidityvault.GenesisState.positions":
+		x.Positions = nil
+	case "bluechipchain.liquidityvault.GenesisState.pending_deallocations":
+		x.PendingDeallocations = nil
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.liquidityvault.GenesisState"))
@@ -288,6 +489,27 @@ func (x *fastReflection_GenesisState) Get(descriptor protoreflect.FieldDescripto
 		}
 		listValue := &_GenesisState_3_list{list: &x.PendingWithdrawals}
 		return protoreflect.ValueOfList(listValue)
+	case "bluechipchain.liquidityvault.GenesisState.pools":
+		if len(x.Pools) == 0 {
+			return protoreflect.ValueOfList(&_GenesisState_4_list{})
+		}
+		listValue := &_GenesisState_4_list{list: &x.Pools}
+		return protoreflect.ValueOfList(listValue)
+	case "bluechipchain.liquidityvault.GenesisState.next_pool_id":
+		value := x.NextPoolId
+		return protoreflect.ValueOfUint64(value)
+	case "bluechipchain.liquidityvault.GenesisState.positions":
+		if len(x.Positions) == 0 {
+			return protoreflect.ValueOfList(&_GenesisState_6_list{})
+		}
+		listValue := &_GenesisState_6_list{list: &x.Positions}
+		return protoreflect.ValueOfList(listValue)
+	case "bluechipchain.liquidityvault.GenesisState.pending_deallocations":
+		if len(x.PendingDeallocations) == 0 {
+			return protoreflect.ValueOfList(&_GenesisState_7_list{})
+		}
+		listValue := &_GenesisState_7_list{list: &x.PendingDeallocations}
+		return protoreflect.ValueOfList(listValue)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.liquidityvault.GenesisState"))
@@ -318,6 +540,20 @@ func (x *fastReflection_GenesisState) Set(fd protoreflect.FieldDescriptor, value
 		lv := value.List()
 		clv := lv.(*_GenesisState_3_list)
 		x.PendingWithdrawals = *clv.list
+	case "bluechipchain.liquidityvault.GenesisState.pools":
+		lv := value.List()
+		clv := lv.(*_GenesisState_4_list)
+		x.Pools = *clv.list
+	case "bluechipchain.liquidityvault.GenesisState.next_pool_id":
+		x.NextPoolId = value.Uint()
+	case "bluechipchain.liquidityvault.GenesisState.positions":
+		lv := value.List()
+		clv := lv.(*_GenesisState_6_list)
+		x.Positions = *clv.list
+	case "bluechipchain.liquidityvault.GenesisState.pending_deallocations":
+		lv := value.List()
+		clv := lv.(*_GenesisState_7_list)
+		x.PendingDeallocations = *clv.list
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.liquidityvault.GenesisState"))
@@ -355,6 +591,26 @@ func (x *fastReflection_GenesisState) Mutable(fd protoreflect.FieldDescriptor) p
 		}
 		value := &_GenesisState_3_list{list: &x.PendingWithdrawals}
 		return protoreflect.ValueOfList(value)
+	case "bluechipchain.liquidityvault.GenesisState.pools":
+		if x.Pools == nil {
+			x.Pools = []*RegisteredPool{}
+		}
+		value := &_GenesisState_4_list{list: &x.Pools}
+		return protoreflect.ValueOfList(value)
+	case "bluechipchain.liquidityvault.GenesisState.positions":
+		if x.Positions == nil {
+			x.Positions = []*PoolPosition{}
+		}
+		value := &_GenesisState_6_list{list: &x.Positions}
+		return protoreflect.ValueOfList(value)
+	case "bluechipchain.liquidityvault.GenesisState.pending_deallocations":
+		if x.PendingDeallocations == nil {
+			x.PendingDeallocations = []*PendingDeallocation{}
+		}
+		value := &_GenesisState_7_list{list: &x.PendingDeallocations}
+		return protoreflect.ValueOfList(value)
+	case "bluechipchain.liquidityvault.GenesisState.next_pool_id":
+		panic(fmt.Errorf("field next_pool_id of message bluechipchain.liquidityvault.GenesisState is not mutable"))
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.liquidityvault.GenesisState"))
@@ -377,6 +633,17 @@ func (x *fastReflection_GenesisState) NewField(fd protoreflect.FieldDescriptor) 
 	case "bluechipchain.liquidityvault.GenesisState.pending_withdrawals":
 		list := []*PendingWithdrawal{}
 		return protoreflect.ValueOfList(&_GenesisState_3_list{list: &list})
+	case "bluechipchain.liquidityvault.GenesisState.pools":
+		list := []*RegisteredPool{}
+		return protoreflect.ValueOfList(&_GenesisState_4_list{list: &list})
+	case "bluechipchain.liquidityvault.GenesisState.next_pool_id":
+		return protoreflect.ValueOfUint64(uint64(0))
+	case "bluechipchain.liquidityvault.GenesisState.positions":
+		list := []*PoolPosition{}
+		return protoreflect.ValueOfList(&_GenesisState_6_list{list: &list})
+	case "bluechipchain.liquidityvault.GenesisState.pending_deallocations":
+		list := []*PendingDeallocation{}
+		return protoreflect.ValueOfList(&_GenesisState_7_list{list: &list})
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.liquidityvault.GenesisState"))
@@ -462,6 +729,27 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 				n += 1 + l + runtime.Sov(uint64(l))
 			}
 		}
+		if len(x.Pools) > 0 {
+			for _, e := range x.Pools {
+				l = options.Size(e)
+				n += 1 + l + runtime.Sov(uint64(l))
+			}
+		}
+		if x.NextPoolId != 0 {
+			n += 1 + runtime.Sov(uint64(x.NextPoolId))
+		}
+		if len(x.Positions) > 0 {
+			for _, e := range x.Positions {
+				l = options.Size(e)
+				n += 1 + l + runtime.Sov(uint64(l))
+			}
+		}
+		if len(x.PendingDeallocations) > 0 {
+			for _, e := range x.PendingDeallocations {
+				l = options.Size(e)
+				n += 1 + l + runtime.Sov(uint64(l))
+			}
+		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
 		}
@@ -490,6 +778,59 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 		if x.unknownFields != nil {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.PendingDeallocations) > 0 {
+			for iNdEx := len(x.PendingDeallocations) - 1; iNdEx >= 0; iNdEx-- {
+				encoded, err := options.Marshal(x.PendingDeallocations[iNdEx])
+				if err != nil {
+					return protoiface.MarshalOutput{
+						NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+						Buf:               input.Buf,
+					}, err
+				}
+				i -= len(encoded)
+				copy(dAtA[i:], encoded)
+				i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+				i--
+				dAtA[i] = 0x3a
+			}
+		}
+		if len(x.Positions) > 0 {
+			for iNdEx := len(x.Positions) - 1; iNdEx >= 0; iNdEx-- {
+				encoded, err := options.Marshal(x.Positions[iNdEx])
+				if err != nil {
+					return protoiface.MarshalOutput{
+						NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+						Buf:               input.Buf,
+					}, err
+				}
+				i -= len(encoded)
+				copy(dAtA[i:], encoded)
+				i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+				i--
+				dAtA[i] = 0x32
+			}
+		}
+		if x.NextPoolId != 0 {
+			i = runtime.EncodeVarint(dAtA, i, uint64(x.NextPoolId))
+			i--
+			dAtA[i] = 0x28
+		}
+		if len(x.Pools) > 0 {
+			for iNdEx := len(x.Pools) - 1; iNdEx >= 0; iNdEx-- {
+				encoded, err := options.Marshal(x.Pools[iNdEx])
+				if err != nil {
+					return protoiface.MarshalOutput{
+						NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+						Buf:               input.Buf,
+					}, err
+				}
+				i -= len(encoded)
+				copy(dAtA[i:], encoded)
+				i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+				i--
+				dAtA[i] = 0x22
+			}
 		}
 		if len(x.PendingWithdrawals) > 0 {
 			for iNdEx := len(x.PendingWithdrawals) - 1; iNdEx >= 0; iNdEx-- {
@@ -690,6 +1031,127 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
 				}
 				iNdEx = postIndex
+			case 4:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Pools", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Pools = append(x.Pools, &RegisteredPool{})
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Pools[len(x.Pools)-1]); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 5:
+				if wireType != 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field NextPoolId", wireType)
+				}
+				x.NextPoolId = 0
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					x.NextPoolId |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+			case 6:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field Positions", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.Positions = append(x.Positions, &PoolPosition{})
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.Positions[len(x.Positions)-1]); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 7:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field PendingDeallocations", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.PendingDeallocations = append(x.PendingDeallocations, &PendingDeallocation{})
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.PendingDeallocations[len(x.PendingDeallocations)-1]); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -751,6 +1213,15 @@ type GenesisState struct {
 	// pending_withdrawals are vault withdrawals still waiting out the grace
 	// period.
 	PendingWithdrawals []*PendingWithdrawal `protobuf:"bytes,3,rep,name=pending_withdrawals,json=pendingWithdrawals,proto3" json:"pending_withdrawals,omitempty"`
+	// pools are the governance-registered liquidity pools.
+	Pools []*RegisteredPool `protobuf:"bytes,4,rep,name=pools,proto3" json:"pools,omitempty"`
+	// next_pool_id is the id assigned to the next registered pool.
+	NextPoolId uint64 `protobuf:"varint,5,opt,name=next_pool_id,json=nextPoolId,proto3" json:"next_pool_id,omitempty"`
+	// positions are the validators' internal shares of pool positions.
+	Positions []*PoolPosition `protobuf:"bytes,6,rep,name=positions,proto3" json:"positions,omitempty"`
+	// pending_deallocations are pool exits still waiting out the deallocation
+	// grace period.
+	PendingDeallocations []*PendingDeallocation `protobuf:"bytes,7,rep,name=pending_deallocations,json=pendingDeallocations,proto3" json:"pending_deallocations,omitempty"`
 }
 
 func (x *GenesisState) Reset() {
@@ -794,6 +1265,34 @@ func (x *GenesisState) GetPendingWithdrawals() []*PendingWithdrawal {
 	return nil
 }
 
+func (x *GenesisState) GetPools() []*RegisteredPool {
+	if x != nil {
+		return x.Pools
+	}
+	return nil
+}
+
+func (x *GenesisState) GetNextPoolId() uint64 {
+	if x != nil {
+		return x.NextPoolId
+	}
+	return 0
+}
+
+func (x *GenesisState) GetPositions() []*PoolPosition {
+	if x != nil {
+		return x.Positions
+	}
+	return nil
+}
+
+func (x *GenesisState) GetPendingDeallocations() []*PendingDeallocation {
+	if x != nil {
+		return x.PendingDeallocations
+	}
+	return nil
+}
+
 var File_bluechipchain_liquidityvault_genesis_proto protoreflect.FileDescriptor
 
 var file_bluechipchain_liquidityvault_genesis_proto_rawDesc = []byte{
@@ -806,29 +1305,50 @@ var file_bluechipchain_liquidityvault_genesis_proto_rawDesc = []byte{
 	0x6f, 0x67, 0x6f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x67, 0x6f, 0x67, 0x6f, 0x2e, 0x70, 0x72,
 	0x6f, 0x74, 0x6f, 0x1a, 0x29, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61,
 	0x69, 0x6e, 0x2f, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c,
-	0x74, 0x2f, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x28,
+	0x74, 0x2f, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x27,
 	0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x6c, 0x69,
-	0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2f, 0x76, 0x61, 0x75,
-	0x6c, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x82, 0x02, 0x0a, 0x0c, 0x47, 0x65, 0x6e,
-	0x65, 0x73, 0x69, 0x73, 0x53, 0x74, 0x61, 0x74, 0x65, 0x12, 0x47, 0x0a, 0x06, 0x70, 0x61, 0x72,
-	0x61, 0x6d, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x24, 0x2e, 0x62, 0x6c, 0x75, 0x65,
-	0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64,
-	0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x42,
-	0x09, 0xc8, 0xde, 0x1f, 0x00, 0xa8, 0xe7, 0xb0, 0x2a, 0x01, 0x52, 0x06, 0x70, 0x61, 0x72, 0x61,
-	0x6d, 0x73, 0x12, 0x41, 0x0a, 0x06, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x73, 0x18, 0x02, 0x20, 0x03,
-	0x28, 0x0b, 0x32, 0x23, 0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61,
+	0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2f, 0x70, 0x6f, 0x6f,
+	0x6c, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x28, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69,
+	0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79,
+	0x76, 0x61, 0x75, 0x6c, 0x74, 0x2f, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x22, 0xac, 0x04, 0x0a, 0x0c, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x53, 0x74, 0x61,
+	0x74, 0x65, 0x12, 0x47, 0x0a, 0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x18, 0x01, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x24, 0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61,
 	0x69, 0x6e, 0x2e, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c,
-	0x74, 0x2e, 0x56, 0x61, 0x75, 0x6c, 0x74, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x06, 0x76,
-	0x61, 0x75, 0x6c, 0x74, 0x73, 0x12, 0x66, 0x0a, 0x13, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67,
-	0x5f, 0x77, 0x69, 0x74, 0x68, 0x64, 0x72, 0x61, 0x77, 0x61, 0x6c, 0x73, 0x18, 0x03, 0x20, 0x03,
-	0x28, 0x0b, 0x32, 0x2f, 0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61,
-	0x69, 0x6e, 0x2e, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c,
-	0x74, 0x2e, 0x50, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x57, 0x69, 0x74, 0x68, 0x64, 0x72, 0x61,
-	0x77, 0x61, 0x6c, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x12, 0x70, 0x65, 0x6e, 0x64, 0x69,
-	0x6e, 0x67, 0x57, 0x69, 0x74, 0x68, 0x64, 0x72, 0x61, 0x77, 0x61, 0x6c, 0x73, 0x42, 0x26, 0x5a,
-	0x24, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x78,
-	0x2f, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2f,
-	0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x74, 0x2e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x42, 0x09, 0xc8, 0xde, 0x1f, 0x00, 0xa8, 0xe7,
+	0xb0, 0x2a, 0x01, 0x52, 0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x41, 0x0a, 0x06, 0x76,
+	0x61, 0x75, 0x6c, 0x74, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x23, 0x2e, 0x62, 0x6c,
+	0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x6c, 0x69, 0x71, 0x75,
+	0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x56, 0x61, 0x75, 0x6c, 0x74,
+	0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x06, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x73, 0x12, 0x66,
+	0x0a, 0x13, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x5f, 0x77, 0x69, 0x74, 0x68, 0x64, 0x72,
+	0x61, 0x77, 0x61, 0x6c, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2f, 0x2e, 0x62, 0x6c,
+	0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x6c, 0x69, 0x71, 0x75,
+	0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x50, 0x65, 0x6e, 0x64, 0x69,
+	0x6e, 0x67, 0x57, 0x69, 0x74, 0x68, 0x64, 0x72, 0x61, 0x77, 0x61, 0x6c, 0x42, 0x04, 0xc8, 0xde,
+	0x1f, 0x00, 0x52, 0x12, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x57, 0x69, 0x74, 0x68, 0x64,
+	0x72, 0x61, 0x77, 0x61, 0x6c, 0x73, 0x12, 0x48, 0x0a, 0x05, 0x70, 0x6f, 0x6f, 0x6c, 0x73, 0x18,
+	0x04, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2c, 0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70,
+	0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76,
+	0x61, 0x75, 0x6c, 0x74, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x65, 0x64, 0x50,
+	0x6f, 0x6f, 0x6c, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x05, 0x70, 0x6f, 0x6f, 0x6c, 0x73,
+	0x12, 0x20, 0x0a, 0x0c, 0x6e, 0x65, 0x78, 0x74, 0x5f, 0x70, 0x6f, 0x6f, 0x6c, 0x5f, 0x69, 0x64,
+	0x18, 0x05, 0x20, 0x01, 0x28, 0x04, 0x52, 0x0a, 0x6e, 0x65, 0x78, 0x74, 0x50, 0x6f, 0x6f, 0x6c,
+	0x49, 0x64, 0x12, 0x4e, 0x0a, 0x09, 0x70, 0x6f, 0x73, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18,
+	0x06, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2a, 0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70,
+	0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76,
+	0x61, 0x75, 0x6c, 0x74, 0x2e, 0x50, 0x6f, 0x6f, 0x6c, 0x50, 0x6f, 0x73, 0x69, 0x74, 0x69, 0x6f,
+	0x6e, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x09, 0x70, 0x6f, 0x73, 0x69, 0x74, 0x69, 0x6f,
+	0x6e, 0x73, 0x12, 0x6c, 0x0a, 0x15, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x5f, 0x64, 0x65,
+	0x61, 0x6c, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x07, 0x20, 0x03, 0x28,
+	0x0b, 0x32, 0x31, 0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69,
+	0x6e, 0x2e, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74,
+	0x2e, 0x50, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x44, 0x65, 0x61, 0x6c, 0x6c, 0x6f, 0x63, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x14, 0x70, 0x65, 0x6e, 0x64,
+	0x69, 0x6e, 0x67, 0x44, 0x65, 0x61, 0x6c, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73,
+	0x42, 0x26, 0x5a, 0x24, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x43, 0x68, 0x61, 0x69,
+	0x6e, 0x2f, 0x78, 0x2f, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75,
+	0x6c, 0x74, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -845,20 +1365,26 @@ func file_bluechipchain_liquidityvault_genesis_proto_rawDescGZIP() []byte {
 
 var file_bluechipchain_liquidityvault_genesis_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
 var file_bluechipchain_liquidityvault_genesis_proto_goTypes = []interface{}{
-	(*GenesisState)(nil),      // 0: bluechipchain.liquidityvault.GenesisState
-	(*Params)(nil),            // 1: bluechipchain.liquidityvault.Params
-	(*Vault)(nil),             // 2: bluechipchain.liquidityvault.Vault
-	(*PendingWithdrawal)(nil), // 3: bluechipchain.liquidityvault.PendingWithdrawal
+	(*GenesisState)(nil),        // 0: bluechipchain.liquidityvault.GenesisState
+	(*Params)(nil),              // 1: bluechipchain.liquidityvault.Params
+	(*Vault)(nil),               // 2: bluechipchain.liquidityvault.Vault
+	(*PendingWithdrawal)(nil),   // 3: bluechipchain.liquidityvault.PendingWithdrawal
+	(*RegisteredPool)(nil),      // 4: bluechipchain.liquidityvault.RegisteredPool
+	(*PoolPosition)(nil),        // 5: bluechipchain.liquidityvault.PoolPosition
+	(*PendingDeallocation)(nil), // 6: bluechipchain.liquidityvault.PendingDeallocation
 }
 var file_bluechipchain_liquidityvault_genesis_proto_depIdxs = []int32{
 	1, // 0: bluechipchain.liquidityvault.GenesisState.params:type_name -> bluechipchain.liquidityvault.Params
 	2, // 1: bluechipchain.liquidityvault.GenesisState.vaults:type_name -> bluechipchain.liquidityvault.Vault
 	3, // 2: bluechipchain.liquidityvault.GenesisState.pending_withdrawals:type_name -> bluechipchain.liquidityvault.PendingWithdrawal
-	3, // [3:3] is the sub-list for method output_type
-	3, // [3:3] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	4, // 3: bluechipchain.liquidityvault.GenesisState.pools:type_name -> bluechipchain.liquidityvault.RegisteredPool
+	5, // 4: bluechipchain.liquidityvault.GenesisState.positions:type_name -> bluechipchain.liquidityvault.PoolPosition
+	6, // 5: bluechipchain.liquidityvault.GenesisState.pending_deallocations:type_name -> bluechipchain.liquidityvault.PendingDeallocation
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_bluechipchain_liquidityvault_genesis_proto_init() }
@@ -867,6 +1393,7 @@ func file_bluechipchain_liquidityvault_genesis_proto_init() {
 		return
 	}
 	file_bluechipchain_liquidityvault_params_proto_init()
+	file_bluechipchain_liquidityvault_pool_proto_init()
 	file_bluechipchain_liquidityvault_vault_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_bluechipchain_liquidityvault_genesis_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {

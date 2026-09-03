@@ -141,9 +141,13 @@ func (am AppModule) ExportGenesis(ctx sdk.Context, cdc codec.JSONCodec) json.Raw
 // To avoid wrong/empty versions, the initial version should be set to 1.
 func (AppModule) ConsensusVersion() uint64 { return 1 }
 
-// EndBlock releases vault withdrawals whose grace period has ended.
+// EndBlock releases vault withdrawals whose grace period has ended and
+// executes matured pool deallocations.
 func (am AppModule) EndBlock(ctx context.Context) error {
-	return am.keeper.ProcessMaturedWithdrawals(ctx)
+	if err := am.keeper.ProcessMaturedWithdrawals(ctx); err != nil {
+		return err
+	}
+	return am.keeper.ProcessMaturedDeallocations(ctx)
 }
 
 // IsOnePerModuleType implements the depinject.OnePerModuleType interface.

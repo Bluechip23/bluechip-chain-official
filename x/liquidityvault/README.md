@@ -28,14 +28,52 @@ stage 1 is the fraction of vault rewards passed through to its delegators**
 | `MsgDeposit` | validator operator | Moves bond-denom tokens from the validator's own account into its vault. Delegated funds cannot be deposited. |
 | `MsgInitiateWithdrawal` | validator operator | Removes the amount from the active balance immediately (it stops counting toward the composite score) and releases it after the universal grace period. |
 | `MsgSetRewardShare` | validator operator | Sets the delegator reward share, a fraction in [0, 1]. Defaults to 0.5. |
-| `MsgUpdateParams` | governance | Sets the stake cap and withdrawal grace period. |
+| `MsgAllocateToPool` | validator operator | Moves active vault balance into a registered pool; the position counts toward the composite score at current value. |
+| `MsgDeallocateFromPool` | validator operator | Queues removal of pool liquidity; after the universal deallocation grace period the proceeds go to the validator's own account, leaving the vault (per the design document, withdrawn pool tokens must be re-staked or re-deposited manually). |
+| `MsgRegisterPool` | governance | Registers a pool contract implementing the Vault Adapter Interface. |
+| `MsgSetPoolEnabled` | governance | Enables/disables new allocations to a pool (deallocations always work). |
+| `MsgUpdateParams` | governance | Sets the stake cap and the grace periods. |
 
 ## Parameters
 
 | Param | Default | Meaning |
 |---|---|---|
 | `stake_cap` | `0` (disabled) | Maximum bond-denom tokens a validator may have bonded directly to the chain. Governance enables it by setting a positive value. |
-| `withdrawal_grace_period` | `72h` | Universal delay between a vault withdrawal request and the release of funds ("Liquidity Providing Change" in the design document). |
+| `withdrawal_grace_period` | `72h` | Universal delay between a vault withdrawal request and the release of funds. |
+| `deallocation_grace_period` | `72h` | Universal delay ("Liquidity Providing Change") between a pool deallocation request and the liquidity leaving the pool. |
+
+## Pool integration: the Vault Adapter Interface
+
+The creator pools are CosmWasm contracts; the vault module deliberately does
+not speak their native schema (two-sided deposits, CW20 mechanics, position
+NFTs). Instead a registered pool contract must implement a minimal JSON
+interface — see `types/wasm.go` for the schema:
+
+- `provide_liquidity` (execute, bond-denom funds attached): add the funds to
+  the caller's position, handling any swap/zap internally.
+- `withdraw_liquidity {ratio}` (execute): remove that fraction of the
+  caller's position and return the proceeds to the caller as bond-denom
+  native funds in the same execution.
+- `position_value {address}` (query): the address's position value in the
+  bond denom.
+
+The module account is the caller for every pool, holding one aggregate
+position per pool at the contract. Validators own internal shares of it
+(ERC-4626-style: first allocation mints 1:1, later allocations mint
+`amount * total_shares / position_value`), so the contracts need no
+per-validator accounting. Ratio truncation dust from partial withdrawals
+stays in the position, favoring remaining shareholders.
+
+A thin adapter contract wrapping the existing creator pools (implementing
+the three calls above) lives on the contract side — it is the
+`bluechip-contracts` repository's half of this integration.
+
+### End-blocker safety
+
+Matured deallocations execute pool contracts inside the end blocker. Each
+entry runs in a cached context under a bounded gas meter with a panic guard:
+a failing or misbehaving pool contract can only fail its own entry, which is
+requeued with a delay (1h) — it can never halt the chain.
 
 ## Stake cap enforcement
 
@@ -65,14 +103,16 @@ it by accident.
 
 ## Deliberate stage-1 scope limits
 
-These arrive with later stages of the LPV rollout, per the design document's
-timeline:
+Still to come within stage 1 ("Introduce liquidity vaults"):
 
-- No pool allocation yet: vault funds are held by the module, not yet routed
-  to liquidity pools / LP NFTs, so the composite score uses the raw vault
-  balance rather than the median of six pseudo-random value posts.
-- No reward flow yet: `delegator_reward_share` is stored and validated, and
-  starts distributing when pool rewards land (stage 1 scope in the document
-  is the parameter itself).
-- No validator-set selection changes: the simple/complex checks and the
-  Reserve Liquidity Fund (RLF) are later stages.
+- Value posts: the composite score currently values positions live; the
+  median of six pseudo-randomly timed value posts arrives next.
+- Reward flow: `delegator_reward_share` is stored and validated; collection
+  and distribution of pool rewards is the following increment.
+
+Deliberately out of scope for stage 1, per the design document's timeline:
+
+- Validator-set selection changes (the simple/complex checks) do not touch
+  consensus in stage 1; a shadow ranking query ships instead.
+- The Reserve Liquidity Fund (RLF), the bubble, and pbluechips are later
+  stages and are not touched by any of this code.

@@ -130,12 +130,14 @@ func (k Keeper) SetRewardShare(ctx context.Context, valAddr sdk.ValAddress, shar
 }
 
 // GetCompositeScore returns a validator's composite score components: the
-// tokens delegated directly to it on the chain, its active vault balance, and
-// their sum. Pending withdrawals do not count.
-func (k Keeper) GetCompositeScore(ctx context.Context, valAddr sdk.ValAddress) (stakedTokens, vaultBalance, compositeScore math.Int, err error) {
+// tokens delegated directly to it on the chain, its active vault balance,
+// the current value of its pool positions, and their sum. Pending vault
+// withdrawals do not count; pending pool deallocations still do (the
+// liquidity is in the pool until the deallocation executes).
+func (k Keeper) GetCompositeScore(ctx context.Context, valAddr sdk.ValAddress) (stakedTokens, vaultBalance, positionValue, compositeScore math.Int, err error) {
 	validator, err := k.stakingKeeper.GetValidator(ctx, valAddr)
 	if err != nil {
-		return math.Int{}, math.Int{}, math.Int{}, errorsmod.Wrap(types.ErrValidatorNotFound, valAddr.String())
+		return math.Int{}, math.Int{}, math.Int{}, math.Int{}, errorsmod.Wrap(types.ErrValidatorNotFound, valAddr.String())
 	}
 
 	stakedTokens = validator.GetTokens()
@@ -145,5 +147,10 @@ func (k Keeper) GetCompositeScore(ctx context.Context, valAddr sdk.ValAddress) (
 		vaultBalance = vault.Balance
 	}
 
-	return stakedTokens, vaultBalance, stakedTokens.Add(vaultBalance), nil
+	positionValue, err = k.ValidatorPositionsValue(ctx, valAddr)
+	if err != nil {
+		return math.Int{}, math.Int{}, math.Int{}, math.Int{}, err
+	}
+
+	return stakedTokens, vaultBalance, positionValue, stakedTokens.Add(vaultBalance).Add(positionValue), nil
 }

@@ -17,9 +17,10 @@ import (
 )
 
 var (
-	md_Params                         protoreflect.MessageDescriptor
-	fd_Params_stake_cap               protoreflect.FieldDescriptor
-	fd_Params_withdrawal_grace_period protoreflect.FieldDescriptor
+	md_Params                           protoreflect.MessageDescriptor
+	fd_Params_stake_cap                 protoreflect.FieldDescriptor
+	fd_Params_withdrawal_grace_period   protoreflect.FieldDescriptor
+	fd_Params_deallocation_grace_period protoreflect.FieldDescriptor
 )
 
 func init() {
@@ -27,6 +28,7 @@ func init() {
 	md_Params = File_bluechipchain_liquidityvault_params_proto.Messages().ByName("Params")
 	fd_Params_stake_cap = md_Params.Fields().ByName("stake_cap")
 	fd_Params_withdrawal_grace_period = md_Params.Fields().ByName("withdrawal_grace_period")
+	fd_Params_deallocation_grace_period = md_Params.Fields().ByName("deallocation_grace_period")
 }
 
 var _ protoreflect.Message = (*fastReflection_Params)(nil)
@@ -106,6 +108,12 @@ func (x *fastReflection_Params) Range(f func(protoreflect.FieldDescriptor, proto
 			return
 		}
 	}
+	if x.DeallocationGracePeriod != nil {
+		value := protoreflect.ValueOfMessage(x.DeallocationGracePeriod.ProtoReflect())
+		if !f(fd_Params_deallocation_grace_period, value) {
+			return
+		}
+	}
 }
 
 // Has reports whether a field is populated.
@@ -125,6 +133,8 @@ func (x *fastReflection_Params) Has(fd protoreflect.FieldDescriptor) bool {
 		return x.StakeCap != ""
 	case "bluechipchain.liquidityvault.Params.withdrawal_grace_period":
 		return x.WithdrawalGracePeriod != nil
+	case "bluechipchain.liquidityvault.Params.deallocation_grace_period":
+		return x.DeallocationGracePeriod != nil
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.liquidityvault.Params"))
@@ -145,6 +155,8 @@ func (x *fastReflection_Params) Clear(fd protoreflect.FieldDescriptor) {
 		x.StakeCap = ""
 	case "bluechipchain.liquidityvault.Params.withdrawal_grace_period":
 		x.WithdrawalGracePeriod = nil
+	case "bluechipchain.liquidityvault.Params.deallocation_grace_period":
+		x.DeallocationGracePeriod = nil
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.liquidityvault.Params"))
@@ -166,6 +178,9 @@ func (x *fastReflection_Params) Get(descriptor protoreflect.FieldDescriptor) pro
 		return protoreflect.ValueOfString(value)
 	case "bluechipchain.liquidityvault.Params.withdrawal_grace_period":
 		value := x.WithdrawalGracePeriod
+		return protoreflect.ValueOfMessage(value.ProtoReflect())
+	case "bluechipchain.liquidityvault.Params.deallocation_grace_period":
+		value := x.DeallocationGracePeriod
 		return protoreflect.ValueOfMessage(value.ProtoReflect())
 	default:
 		if descriptor.IsExtension() {
@@ -191,6 +206,8 @@ func (x *fastReflection_Params) Set(fd protoreflect.FieldDescriptor, value proto
 		x.StakeCap = value.Interface().(string)
 	case "bluechipchain.liquidityvault.Params.withdrawal_grace_period":
 		x.WithdrawalGracePeriod = value.Message().Interface().(*durationpb.Duration)
+	case "bluechipchain.liquidityvault.Params.deallocation_grace_period":
+		x.DeallocationGracePeriod = value.Message().Interface().(*durationpb.Duration)
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.liquidityvault.Params"))
@@ -216,6 +233,11 @@ func (x *fastReflection_Params) Mutable(fd protoreflect.FieldDescriptor) protore
 			x.WithdrawalGracePeriod = new(durationpb.Duration)
 		}
 		return protoreflect.ValueOfMessage(x.WithdrawalGracePeriod.ProtoReflect())
+	case "bluechipchain.liquidityvault.Params.deallocation_grace_period":
+		if x.DeallocationGracePeriod == nil {
+			x.DeallocationGracePeriod = new(durationpb.Duration)
+		}
+		return protoreflect.ValueOfMessage(x.DeallocationGracePeriod.ProtoReflect())
 	case "bluechipchain.liquidityvault.Params.stake_cap":
 		panic(fmt.Errorf("field stake_cap of message bluechipchain.liquidityvault.Params is not mutable"))
 	default:
@@ -234,6 +256,9 @@ func (x *fastReflection_Params) NewField(fd protoreflect.FieldDescriptor) protor
 	case "bluechipchain.liquidityvault.Params.stake_cap":
 		return protoreflect.ValueOfString("")
 	case "bluechipchain.liquidityvault.Params.withdrawal_grace_period":
+		m := new(durationpb.Duration)
+		return protoreflect.ValueOfMessage(m.ProtoReflect())
+	case "bluechipchain.liquidityvault.Params.deallocation_grace_period":
 		m := new(durationpb.Duration)
 		return protoreflect.ValueOfMessage(m.ProtoReflect())
 	default:
@@ -313,6 +338,10 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 			l = options.Size(x.WithdrawalGracePeriod)
 			n += 1 + l + runtime.Sov(uint64(l))
 		}
+		if x.DeallocationGracePeriod != nil {
+			l = options.Size(x.DeallocationGracePeriod)
+			n += 1 + l + runtime.Sov(uint64(l))
+		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
 		}
@@ -341,6 +370,20 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 		if x.unknownFields != nil {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
+		}
+		if x.DeallocationGracePeriod != nil {
+			encoded, err := options.Marshal(x.DeallocationGracePeriod)
+			if err != nil {
+				return protoiface.MarshalOutput{
+					NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+					Buf:               input.Buf,
+				}, err
+			}
+			i -= len(encoded)
+			copy(dAtA[i:], encoded)
+			i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+			i--
+			dAtA[i] = 0x1a
 		}
 		if x.WithdrawalGracePeriod != nil {
 			encoded, err := options.Marshal(x.WithdrawalGracePeriod)
@@ -480,6 +523,42 @@ func (x *fastReflection_Params) ProtoMethods() *protoiface.Methods {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
 				}
 				iNdEx = postIndex
+			case 3:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field DeallocationGracePeriod", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				if x.DeallocationGracePeriod == nil {
+					x.DeallocationGracePeriod = &durationpb.Duration{}
+				}
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.DeallocationGracePeriod); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -544,6 +623,11 @@ type Params struct {
 	// request and the release of the funds. It protects pools against sudden
 	// liquidity swings and is set protocol-wide, not per validator.
 	WithdrawalGracePeriod *durationpb.Duration `protobuf:"bytes,2,opt,name=withdrawal_grace_period,json=withdrawalGracePeriod,proto3" json:"withdrawal_grace_period,omitempty"`
+	// deallocation_grace_period is the universal delay ("Liquidity Providing
+	// Change" in the LPV design document) between a validator requesting to
+	// remove liquidity from a pool and the liquidity actually being removed.
+	// Set protocol-wide, not per validator.
+	DeallocationGracePeriod *durationpb.Duration `protobuf:"bytes,3,opt,name=deallocation_grace_period,json=deallocationGracePeriod,proto3" json:"deallocation_grace_period,omitempty"`
 }
 
 func (x *Params) Reset() {
@@ -580,6 +664,13 @@ func (x *Params) GetWithdrawalGracePeriod() *durationpb.Duration {
 	return nil
 }
 
+func (x *Params) GetDeallocationGracePeriod() *durationpb.Duration {
+	if x != nil {
+		return x.DeallocationGracePeriod
+	}
+	return nil
+}
+
 var File_bluechipchain_liquidityvault_params_proto protoreflect.FileDescriptor
 
 var file_bluechipchain_liquidityvault_params_proto_rawDesc = []byte{
@@ -593,7 +684,7 @@ var file_bluechipchain_liquidityvault_params_proto_rawDesc = []byte{
 	0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x14, 0x67, 0x6f, 0x67, 0x6f, 0x70, 0x72, 0x6f,
 	0x74, 0x6f, 0x2f, 0x67, 0x6f, 0x67, 0x6f, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1e, 0x67,
 	0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x64,
-	0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xe4, 0x01,
+	0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xca, 0x02,
 	0x0a, 0x06, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x48, 0x0a, 0x09, 0x73, 0x74, 0x61, 0x6b,
 	0x65, 0x5f, 0x63, 0x61, 0x70, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x42, 0x2b, 0xc8, 0xde, 0x1f,
 	0x00, 0xda, 0xde, 0x1f, 0x15, 0x63, 0x6f, 0x73, 0x6d, 0x6f, 0x73, 0x73, 0x64, 0x6b, 0x2e, 0x69,
@@ -605,13 +696,19 @@ var file_bluechipchain_liquidityvault_params_proto_rawDesc = []byte{
 	0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x44, 0x75, 0x72, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x42, 0x0d,
 	0xc8, 0xde, 0x1f, 0x00, 0x98, 0xdf, 0x1f, 0x01, 0xa8, 0xe7, 0xb0, 0x2a, 0x01, 0x52, 0x15, 0x77,
 	0x69, 0x74, 0x68, 0x64, 0x72, 0x61, 0x77, 0x61, 0x6c, 0x47, 0x72, 0x61, 0x63, 0x65, 0x50, 0x65,
-	0x72, 0x69, 0x6f, 0x64, 0x3a, 0x2e, 0xe8, 0xa0, 0x1f, 0x01, 0x8a, 0xe7, 0xb0, 0x2a, 0x25, 0x62,
-	0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x78, 0x2f, 0x6c,
-	0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2f, 0x50, 0x61,
-	0x72, 0x61, 0x6d, 0x73, 0x42, 0x26, 0x5a, 0x24, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70,
-	0x43, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x78, 0x2f, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74,
-	0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x33,
+	0x72, 0x69, 0x6f, 0x64, 0x12, 0x64, 0x0a, 0x19, 0x64, 0x65, 0x61, 0x6c, 0x6c, 0x6f, 0x63, 0x61,
+	0x74, 0x69, 0x6f, 0x6e, 0x5f, 0x67, 0x72, 0x61, 0x63, 0x65, 0x5f, 0x70, 0x65, 0x72, 0x69, 0x6f,
+	0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x19, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65,
+	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x44, 0x75, 0x72, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x42, 0x0d, 0xc8, 0xde, 0x1f, 0x00, 0x98, 0xdf, 0x1f, 0x01, 0xa8, 0xe7, 0xb0, 0x2a,
+	0x01, 0x52, 0x17, 0x64, 0x65, 0x61, 0x6c, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x47,
+	0x72, 0x61, 0x63, 0x65, 0x50, 0x65, 0x72, 0x69, 0x6f, 0x64, 0x3a, 0x2e, 0xe8, 0xa0, 0x1f, 0x01,
+	0x8a, 0xe7, 0xb0, 0x2a, 0x25, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61,
+	0x69, 0x6e, 0x2f, 0x78, 0x2f, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61,
+	0x75, 0x6c, 0x74, 0x2f, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x42, 0x26, 0x5a, 0x24, 0x62, 0x6c,
+	0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x78, 0x2f, 0x6c, 0x69,
+	0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2f, 0x74, 0x79, 0x70,
+	0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -633,11 +730,12 @@ var file_bluechipchain_liquidityvault_params_proto_goTypes = []interface{}{
 }
 var file_bluechipchain_liquidityvault_params_proto_depIdxs = []int32{
 	1, // 0: bluechipchain.liquidityvault.Params.withdrawal_grace_period:type_name -> google.protobuf.Duration
-	1, // [1:1] is the sub-list for method output_type
-	1, // [1:1] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	1, // 1: bluechipchain.liquidityvault.Params.deallocation_grace_period:type_name -> google.protobuf.Duration
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_bluechipchain_liquidityvault_params_proto_init() }

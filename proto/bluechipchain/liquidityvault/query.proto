@@ -7,6 +7,7 @@ import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
 import "bluechipchain/liquidityvault/params.proto";
+import "bluechipchain/liquidityvault/pool.proto";
 import "bluechipchain/liquidityvault/vault.proto";
 
 option go_package = "bluechipChain/x/liquidityvault/types";
@@ -30,9 +31,21 @@ service Query {
   }
 
   // CompositeScore queries a validator's composite score: its tokens staked
-  // directly to the chain plus its active vault balance.
+  // directly to the chain plus its vault value (active balance and valued
+  // pool positions).
   rpc CompositeScore(QueryCompositeScoreRequest) returns (QueryCompositeScoreResponse) {
     option (google.api.http).get = "/bluechipChain/liquidityvault/composite_score/{validator_address}";
+  }
+
+  // Pools queries all registered liquidity pools.
+  rpc Pools(QueryPoolsRequest) returns (QueryPoolsResponse) {
+    option (google.api.http).get = "/bluechipChain/liquidityvault/pools";
+  }
+
+  // Positions queries a validator's pool positions, valued at current pool
+  // prices, including pending deallocations.
+  rpc Positions(QueryPositionsRequest) returns (QueryPositionsResponse) {
+    option (google.api.http).get = "/bluechipChain/liquidityvault/positions/{validator_address}";
   }
 }
 
@@ -106,10 +119,65 @@ message QueryCompositeScoreResponse {
     (gogoproto.nullable) = false
   ];
 
-  // composite_score is staked_tokens + vault_balance.
+  // composite_score is staked_tokens + vault_balance + position_value.
   string composite_score = 3 [
     (cosmos_proto.scalar) = "cosmos.Int",
     (gogoproto.customtype) = "cosmossdk.io/math.Int",
     (gogoproto.nullable) = false
   ];
+
+  // position_value is the current value of the validator's pool positions
+  // in the bond denom.
+  string position_value = 4 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// QueryPoolsRequest is request type for the Query/Pools RPC method.
+message QueryPoolsRequest {
+  // pagination defines an optional pagination for the request.
+  cosmos.base.query.v1beta1.PageRequest pagination = 1;
+}
+
+// QueryPoolsResponse is response type for the Query/Pools RPC method.
+message QueryPoolsResponse {
+  // pools are the registered liquidity pools.
+  repeated RegisteredPool pools = 1 [(gogoproto.nullable) = false];
+
+  // pagination defines the pagination in the response.
+  cosmos.base.query.v1beta1.PageResponse pagination = 2;
+}
+
+// QueryPositionsRequest is request type for the Query/Positions RPC method.
+message QueryPositionsRequest {
+  // validator_address is the operator address of the validator whose pool
+  // positions are queried.
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.ValidatorAddressString"];
+}
+
+// PositionView is a validator's position in one pool with its current value.
+message PositionView {
+  // position is the validator's internal share record.
+  PoolPosition position = 1 [(gogoproto.nullable) = false];
+
+  // value is the position's current value in the bond denom, at current pool
+  // prices.
+  string value = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// QueryPositionsResponse is response type for the Query/Positions RPC
+// method.
+message QueryPositionsResponse {
+  // positions are the validator's pool positions with current values.
+  repeated PositionView positions = 1 [(gogoproto.nullable) = false];
+
+  // pending_deallocations are the validator's pool exits still waiting out
+  // the deallocation grace period.
+  repeated PendingDeallocation pending_deallocations = 2 [(gogoproto.nullable) = false];
 }

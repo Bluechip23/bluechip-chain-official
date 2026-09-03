@@ -4,6 +4,7 @@ package bluechipchain.liquidityvault;
 import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "bluechipchain/liquidityvault/params.proto";
+import "bluechipchain/liquidityvault/pool.proto";
 import "bluechipchain/liquidityvault/vault.proto";
 
 option go_package = "bluechipChain/x/liquidityvault/types";
@@ -22,4 +23,17 @@ message GenesisState {
   // pending_withdrawals are vault withdrawals still waiting out the grace
   // period.
   repeated PendingWithdrawal pending_withdrawals = 3 [(gogoproto.nullable) = false];
+
+  // pools are the governance-registered liquidity pools.
+  repeated RegisteredPool pools = 4 [(gogoproto.nullable) = false];
+
+  // next_pool_id is the id assigned to the next registered pool.
+  uint64 next_pool_id = 5;
+
+  // positions are the validators' internal shares of pool positions.
+  repeated PoolPosition positions = 6 [(gogoproto.nullable) = false];
+
+  // pending_deallocations are pool exits still waiting out the deallocation
+  // grace period.
+  repeated PendingDeallocation pending_deallocations = 7 [(gogoproto.nullable) = false];
 }

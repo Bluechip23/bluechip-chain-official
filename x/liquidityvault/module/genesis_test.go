@@ -17,7 +17,7 @@ import (
 func TestGenesisRoundTrip(t *testing.T) {
 	valAddr := sdk.ValAddress([]byte("validator-operator-1")).String()
 	genesisState := types.GenesisState{
-		Params: types.NewParams(math.NewInt(1_000_000), 48*time.Hour),
+		Params: types.NewParams(math.NewInt(1_000_000), 48*time.Hour, 24*time.Hour),
 		Vaults: []types.Vault{
 			{
 				ValidatorAddress:     valAddr,
@@ -35,7 +35,7 @@ func TestGenesisRoundTrip(t *testing.T) {
 	}
 	require.NoError(t, genesisState.Validate())
 
-	k, ctx, _, _ := keepertest.LiquidityvaultKeeper(t)
+	k, ctx, _, _, _ := keepertest.LiquidityvaultKeeper(t)
 	liquidityvault.InitGenesis(ctx, k, genesisState)
 	got := liquidityvault.ExportGenesis(ctx, k)
 	require.NotNil(t, got)

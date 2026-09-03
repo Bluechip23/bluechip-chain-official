@@ -31,7 +31,18 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 				{
 					RpcMethod:      "CompositeScore",
 					Use:            "composite-score [validator-address]",
-					Short:          "Shows a validator's composite score (staked tokens + vault balance)",
+					Short:          "Shows a validator's composite score (staked tokens + vault balance + position value)",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "validator_address"}},
+				},
+				{
+					RpcMethod: "Pools",
+					Use:       "pools",
+					Short:     "Lists all registered liquidity pools",
+				},
+				{
+					RpcMethod:      "Positions",
+					Use:            "positions [validator-address]",
+					Short:          "Shows a validator's pool positions and pending deallocations",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "validator_address"}},
 				},
 			},
@@ -57,6 +68,32 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Use:            "set-reward-share [delegator-reward-share]",
 					Short:          "Set the fraction of vault rewards passed through to delegators",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "delegator_reward_share"}},
+				},
+				{
+					RpcMethod: "AllocateToPool",
+					Use:       "allocate-to-pool [pool-id] [amount]",
+					Short:     "Move active vault balance into a registered liquidity pool",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "pool_id"},
+						{ProtoField: "amount"},
+					},
+				},
+				{
+					RpcMethod: "DeallocateFromPool",
+					Use:       "deallocate-from-pool [pool-id] [shares]",
+					Short:     "Request removal of pool liquidity after the universal grace period",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "pool_id"},
+						{ProtoField: "shares"},
+					},
+				},
+				{
+					RpcMethod: "RegisterPool",
+					Skip:      true, // skipped because authority gated
+				},
+				{
+					RpcMethod: "SetPoolEnabled",
+					Skip:      true, // skipped because authority gated
 				},
 				{
 					RpcMethod: "UpdateParams",

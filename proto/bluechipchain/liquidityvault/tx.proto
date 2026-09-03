@@ -30,6 +30,25 @@ service Msg {
   // change in stage 1 of the LPV rollout.
   rpc SetRewardShare(MsgSetRewardShare) returns (MsgSetRewardShareResponse);
 
+  // AllocateToPool moves active vault balance into a registered liquidity
+  // pool. The resulting pool position counts toward the composite score at
+  // its current value.
+  rpc AllocateToPool(MsgAllocateToPool) returns (MsgAllocateToPoolResponse);
+
+  // DeallocateFromPool requests removal of liquidity from a pool. The
+  // liquidity keeps earning (and counting toward the composite score) until
+  // the universal deallocation grace period ends; the withdrawn funds then
+  // go to the validator's own account, leaving the vault.
+  rpc DeallocateFromPool(MsgDeallocateFromPool) returns (MsgDeallocateFromPoolResponse);
+
+  // RegisterPool registers a liquidity pool contract that vaults may supply
+  // liquidity to. Governance gated.
+  rpc RegisterPool(MsgRegisterPool) returns (MsgRegisterPoolResponse);
+
+  // SetPoolEnabled enables or disables new allocations to a registered
+  // pool. Governance gated. Deallocations are always allowed.
+  rpc SetPoolEnabled(MsgSetPoolEnabled) returns (MsgSetPoolEnabledResponse);
+
   // UpdateParams defines a (governance) operation for updating the module
   // parameters. The authority defaults to the x/gov module account.
   rpc UpdateParams(MsgUpdateParams) returns (MsgUpdateParamsResponse);
@@ -102,6 +121,108 @@ message MsgSetRewardShare {
 // MsgSetRewardShareResponse defines the response structure for executing a
 // MsgSetRewardShare message.
 message MsgSetRewardShareResponse {}
+
+// MsgAllocateToPool is the Msg/AllocateToPool request type.
+message MsgAllocateToPool {
+  option (cosmos.msg.v1.signer) = "validator_address";
+  option (amino.name) = "bluechipchain/x/liquidityvault/MsgAllocateToPool";
+
+  // validator_address is the operator address of the allocating validator.
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.ValidatorAddressString"];
+
+  // pool_id is the registered pool to supply liquidity to.
+  uint64 pool_id = 2;
+
+  // amount is the bond-denom coin to move from the vault's active balance
+  // into the pool.
+  cosmos.base.v1beta1.Coin amount = 3 [
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
+}
+
+// MsgAllocateToPoolResponse defines the response structure for executing a
+// MsgAllocateToPool message.
+message MsgAllocateToPoolResponse {
+  // shares is the number of internal pool shares minted for the allocation.
+  string shares = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// MsgDeallocateFromPool is the Msg/DeallocateFromPool request type.
+message MsgDeallocateFromPool {
+  option (cosmos.msg.v1.signer) = "validator_address";
+  option (amino.name) = "bluechipchain/x/liquidityvault/MsgDeallocateFromPool";
+
+  // validator_address is the operator address of the deallocating validator.
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.ValidatorAddressString"];
+
+  // pool_id is the pool to remove liquidity from.
+  uint64 pool_id = 2;
+
+  // shares is the number of the validator's internal pool shares to redeem.
+  string shares = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// MsgDeallocateFromPoolResponse defines the response structure for executing
+// a MsgDeallocateFromPool message.
+message MsgDeallocateFromPoolResponse {
+  // complete_time is when the deallocation grace period ends and the
+  // liquidity is removed from the pool.
+  google.protobuf.Timestamp complete_time = 1 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false
+  ];
+}
+
+// MsgRegisterPool is the Msg/RegisterPool request type.
+message MsgRegisterPool {
+  option (cosmos.msg.v1.signer) = "authority";
+  option (amino.name) = "bluechipchain/x/liquidityvault/MsgRegisterPool";
+
+  // authority is the address that controls the module (defaults to x/gov unless overwritten).
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // contract_address is the CosmWasm contract implementing the Vault Adapter
+  // Interface for the pool.
+  string contract_address = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // description is a short human-readable label for the pool.
+  string description = 3;
+}
+
+// MsgRegisterPoolResponse defines the response structure for executing a
+// MsgRegisterPool message.
+message MsgRegisterPoolResponse {
+  // pool_id is the module-assigned identifier of the new pool.
+  uint64 pool_id = 1;
+}
+
+// MsgSetPoolEnabled is the Msg/SetPoolEnabled request type.
+message MsgSetPoolEnabled {
+  option (cosmos.msg.v1.signer) = "authority";
+  option (amino.name) = "bluechipchain/x/liquidityvault/MsgSetPoolEnabled";
+
+  // authority is the address that controls the module (defaults to x/gov unless overwritten).
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // pool_id is the registered pool to update.
+  uint64 pool_id = 2;
+
+  // enabled controls whether new allocations to the pool are accepted.
+  bool enabled = 3;
+}
+
+// MsgSetPoolEnabledResponse defines the response structure for executing a
+// MsgSetPoolEnabled message.
+message MsgSetPoolEnabledResponse {}
 
 // MsgUpdateParams is the Msg/UpdateParams request type.
 message MsgUpdateParams {
