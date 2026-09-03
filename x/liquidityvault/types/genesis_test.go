@@ -112,6 +112,46 @@ func TestGenesisState_Validate(t *testing.T) {
 			},
 			valid: false,
 		},
+		{
+			desc: "value post history without a vault is invalid",
+			genState: &types.GenesisState{
+				Params: types.DefaultParams(),
+				ValuePostHistories: []types.ValuePostHistory{
+					{
+						ValidatorAddress: valAddr,
+						Posts:            []types.ValuePost{{Value: math.NewInt(1), PostTime: time.Now().UTC()}},
+					},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "scheduled value post without a vault is invalid",
+			genState: &types.GenesisState{
+				Params: types.DefaultParams(),
+				ScheduledValuePosts: []types.ScheduledValuePost{
+					{ValidatorAddress: valAddr, PostTime: time.Now().UTC()},
+				},
+			},
+			valid: false,
+		},
+		{
+			desc: "value posts tied to a vault are valid",
+			genState: &types.GenesisState{
+				Params: types.DefaultParams(),
+				Vaults: []types.Vault{validVault},
+				ValuePostHistories: []types.ValuePostHistory{
+					{
+						ValidatorAddress: valAddr,
+						Posts:            []types.ValuePost{{Value: math.NewInt(1), PostTime: time.Now().UTC()}},
+					},
+				},
+				ScheduledValuePosts: []types.ScheduledValuePost{
+					{ValidatorAddress: valAddr, PostTime: time.Now().UTC()},
+				},
+			},
+			valid: true,
+		},
 	}
 	for _, tc := range tests {
 		t.Run(tc.desc, func(t *testing.T) {

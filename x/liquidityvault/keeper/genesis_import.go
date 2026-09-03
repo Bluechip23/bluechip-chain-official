@@ -31,6 +31,34 @@ func (k Keeper) ImportPositions(ctx context.Context, positions []types.PoolPosit
 	return nil
 }
 
+// ImportValuePostSchedule writes the genesis value-post schedule and starts
+// the cadence for any vault the schedule does not cover (e.g. a genesis file
+// hand-written without schedule entries).
+func (k Keeper) ImportValuePostSchedule(ctx context.Context, vaults []types.Vault, scheduled []types.ScheduledValuePost) error {
+	covered := make(map[string]bool, len(scheduled))
+	for _, entry := range scheduled {
+		if err := k.SetScheduledValuePost(ctx, entry); err != nil {
+			return err
+		}
+		covered[entry.ValidatorAddress] = true
+	}
+
+	sdkCtx := sdk.UnwrapSDKContext(ctx)
+	for _, vault := range vaults {
+		if covered[vault.ValidatorAddress] {
+			continue
+		}
+		valAddr, err := sdk.ValAddressFromBech32(vault.ValidatorAddress)
+		if err != nil {
+			return err
+		}
+		if err := k.scheduleNextValuePost(sdkCtx, valAddr); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 // ImportPendingDeallocations writes genesis queue entries and rebuilds the
 // per-(validator, pool) pending-share reservations from them.
 func (k Keeper) ImportPendingDeallocations(ctx context.Context, deallocations []types.PendingDeallocation) error {

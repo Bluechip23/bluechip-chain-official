@@ -6,8 +6,10 @@ import "cosmos_proto/cosmos.proto";
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
 import "cosmos/base/query/v1beta1/pagination.proto";
+import "google/protobuf/timestamp.proto";
 import "bluechipchain/liquidityvault/params.proto";
 import "bluechipchain/liquidityvault/pool.proto";
+import "bluechipchain/liquidityvault/valuepost.proto";
 import "bluechipchain/liquidityvault/vault.proto";
 
 option go_package = "bluechipChain/x/liquidityvault/types";
@@ -46,6 +48,20 @@ service Query {
   // prices, including pending deallocations.
   rpc Positions(QueryPositionsRequest) returns (QueryPositionsResponse) {
     option (google.api.http).get = "/bluechipChain/liquidityvault/positions/{validator_address}";
+  }
+
+  // ValuePosts queries a validator's rolling value-post window and the
+  // median derived from it.
+  rpc ValuePosts(QueryValuePostsRequest) returns (QueryValuePostsResponse) {
+    option (google.api.http).get = "/bluechipChain/liquidityvault/value_posts/{validator_address}";
+  }
+
+  // SetRanking is a SHADOW of the design document's complex validator-set
+  // check: all validators ranked by staked tokens with the composite score
+  // as tiebreaker. Observability only — it has no effect on the actual
+  // validator set in stage 1.
+  rpc SetRanking(QuerySetRankingRequest) returns (QuerySetRankingResponse) {
+    option (google.api.http).get = "/bluechipChain/liquidityvault/set_ranking";
   }
 }
 
@@ -133,6 +149,15 @@ message QueryCompositeScoreResponse {
     (gogoproto.customtype) = "cosmossdk.io/math.Int",
     (gogoproto.nullable) = false
   ];
+
+  // median_vault_value is the median of the vault's value posts — the vault
+  // component actually used in composite_score once posts exist. Before the
+  // first post it equals the live vault value.
+  string median_vault_value = 5 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
 }
 
 // QueryPoolsRequest is request type for the Query/Pools RPC method.
@@ -180,4 +205,70 @@ message QueryPositionsResponse {
   // pending_deallocations are the validator's pool exits still waiting out
   // the deallocation grace period.
   repeated PendingDeallocation pending_deallocations = 2 [(gogoproto.nullable) = false];
+}
+
+// QueryValuePostsRequest is request type for the Query/ValuePosts RPC
+// method.
+message QueryValuePostsRequest {
+  // validator_address is the operator address of the validator whose value
+  // posts are queried.
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.ValidatorAddressString"];
+}
+
+// QueryValuePostsResponse is response type for the Query/ValuePosts RPC
+// method.
+message QueryValuePostsResponse {
+  // posts are the validator's retained value posts, oldest first.
+  repeated ValuePost posts = 1 [(gogoproto.nullable) = false];
+
+  // median is the median of the retained posts (zero when there are none).
+  string median = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // next_post_time is when the next snapshot is due; unset when nothing is
+  // scheduled (e.g. the validator has no vault).
+  google.protobuf.Timestamp next_post_time = 3 [(gogoproto.stdtime) = true];
+}
+
+// QuerySetRankingRequest is request type for the Query/SetRanking RPC
+// method.
+message QuerySetRankingRequest {}
+
+// RankedValidator is one row of the shadow set ranking.
+message RankedValidator {
+  // validator_address is the operator address of the validator.
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.ValidatorAddressString"];
+
+  // staked_tokens are the tokens delegated directly to the validator.
+  string staked_tokens = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // median_vault_value is the median-of-posts vault value used as the
+  // tiebreaker.
+  string median_vault_value = 3 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // composite_score is staked_tokens + median_vault_value.
+  string composite_score = 4 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// QuerySetRankingResponse is response type for the Query/SetRanking RPC
+// method: validators ordered by staked tokens descending, composite score
+// as tiebreaker — the design document's complex check, in shadow mode.
+message QuerySetRankingResponse {
+  // validators are the ranked validators, best first.
+  repeated RankedValidator validators = 1 [(gogoproto.nullable) = false];
 }

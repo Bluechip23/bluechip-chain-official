@@ -3,6 +3,7 @@ package keeper
 import (
 	"context"
 	"fmt"
+	"sort"
 	"testing"
 
 	"cosmossdk.io/log"
@@ -52,6 +53,20 @@ func (m *MockStakingKeeper) GetValidator(_ context.Context, addr sdk.ValAddress)
 		return stakingtypes.Validator{}, stakingtypes.ErrNoValidatorFound
 	}
 	return validator, nil
+}
+
+func (m *MockStakingKeeper) GetAllValidators(_ context.Context) ([]stakingtypes.Validator, error) {
+	addrs := make([]string, 0, len(m.Validators))
+	for addr := range m.Validators {
+		addrs = append(addrs, addr)
+	}
+	sort.Strings(addrs)
+
+	validators := make([]stakingtypes.Validator, 0, len(addrs))
+	for _, addr := range addrs {
+		validators = append(validators, m.Validators[addr])
+	}
+	return validators, nil
 }
 
 func (m *MockStakingKeeper) BondDenom(_ context.Context) (string, error) {

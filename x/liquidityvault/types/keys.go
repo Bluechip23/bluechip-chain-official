@@ -64,6 +64,22 @@ var (
 	// PositionKeyPrefix. It always equals the queue's per-position sums
 	// (enforced by the module invariant).
 	PendingSharesKeyPrefix = []byte{0x09}
+
+	// ValuePostHistoryKeyPrefix is the store prefix for validators' rolling
+	// value-post windows, keyed by validator operator address.
+	ValuePostHistoryKeyPrefix = []byte{0x0A}
+
+	// ValuePostScheduleKeyPrefix is the store prefix for the time-ordered
+	// value-post schedule, keyed by post time then validator operator
+	// address.
+	ValuePostScheduleKeyPrefix = []byte{0x0B}
+
+	// CachedPoolValueKeyPrefix is the store prefix for the last successfully
+	// observed position value per pool, keyed by pool id. Used as the
+	// fallback when a pool contract cannot be queried during a value post,
+	// so a broken pool degrades a score gracefully instead of halting the
+	// end blocker or zeroing the vault.
+	CachedPoolValueKeyPrefix = []byte{0x0C}
 )
 
 // VaultKey returns the store key for a validator's vault.
@@ -134,4 +150,28 @@ func PendingDeallocationTimeKey(t time.Time) []byte {
 // deallocation from a pool completing at time t.
 func PendingDeallocationKey(t time.Time, valAddr sdk.ValAddress, poolID uint64) []byte {
 	return append(PendingDeallocationTimeKey(t), positionSuffix(valAddr, poolID)...)
+}
+
+// ValuePostHistoryKey returns the store key for a validator's value-post
+// window.
+func ValuePostHistoryKey(valAddr sdk.ValAddress) []byte {
+	return append(ValuePostHistoryKeyPrefix, valAddr.Bytes()...)
+}
+
+// ValuePostScheduleTimeKey returns the schedule prefix covering every post
+// due at time t.
+func ValuePostScheduleTimeKey(t time.Time) []byte {
+	return append(ValuePostScheduleKeyPrefix, sdk.FormatTimeBytes(t)...)
+}
+
+// ValuePostScheduleKey returns the store key for a validator's scheduled
+// value post at time t.
+func ValuePostScheduleKey(t time.Time, valAddr sdk.ValAddress) []byte {
+	return append(ValuePostScheduleTimeKey(t), valAddr.Bytes()...)
+}
+
+// CachedPoolValueKey returns the store key for a pool's last observed
+// position value.
+func CachedPoolValueKey(poolID uint64) []byte {
+	return binary.BigEndian.AppendUint64(CachedPoolValueKeyPrefix, poolID)
 }

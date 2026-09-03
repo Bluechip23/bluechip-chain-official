@@ -42,4 +42,15 @@ message Params {
     (gogoproto.nullable) = false,
     (amino.dont_omitempty) = true
   ];
+
+  // value_post_interval is the average time between a vault's value posts.
+  // Actual post times are jittered pseudo-randomly within
+  // [interval/2, interval*3/2) to mitigate gaming of the snapshots. The
+  // design document's cadence is six posts per five-day complex-check
+  // window (20h).
+  google.protobuf.Duration value_post_interval = 4 [
+    (gogoproto.stdduration) = true,
+    (gogoproto.nullable) = false,
+    (amino.dont_omitempty) = true
+  ];
 }

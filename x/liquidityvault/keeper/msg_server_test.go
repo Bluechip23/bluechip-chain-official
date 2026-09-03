@@ -45,7 +45,7 @@ func TestMsgUpdateParams(t *testing.T) {
 			name: "all good",
 			input: &types.MsgUpdateParams{
 				Authority: k.GetAuthority(),
-				Params:    types.NewParams(math.NewInt(1_000_000), types.DefaultWithdrawalGracePeriod, types.DefaultDeallocationGracePeriod),
+				Params:    types.NewParams(math.NewInt(1_000_000), types.DefaultWithdrawalGracePeriod, types.DefaultDeallocationGracePeriod, types.DefaultValuePostInterval),
 			},
 		},
 	}

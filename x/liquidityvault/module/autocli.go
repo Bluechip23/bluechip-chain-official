@@ -45,6 +45,17 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Short:          "Shows a validator's pool positions and pending deallocations",
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "validator_address"}},
 				},
+				{
+					RpcMethod:      "ValuePosts",
+					Use:            "value-posts [validator-address]",
+					Short:          "Shows a validator's vault value posts, their median, and the next post time",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{{ProtoField: "validator_address"}},
+				},
+				{
+					RpcMethod: "SetRanking",
+					Use:       "set-ranking",
+					Short:     "Shows the shadow complex-check ranking (staked tokens, composite score tiebreaker)",
+				},
 			},
 		},
 		Tx: &autocliv1.ServiceCommandDescriptor{

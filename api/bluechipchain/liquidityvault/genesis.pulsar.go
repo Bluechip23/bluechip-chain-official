@@ -269,6 +269,159 @@ func (x *_GenesisState_7_list) IsValid() bool {
 	return x.list != nil
 }
 
+var _ protoreflect.List = (*_GenesisState_8_list)(nil)
+
+type _GenesisState_8_list struct {
+	list *[]*ValuePostHistory
+}
+
+func (x *_GenesisState_8_list) Len() int {
+	if x.list == nil {
+		return 0
+	}
+	return len(*x.list)
+}
+
+func (x *_GenesisState_8_list) Get(i int) protoreflect.Value {
+	return protoreflect.ValueOfMessage((*x.list)[i].ProtoReflect())
+}
+
+func (x *_GenesisState_8_list) Set(i int, value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*ValuePostHistory)
+	(*x.list)[i] = concreteValue
+}
+
+func (x *_GenesisState_8_list) Append(value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*ValuePostHistory)
+	*x.list = append(*x.list, concreteValue)
+}
+
+func (x *_GenesisState_8_list) AppendMutable() protoreflect.Value {
+	v := new(ValuePostHistory)
+	*x.list = append(*x.list, v)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_8_list) Truncate(n int) {
+	for i := n; i < len(*x.list); i++ {
+		(*x.list)[i] = nil
+	}
+	*x.list = (*x.list)[:n]
+}
+
+func (x *_GenesisState_8_list) NewElement() protoreflect.Value {
+	v := new(ValuePostHistory)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_8_list) IsValid() bool {
+	return x.list != nil
+}
+
+var _ protoreflect.List = (*_GenesisState_9_list)(nil)
+
+type _GenesisState_9_list struct {
+	list *[]*ScheduledValuePost
+}
+
+func (x *_GenesisState_9_list) Len() int {
+	if x.list == nil {
+		return 0
+	}
+	return len(*x.list)
+}
+
+func (x *_GenesisState_9_list) Get(i int) protoreflect.Value {
+	return protoreflect.ValueOfMessage((*x.list)[i].ProtoReflect())
+}
+
+func (x *_GenesisState_9_list) Set(i int, value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*ScheduledValuePost)
+	(*x.list)[i] = concreteValue
+}
+
+func (x *_GenesisState_9_list) Append(value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*ScheduledValuePost)
+	*x.list = append(*x.list, concreteValue)
+}
+
+func (x *_GenesisState_9_list) AppendMutable() protoreflect.Value {
+	v := new(ScheduledValuePost)
+	*x.list = append(*x.list, v)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_9_list) Truncate(n int) {
+	for i := n; i < len(*x.list); i++ {
+		(*x.list)[i] = nil
+	}
+	*x.list = (*x.list)[:n]
+}
+
+func (x *_GenesisState_9_list) NewElement() protoreflect.Value {
+	v := new(ScheduledValuePost)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_9_list) IsValid() bool {
+	return x.list != nil
+}
+
+var _ protoreflect.List = (*_GenesisState_10_list)(nil)
+
+type _GenesisState_10_list struct {
+	list *[]*CachedPoolValue
+}
+
+func (x *_GenesisState_10_list) Len() int {
+	if x.list == nil {
+		return 0
+	}
+	return len(*x.list)
+}
+
+func (x *_GenesisState_10_list) Get(i int) protoreflect.Value {
+	return protoreflect.ValueOfMessage((*x.list)[i].ProtoReflect())
+}
+
+func (x *_GenesisState_10_list) Set(i int, value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*CachedPoolValue)
+	(*x.list)[i] = concreteValue
+}
+
+func (x *_GenesisState_10_list) Append(value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*CachedPoolValue)
+	*x.list = append(*x.list, concreteValue)
+}
+
+func (x *_GenesisState_10_list) AppendMutable() protoreflect.Value {
+	v := new(CachedPoolValue)
+	*x.list = append(*x.list, v)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_10_list) Truncate(n int) {
+	for i := n; i < len(*x.list); i++ {
+		(*x.list)[i] = nil
+	}
+	*x.list = (*x.list)[:n]
+}
+
+func (x *_GenesisState_10_list) NewElement() protoreflect.Value {
+	v := new(CachedPoolValue)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_10_list) IsValid() bool {
+	return x.list != nil
+}
+
 var (
 	md_GenesisState                       protoreflect.MessageDescriptor
 	fd_GenesisState_params                protoreflect.FieldDescriptor
@@ -278,6 +431,9 @@ var (
 	fd_GenesisState_next_pool_id          protoreflect.FieldDescriptor
 	fd_GenesisState_positions             protoreflect.FieldDescriptor
 	fd_GenesisState_pending_deallocations protoreflect.FieldDescriptor
+	fd_GenesisState_value_post_histories  protoreflect.FieldDescriptor
+	fd_GenesisState_scheduled_value_posts protoreflect.FieldDescriptor
+	fd_GenesisState_cached_pool_values    protoreflect.FieldDescriptor
 )
 
 func init() {
@@ -290,6 +446,9 @@ func init() {
 	fd_GenesisState_next_pool_id = md_GenesisState.Fields().ByName("next_pool_id")
 	fd_GenesisState_positions = md_GenesisState.Fields().ByName("positions")
 	fd_GenesisState_pending_deallocations = md_GenesisState.Fields().ByName("pending_deallocations")
+	fd_GenesisState_value_post_histories = md_GenesisState.Fields().ByName("value_post_histories")
+	fd_GenesisState_scheduled_value_posts = md_GenesisState.Fields().ByName("scheduled_value_posts")
+	fd_GenesisState_cached_pool_values = md_GenesisState.Fields().ByName("cached_pool_values")
 }
 
 var _ protoreflect.Message = (*fastReflection_GenesisState)(nil)
@@ -399,6 +558,24 @@ func (x *fastReflection_GenesisState) Range(f func(protoreflect.FieldDescriptor,
 			return
 		}
 	}
+	if len(x.ValuePostHistories) != 0 {
+		value := protoreflect.ValueOfList(&_GenesisState_8_list{list: &x.ValuePostHistories})
+		if !f(fd_GenesisState_value_post_histories, value) {
+			return
+		}
+	}
+	if len(x.ScheduledValuePosts) != 0 {
+		value := protoreflect.ValueOfList(&_GenesisState_9_list{list: &x.ScheduledValuePosts})
+		if !f(fd_GenesisState_scheduled_value_posts, value) {
+			return
+		}
+	}
+	if len(x.CachedPoolValues) != 0 {
+		value := protoreflect.ValueOfList(&_GenesisState_10_list{list: &x.CachedPoolValues})
+		if !f(fd_GenesisState_cached_pool_values, value) {
+			return
+		}
+	}
 }
 
 // Has reports whether a field is populated.
@@ -428,6 +605,12 @@ func (x *fastReflection_GenesisState) Has(fd protoreflect.FieldDescriptor) bool 
 		return len(x.Positions) != 0
 	case "bluechipchain.liquidityvault.GenesisState.pending_deallocations":
 		return len(x.PendingDeallocations) != 0
+	case "bluechipchain.liquidityvault.GenesisState.value_post_histories":
+		return len(x.ValuePostHistories) != 0
+	case "bluechipchain.liquidityvault.GenesisState.scheduled_value_posts":
+		return len(x.ScheduledValuePosts) != 0
+	case "bluechipchain.liquidityvault.GenesisState.cached_pool_values":
+		return len(x.CachedPoolValues) != 0
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.liquidityvault.GenesisState"))
@@ -458,6 +641,12 @@ func (x *fastReflection_GenesisState) Clear(fd protoreflect.FieldDescriptor) {
 		x.Positions = nil
 	case "bluechipchain.liquidityvault.GenesisState.pending_deallocations":
 		x.PendingDeallocations = nil
+	case "bluechipchain.liquidityvault.GenesisState.value_post_histories":
+		x.ValuePostHistories = nil
+	case "bluechipchain.liquidityvault.GenesisState.scheduled_value_posts":
+		x.ScheduledValuePosts = nil
+	case "bluechipchain.liquidityvault.GenesisState.cached_pool_values":
+		x.CachedPoolValues = nil
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.liquidityvault.GenesisState"))
@@ -510,6 +699,24 @@ func (x *fastReflection_GenesisState) Get(descriptor protoreflect.FieldDescripto
 		}
 		listValue := &_GenesisState_7_list{list: &x.PendingDeallocations}
 		return protoreflect.ValueOfList(listValue)
+	case "bluechipchain.liquidityvault.GenesisState.value_post_histories":
+		if len(x.ValuePostHistories) == 0 {
+			return protoreflect.ValueOfList(&_GenesisState_8_list{})
+		}
+		listValue := &_GenesisState_8_list{list: &x.ValuePostHistories}
+		return protoreflect.ValueOfList(listValue)
+	case "bluechipchain.liquidityvault.GenesisState.scheduled_value_posts":
+		if len(x.ScheduledValuePosts) == 0 {
+			return protoreflect.ValueOfList(&_GenesisState_9_list{})
+		}
+		listValue := &_GenesisState_9_list{list: &x.ScheduledValuePosts}
+		return protoreflect.ValueOfList(listValue)
+	case "bluechipchain.liquidityvault.GenesisState.cached_pool_values":
+		if len(x.CachedPoolValues) == 0 {
+			return protoreflect.ValueOfList(&_GenesisState_10_list{})
+		}
+		listValue := &_GenesisState_10_list{list: &x.CachedPoolValues}
+		return protoreflect.ValueOfList(listValue)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.liquidityvault.GenesisState"))
@@ -554,6 +761,18 @@ func (x *fastReflection_GenesisState) Set(fd protoreflect.FieldDescriptor, value
 		lv := value.List()
 		clv := lv.(*_GenesisState_7_list)
 		x.PendingDeallocations = *clv.list
+	case "bluechipchain.liquidityvault.GenesisState.value_post_histories":
+		lv := value.List()
+		clv := lv.(*_GenesisState_8_list)
+		x.ValuePostHistories = *clv.list
+	case "bluechipchain.liquidityvault.GenesisState.scheduled_value_posts":
+		lv := value.List()
+		clv := lv.(*_GenesisState_9_list)
+		x.ScheduledValuePosts = *clv.list
+	case "bluechipchain.liquidityvault.GenesisState.cached_pool_values":
+		lv := value.List()
+		clv := lv.(*_GenesisState_10_list)
+		x.CachedPoolValues = *clv.list
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.liquidityvault.GenesisState"))
@@ -609,6 +828,24 @@ func (x *fastReflection_GenesisState) Mutable(fd protoreflect.FieldDescriptor) p
 		}
 		value := &_GenesisState_7_list{list: &x.PendingDeallocations}
 		return protoreflect.ValueOfList(value)
+	case "bluechipchain.liquidityvault.GenesisState.value_post_histories":
+		if x.ValuePostHistories == nil {
+			x.ValuePostHistories = []*ValuePostHistory{}
+		}
+		value := &_GenesisState_8_list{list: &x.ValuePostHistories}
+		return protoreflect.ValueOfList(value)
+	case "bluechipchain.liquidityvault.GenesisState.scheduled_value_posts":
+		if x.ScheduledValuePosts == nil {
+			x.ScheduledValuePosts = []*ScheduledValuePost{}
+		}
+		value := &_GenesisState_9_list{list: &x.ScheduledValuePosts}
+		return protoreflect.ValueOfList(value)
+	case "bluechipchain.liquidityvault.GenesisState.cached_pool_values":
+		if x.CachedPoolValues == nil {
+			x.CachedPoolValues = []*CachedPoolValue{}
+		}
+		value := &_GenesisState_10_list{list: &x.CachedPoolValues}
+		return protoreflect.ValueOfList(value)
 	case "bluechipchain.liquidityvault.GenesisState.next_pool_id":
 		panic(fmt.Errorf("field next_pool_id of message bluechipchain.liquidityvault.GenesisState is not mutable"))
 	default:
@@ -644,6 +881,15 @@ func (x *fastReflection_GenesisState) NewField(fd protoreflect.FieldDescriptor) 
 	case "bluechipchain.liquidityvault.GenesisState.pending_deallocations":
 		list := []*PendingDeallocation{}
 		return protoreflect.ValueOfList(&_GenesisState_7_list{list: &list})
+	case "bluechipchain.liquidityvault.GenesisState.value_post_histories":
+		list := []*ValuePostHistory{}
+		return protoreflect.ValueOfList(&_GenesisState_8_list{list: &list})
+	case "bluechipchain.liquidityvault.GenesisState.scheduled_value_posts":
+		list := []*ScheduledValuePost{}
+		return protoreflect.ValueOfList(&_GenesisState_9_list{list: &list})
+	case "bluechipchain.liquidityvault.GenesisState.cached_pool_values":
+		list := []*CachedPoolValue{}
+		return protoreflect.ValueOfList(&_GenesisState_10_list{list: &list})
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.liquidityvault.GenesisState"))
@@ -750,6 +996,24 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 				n += 1 + l + runtime.Sov(uint64(l))
 			}
 		}
+		if len(x.ValuePostHistories) > 0 {
+			for _, e := range x.ValuePostHistories {
+				l = options.Size(e)
+				n += 1 + l + runtime.Sov(uint64(l))
+			}
+		}
+		if len(x.ScheduledValuePosts) > 0 {
+			for _, e := range x.ScheduledValuePosts {
+				l = options.Size(e)
+				n += 1 + l + runtime.Sov(uint64(l))
+			}
+		}
+		if len(x.CachedPoolValues) > 0 {
+			for _, e := range x.CachedPoolValues {
+				l = options.Size(e)
+				n += 1 + l + runtime.Sov(uint64(l))
+			}
+		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
 		}
@@ -778,6 +1042,54 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 		if x.unknownFields != nil {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.CachedPoolValues) > 0 {
+			for iNdEx := len(x.CachedPoolValues) - 1; iNdEx >= 0; iNdEx-- {
+				encoded, err := options.Marshal(x.CachedPoolValues[iNdEx])
+				if err != nil {
+					return protoiface.MarshalOutput{
+						NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+						Buf:               input.Buf,
+					}, err
+				}
+				i -= len(encoded)
+				copy(dAtA[i:], encoded)
+				i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+				i--
+				dAtA[i] = 0x52
+			}
+		}
+		if len(x.ScheduledValuePosts) > 0 {
+			for iNdEx := len(x.ScheduledValuePosts) - 1; iNdEx >= 0; iNdEx-- {
+				encoded, err := options.Marshal(x.ScheduledValuePosts[iNdEx])
+				if err != nil {
+					return protoiface.MarshalOutput{
+						NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+						Buf:               input.Buf,
+					}, err
+				}
+				i -= len(encoded)
+				copy(dAtA[i:], encoded)
+				i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+				i--
+				dAtA[i] = 0x4a
+			}
+		}
+		if len(x.ValuePostHistories) > 0 {
+			for iNdEx := len(x.ValuePostHistories) - 1; iNdEx >= 0; iNdEx-- {
+				encoded, err := options.Marshal(x.ValuePostHistories[iNdEx])
+				if err != nil {
+					return protoiface.MarshalOutput{
+						NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+						Buf:               input.Buf,
+					}, err
+				}
+				i -= len(encoded)
+				copy(dAtA[i:], encoded)
+				i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+				i--
+				dAtA[i] = 0x42
+			}
 		}
 		if len(x.PendingDeallocations) > 0 {
 			for iNdEx := len(x.PendingDeallocations) - 1; iNdEx >= 0; iNdEx-- {
@@ -1152,6 +1464,108 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
 				}
 				iNdEx = postIndex
+			case 8:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ValuePostHistories", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ValuePostHistories = append(x.ValuePostHistories, &ValuePostHistory{})
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.ValuePostHistories[len(x.ValuePostHistories)-1]); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 9:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field ScheduledValuePosts", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.ScheduledValuePosts = append(x.ScheduledValuePosts, &ScheduledValuePost{})
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.ScheduledValuePosts[len(x.ScheduledValuePosts)-1]); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
+			case 10:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field CachedPoolValues", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.CachedPoolValues = append(x.CachedPoolValues, &CachedPoolValue{})
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.CachedPoolValues[len(x.CachedPoolValues)-1]); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -1222,6 +1636,13 @@ type GenesisState struct {
 	// pending_deallocations are pool exits still waiting out the deallocation
 	// grace period.
 	PendingDeallocations []*PendingDeallocation `protobuf:"bytes,7,rep,name=pending_deallocations,json=pendingDeallocations,proto3" json:"pending_deallocations,omitempty"`
+	// value_post_histories are the validators' rolling value-post windows.
+	ValuePostHistories []*ValuePostHistory `protobuf:"bytes,8,rep,name=value_post_histories,json=valuePostHistories,proto3" json:"value_post_histories,omitempty"`
+	// scheduled_value_posts is the pending value-post schedule.
+	ScheduledValuePosts []*ScheduledValuePost `protobuf:"bytes,9,rep,name=scheduled_value_posts,json=scheduledValuePosts,proto3" json:"scheduled_value_posts,omitempty"`
+	// cached_pool_values are the last observed position values per pool (the
+	// dark-pool valuation fallback).
+	CachedPoolValues []*CachedPoolValue `protobuf:"bytes,10,rep,name=cached_pool_values,json=cachedPoolValues,proto3" json:"cached_pool_values,omitempty"`
 }
 
 func (x *GenesisState) Reset() {
@@ -1293,6 +1714,27 @@ func (x *GenesisState) GetPendingDeallocations() []*PendingDeallocation {
 	return nil
 }
 
+func (x *GenesisState) GetValuePostHistories() []*ValuePostHistory {
+	if x != nil {
+		return x.ValuePostHistories
+	}
+	return nil
+}
+
+func (x *GenesisState) GetScheduledValuePosts() []*ScheduledValuePost {
+	if x != nil {
+		return x.ScheduledValuePosts
+	}
+	return nil
+}
+
+func (x *GenesisState) GetCachedPoolValues() []*CachedPoolValue {
+	if x != nil {
+		return x.CachedPoolValues
+	}
+	return nil
+}
+
 var File_bluechipchain_liquidityvault_genesis_proto protoreflect.FileDescriptor
 
 var file_bluechipchain_liquidityvault_genesis_proto_rawDesc = []byte{
@@ -1308,47 +1750,70 @@ var file_bluechipchain_liquidityvault_genesis_proto_rawDesc = []byte{
 	0x74, 0x2f, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x27,
 	0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x6c, 0x69,
 	0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2f, 0x70, 0x6f, 0x6f,
-	0x6c, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x28, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69,
+	0x6c, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x2c, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69,
 	0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79,
-	0x76, 0x61, 0x75, 0x6c, 0x74, 0x2f, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74,
-	0x6f, 0x22, 0xac, 0x04, 0x0a, 0x0c, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x53, 0x74, 0x61,
-	0x74, 0x65, 0x12, 0x47, 0x0a, 0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x18, 0x01, 0x20, 0x01,
-	0x28, 0x0b, 0x32, 0x24, 0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61,
-	0x69, 0x6e, 0x2e, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c,
-	0x74, 0x2e, 0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x42, 0x09, 0xc8, 0xde, 0x1f, 0x00, 0xa8, 0xe7,
-	0xb0, 0x2a, 0x01, 0x52, 0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x41, 0x0a, 0x06, 0x76,
-	0x61, 0x75, 0x6c, 0x74, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x23, 0x2e, 0x62, 0x6c,
-	0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x6c, 0x69, 0x71, 0x75,
-	0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x56, 0x61, 0x75, 0x6c, 0x74,
-	0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x06, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x73, 0x12, 0x66,
-	0x0a, 0x13, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x5f, 0x77, 0x69, 0x74, 0x68, 0x64, 0x72,
-	0x61, 0x77, 0x61, 0x6c, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2f, 0x2e, 0x62, 0x6c,
-	0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x6c, 0x69, 0x71, 0x75,
-	0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x50, 0x65, 0x6e, 0x64, 0x69,
-	0x6e, 0x67, 0x57, 0x69, 0x74, 0x68, 0x64, 0x72, 0x61, 0x77, 0x61, 0x6c, 0x42, 0x04, 0xc8, 0xde,
-	0x1f, 0x00, 0x52, 0x12, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x57, 0x69, 0x74, 0x68, 0x64,
-	0x72, 0x61, 0x77, 0x61, 0x6c, 0x73, 0x12, 0x48, 0x0a, 0x05, 0x70, 0x6f, 0x6f, 0x6c, 0x73, 0x18,
-	0x04, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2c, 0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70,
+	0x76, 0x61, 0x75, 0x6c, 0x74, 0x2f, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x70, 0x6f, 0x73, 0x74, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x28, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63,
+	0x68, 0x61, 0x69, 0x6e, 0x2f, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61,
+	0x75, 0x6c, 0x74, 0x2f, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22,
+	0xe3, 0x06, 0x0a, 0x0c, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x53, 0x74, 0x61, 0x74, 0x65,
+	0x12, 0x47, 0x0a, 0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
+	0x32, 0x24, 0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e,
+	0x2e, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e,
+	0x50, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x42, 0x09, 0xc8, 0xde, 0x1f, 0x00, 0xa8, 0xe7, 0xb0, 0x2a,
+	0x01, 0x52, 0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x12, 0x41, 0x0a, 0x06, 0x76, 0x61, 0x75,
+	0x6c, 0x74, 0x73, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x23, 0x2e, 0x62, 0x6c, 0x75, 0x65,
+	0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64,
+	0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x56, 0x61, 0x75, 0x6c, 0x74, 0x42, 0x04,
+	0xc8, 0xde, 0x1f, 0x00, 0x52, 0x06, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x73, 0x12, 0x66, 0x0a, 0x13,
+	0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x5f, 0x77, 0x69, 0x74, 0x68, 0x64, 0x72, 0x61, 0x77,
+	0x61, 0x6c, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2f, 0x2e, 0x62, 0x6c, 0x75, 0x65,
+	0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64,
+	0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x50, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67,
+	0x57, 0x69, 0x74, 0x68, 0x64, 0x72, 0x61, 0x77, 0x61, 0x6c, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00,
+	0x52, 0x12, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x57, 0x69, 0x74, 0x68, 0x64, 0x72, 0x61,
+	0x77, 0x61, 0x6c, 0x73, 0x12, 0x48, 0x0a, 0x05, 0x70, 0x6f, 0x6f, 0x6c, 0x73, 0x18, 0x04, 0x20,
+	0x03, 0x28, 0x0b, 0x32, 0x2c, 0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68,
+	0x61, 0x69, 0x6e, 0x2e, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75,
+	0x6c, 0x74, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x65, 0x64, 0x50, 0x6f, 0x6f,
+	0x6c, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x05, 0x70, 0x6f, 0x6f, 0x6c, 0x73, 0x12, 0x20,
+	0x0a, 0x0c, 0x6e, 0x65, 0x78, 0x74, 0x5f, 0x70, 0x6f, 0x6f, 0x6c, 0x5f, 0x69, 0x64, 0x18, 0x05,
+	0x20, 0x01, 0x28, 0x04, 0x52, 0x0a, 0x6e, 0x65, 0x78, 0x74, 0x50, 0x6f, 0x6f, 0x6c, 0x49, 0x64,
+	0x12, 0x4e, 0x0a, 0x09, 0x70, 0x6f, 0x73, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x06, 0x20,
+	0x03, 0x28, 0x0b, 0x32, 0x2a, 0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68,
+	0x61, 0x69, 0x6e, 0x2e, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75,
+	0x6c, 0x74, 0x2e, 0x50, 0x6f, 0x6f, 0x6c, 0x50, 0x6f, 0x73, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x42,
+	0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x09, 0x70, 0x6f, 0x73, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x73,
+	0x12, 0x6c, 0x0a, 0x15, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x5f, 0x64, 0x65, 0x61, 0x6c,
+	0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x07, 0x20, 0x03, 0x28, 0x0b, 0x32,
+	0x31, 0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e,
+	0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x50,
+	0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x44, 0x65, 0x61, 0x6c, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69,
+	0x6f, 0x6e, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x14, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e,
+	0x67, 0x44, 0x65, 0x61, 0x6c, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x12, 0x66,
+	0x0a, 0x14, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x5f, 0x70, 0x6f, 0x73, 0x74, 0x5f, 0x68, 0x69, 0x73,
+	0x74, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x18, 0x08, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2e, 0x2e, 0x62,
+	0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x6c, 0x69, 0x71,
+	0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x56, 0x61, 0x6c, 0x75,
+	0x65, 0x50, 0x6f, 0x73, 0x74, 0x48, 0x69, 0x73, 0x74, 0x6f, 0x72, 0x79, 0x42, 0x04, 0xc8, 0xde,
+	0x1f, 0x00, 0x52, 0x12, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x50, 0x6f, 0x73, 0x74, 0x48, 0x69, 0x73,
+	0x74, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x12, 0x6a, 0x0a, 0x15, 0x73, 0x63, 0x68, 0x65, 0x64, 0x75,
+	0x6c, 0x65, 0x64, 0x5f, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x5f, 0x70, 0x6f, 0x73, 0x74, 0x73, 0x18,
+	0x09, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x30, 0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70,
 	0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76,
-	0x61, 0x75, 0x6c, 0x74, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x65, 0x64, 0x50,
-	0x6f, 0x6f, 0x6c, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x05, 0x70, 0x6f, 0x6f, 0x6c, 0x73,
-	0x12, 0x20, 0x0a, 0x0c, 0x6e, 0x65, 0x78, 0x74, 0x5f, 0x70, 0x6f, 0x6f, 0x6c, 0x5f, 0x69, 0x64,
-	0x18, 0x05, 0x20, 0x01, 0x28, 0x04, 0x52, 0x0a, 0x6e, 0x65, 0x78, 0x74, 0x50, 0x6f, 0x6f, 0x6c,
-	0x49, 0x64, 0x12, 0x4e, 0x0a, 0x09, 0x70, 0x6f, 0x73, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18,
-	0x06, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2a, 0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70,
-	0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76,
-	0x61, 0x75, 0x6c, 0x74, 0x2e, 0x50, 0x6f, 0x6f, 0x6c, 0x50, 0x6f, 0x73, 0x69, 0x74, 0x69, 0x6f,
-	0x6e, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x09, 0x70, 0x6f, 0x73, 0x69, 0x74, 0x69, 0x6f,
-	0x6e, 0x73, 0x12, 0x6c, 0x0a, 0x15, 0x70, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x5f, 0x64, 0x65,
-	0x61, 0x6c, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x18, 0x07, 0x20, 0x03, 0x28,
-	0x0b, 0x32, 0x31, 0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69,
-	0x6e, 0x2e, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74,
-	0x2e, 0x50, 0x65, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x44, 0x65, 0x61, 0x6c, 0x6c, 0x6f, 0x63, 0x61,
-	0x74, 0x69, 0x6f, 0x6e, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x14, 0x70, 0x65, 0x6e, 0x64,
-	0x69, 0x6e, 0x67, 0x44, 0x65, 0x61, 0x6c, 0x6c, 0x6f, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73,
-	0x42, 0x26, 0x5a, 0x24, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x43, 0x68, 0x61, 0x69,
-	0x6e, 0x2f, 0x78, 0x2f, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75,
-	0x6c, 0x74, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x61, 0x75, 0x6c, 0x74, 0x2e, 0x53, 0x63, 0x68, 0x65, 0x64, 0x75, 0x6c, 0x65, 0x64, 0x56, 0x61,
+	0x6c, 0x75, 0x65, 0x50, 0x6f, 0x73, 0x74, 0x42, 0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x13, 0x73,
+	0x63, 0x68, 0x65, 0x64, 0x75, 0x6c, 0x65, 0x64, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x50, 0x6f, 0x73,
+	0x74, 0x73, 0x12, 0x61, 0x0a, 0x12, 0x63, 0x61, 0x63, 0x68, 0x65, 0x64, 0x5f, 0x70, 0x6f, 0x6f,
+	0x6c, 0x5f, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x73, 0x18, 0x0a, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x2d,
+	0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2e, 0x6c,
+	0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x43, 0x61,
+	0x63, 0x68, 0x65, 0x64, 0x50, 0x6f, 0x6f, 0x6c, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x42, 0x04, 0xc8,
+	0xde, 0x1f, 0x00, 0x52, 0x10, 0x63, 0x61, 0x63, 0x68, 0x65, 0x64, 0x50, 0x6f, 0x6f, 0x6c, 0x56,
+	0x61, 0x6c, 0x75, 0x65, 0x73, 0x42, 0x26, 0x5a, 0x24, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69,
+	0x70, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x78, 0x2f, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69,
+	0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1372,6 +1837,9 @@ var file_bluechipchain_liquidityvault_genesis_proto_goTypes = []interface{}{
 	(*RegisteredPool)(nil),      // 4: bluechipchain.liquidityvault.RegisteredPool
 	(*PoolPosition)(nil),        // 5: bluechipchain.liquidityvault.PoolPosition
 	(*PendingDeallocation)(nil), // 6: bluechipchain.liquidityvault.PendingDeallocation
+	(*ValuePostHistory)(nil),    // 7: bluechipchain.liquidityvault.ValuePostHistory
+	(*ScheduledValuePost)(nil),  // 8: bluechipchain.liquidityvault.ScheduledValuePost
+	(*CachedPoolValue)(nil),     // 9: bluechipchain.liquidityvault.CachedPoolValue
 }
 var file_bluechipchain_liquidityvault_genesis_proto_depIdxs = []int32{
 	1, // 0: bluechipchain.liquidityvault.GenesisState.params:type_name -> bluechipchain.liquidityvault.Params
@@ -1380,11 +1848,14 @@ var file_bluechipchain_liquidityvault_genesis_proto_depIdxs = []int32{
 	4, // 3: bluechipchain.liquidityvault.GenesisState.pools:type_name -> bluechipchain.liquidityvault.RegisteredPool
 	5, // 4: bluechipchain.liquidityvault.GenesisState.positions:type_name -> bluechipchain.liquidityvault.PoolPosition
 	6, // 5: bluechipchain.liquidityvault.GenesisState.pending_deallocations:type_name -> bluechipchain.liquidityvault.PendingDeallocation
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	7, // 6: bluechipchain.liquidityvault.GenesisState.value_post_histories:type_name -> bluechipchain.liquidityvault.ValuePostHistory
+	8, // 7: bluechipchain.liquidityvault.GenesisState.scheduled_value_posts:type_name -> bluechipchain.liquidityvault.ScheduledValuePost
+	9, // 8: bluechipchain.liquidityvault.GenesisState.cached_pool_values:type_name -> bluechipchain.liquidityvault.CachedPoolValue
+	9, // [9:9] is the sub-list for method output_type
+	9, // [9:9] is the sub-list for method input_type
+	9, // [9:9] is the sub-list for extension type_name
+	9, // [9:9] is the sub-list for extension extendee
+	0, // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_bluechipchain_liquidityvault_genesis_proto_init() }
@@ -1394,6 +1865,7 @@ func file_bluechipchain_liquidityvault_genesis_proto_init() {
 	}
 	file_bluechipchain_liquidityvault_params_proto_init()
 	file_bluechipchain_liquidityvault_pool_proto_init()
+	file_bluechipchain_liquidityvault_valuepost_proto_init()
 	file_bluechipchain_liquidityvault_vault_proto_init()
 	if !protoimpl.UnsafeEnabled {
 		file_bluechipchain_liquidityvault_genesis_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {

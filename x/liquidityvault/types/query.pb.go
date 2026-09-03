@@ -13,19 +13,23 @@ import (
 	_ "github.com/cosmos/gogoproto/gogoproto"
 	grpc1 "github.com/cosmos/gogoproto/grpc"
 	proto "github.com/cosmos/gogoproto/proto"
+	github_com_cosmos_gogoproto_types "github.com/cosmos/gogoproto/types"
 	_ "google.golang.org/genproto/googleapis/api/annotations"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	_ "google.golang.org/protobuf/types/known/timestamppb"
 	io "io"
 	math "math"
 	math_bits "math/bits"
+	time "time"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ = proto.Marshal
 var _ = fmt.Errorf
 var _ = math.Inf
+var _ = time.Kitchen
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the proto package it is being compiled against.
@@ -381,6 +385,10 @@ type QueryCompositeScoreResponse struct {
 	// position_value is the current value of the validator's pool positions
 	// in the bond denom.
 	PositionValue cosmossdk_io_math.Int `protobuf:"bytes,4,opt,name=position_value,json=positionValue,proto3,customtype=cosmossdk.io/math.Int" json:"position_value"`
+	// median_vault_value is the median of the vault's value posts — the vault
+	// component actually used in composite_score once posts exist. Before the
+	// first post it equals the live vault value.
+	MedianVaultValue cosmossdk_io_math.Int `protobuf:"bytes,5,opt,name=median_vault_value,json=medianVaultValue,proto3,customtype=cosmossdk.io/math.Int" json:"median_vault_value"`
 }
 
 func (m *QueryCompositeScoreResponse) Reset()         { *m = QueryCompositeScoreResponse{} }
@@ -670,6 +678,252 @@ func (m *QueryPositionsResponse) GetPendingDeallocations() []PendingDeallocation
 	return nil
 }
 
+// QueryValuePostsRequest is request type for the Query/ValuePosts RPC
+// method.
+type QueryValuePostsRequest struct {
+	// validator_address is the operator address of the validator whose value
+	// posts are queried.
+	ValidatorAddress string `protobuf:"bytes,1,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
+}
+
+func (m *QueryValuePostsRequest) Reset()         { *m = QueryValuePostsRequest{} }
+func (m *QueryValuePostsRequest) String() string { return proto.CompactTextString(m) }
+func (*QueryValuePostsRequest) ProtoMessage()    {}
+func (*QueryValuePostsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_57ea5533ca9e4b9e, []int{13}
+}
+func (m *QueryValuePostsRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryValuePostsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryValuePostsRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryValuePostsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryValuePostsRequest.Merge(m, src)
+}
+func (m *QueryValuePostsRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryValuePostsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryValuePostsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryValuePostsRequest proto.InternalMessageInfo
+
+func (m *QueryValuePostsRequest) GetValidatorAddress() string {
+	if m != nil {
+		return m.ValidatorAddress
+	}
+	return ""
+}
+
+// QueryValuePostsResponse is response type for the Query/ValuePosts RPC
+// method.
+type QueryValuePostsResponse struct {
+	// posts are the validator's retained value posts, oldest first.
+	Posts []ValuePost `protobuf:"bytes,1,rep,name=posts,proto3" json:"posts"`
+	// median is the median of the retained posts (zero when there are none).
+	Median cosmossdk_io_math.Int `protobuf:"bytes,2,opt,name=median,proto3,customtype=cosmossdk.io/math.Int" json:"median"`
+	// next_post_time is when the next snapshot is due; unset when nothing is
+	// scheduled (e.g. the validator has no vault).
+	NextPostTime *time.Time `protobuf:"bytes,3,opt,name=next_post_time,json=nextPostTime,proto3,stdtime" json:"next_post_time,omitempty"`
+}
+
+func (m *QueryValuePostsResponse) Reset()         { *m = QueryValuePostsResponse{} }
+func (m *QueryValuePostsResponse) String() string { return proto.CompactTextString(m) }
+func (*QueryValuePostsResponse) ProtoMessage()    {}
+func (*QueryValuePostsResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_57ea5533ca9e4b9e, []int{14}
+}
+func (m *QueryValuePostsResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QueryValuePostsResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QueryValuePostsResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QueryValuePostsResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QueryValuePostsResponse.Merge(m, src)
+}
+func (m *QueryValuePostsResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QueryValuePostsResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QueryValuePostsResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QueryValuePostsResponse proto.InternalMessageInfo
+
+func (m *QueryValuePostsResponse) GetPosts() []ValuePost {
+	if m != nil {
+		return m.Posts
+	}
+	return nil
+}
+
+func (m *QueryValuePostsResponse) GetNextPostTime() *time.Time {
+	if m != nil {
+		return m.NextPostTime
+	}
+	return nil
+}
+
+// QuerySetRankingRequest is request type for the Query/SetRanking RPC
+// method.
+type QuerySetRankingRequest struct {
+}
+
+func (m *QuerySetRankingRequest) Reset()         { *m = QuerySetRankingRequest{} }
+func (m *QuerySetRankingRequest) String() string { return proto.CompactTextString(m) }
+func (*QuerySetRankingRequest) ProtoMessage()    {}
+func (*QuerySetRankingRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_57ea5533ca9e4b9e, []int{15}
+}
+func (m *QuerySetRankingRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QuerySetRankingRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QuerySetRankingRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QuerySetRankingRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QuerySetRankingRequest.Merge(m, src)
+}
+func (m *QuerySetRankingRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *QuerySetRankingRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_QuerySetRankingRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QuerySetRankingRequest proto.InternalMessageInfo
+
+// RankedValidator is one row of the shadow set ranking.
+type RankedValidator struct {
+	// validator_address is the operator address of the validator.
+	ValidatorAddress string `protobuf:"bytes,1,opt,name=validator_address,json=validatorAddress,proto3" json:"validator_address,omitempty"`
+	// staked_tokens are the tokens delegated directly to the validator.
+	StakedTokens cosmossdk_io_math.Int `protobuf:"bytes,2,opt,name=staked_tokens,json=stakedTokens,proto3,customtype=cosmossdk.io/math.Int" json:"staked_tokens"`
+	// median_vault_value is the median-of-posts vault value used as the
+	// tiebreaker.
+	MedianVaultValue cosmossdk_io_math.Int `protobuf:"bytes,3,opt,name=median_vault_value,json=medianVaultValue,proto3,customtype=cosmossdk.io/math.Int" json:"median_vault_value"`
+	// composite_score is staked_tokens + median_vault_value.
+	CompositeScore cosmossdk_io_math.Int `protobuf:"bytes,4,opt,name=composite_score,json=compositeScore,proto3,customtype=cosmossdk.io/math.Int" json:"composite_score"`
+}
+
+func (m *RankedValidator) Reset()         { *m = RankedValidator{} }
+func (m *RankedValidator) String() string { return proto.CompactTextString(m) }
+func (*RankedValidator) ProtoMessage()    {}
+func (*RankedValidator) Descriptor() ([]byte, []int) {
+	return fileDescriptor_57ea5533ca9e4b9e, []int{16}
+}
+func (m *RankedValidator) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RankedValidator) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_RankedValidator.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *RankedValidator) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RankedValidator.Merge(m, src)
+}
+func (m *RankedValidator) XXX_Size() int {
+	return m.Size()
+}
+func (m *RankedValidator) XXX_DiscardUnknown() {
+	xxx_messageInfo_RankedValidator.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RankedValidator proto.InternalMessageInfo
+
+func (m *RankedValidator) GetValidatorAddress() string {
+	if m != nil {
+		return m.ValidatorAddress
+	}
+	return ""
+}
+
+// QuerySetRankingResponse is response type for the Query/SetRanking RPC
+// method: validators ordered by staked tokens descending, composite score
+// as tiebreaker — the design document's complex check, in shadow mode.
+type QuerySetRankingResponse struct {
+	// validators are the ranked validators, best first.
+	Validators []RankedValidator `protobuf:"bytes,1,rep,name=validators,proto3" json:"validators"`
+}
+
+func (m *QuerySetRankingResponse) Reset()         { *m = QuerySetRankingResponse{} }
+func (m *QuerySetRankingResponse) String() string { return proto.CompactTextString(m) }
+func (*QuerySetRankingResponse) ProtoMessage()    {}
+func (*QuerySetRankingResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_57ea5533ca9e4b9e, []int{17}
+}
+func (m *QuerySetRankingResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *QuerySetRankingResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_QuerySetRankingResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *QuerySetRankingResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_QuerySetRankingResponse.Merge(m, src)
+}
+func (m *QuerySetRankingResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *QuerySetRankingResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_QuerySetRankingResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_QuerySetRankingResponse proto.InternalMessageInfo
+
+func (m *QuerySetRankingResponse) GetValidators() []RankedValidator {
+	if m != nil {
+		return m.Validators
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*QueryParamsRequest)(nil), "bluechipchain.liquidityvault.QueryParamsRequest")
 	proto.RegisterType((*QueryParamsResponse)(nil), "bluechipchain.liquidityvault.QueryParamsResponse")
@@ -684,6 +938,11 @@ func init() {
 	proto.RegisterType((*QueryPositionsRequest)(nil), "bluechipchain.liquidityvault.QueryPositionsRequest")
 	proto.RegisterType((*PositionView)(nil), "bluechipchain.liquidityvault.PositionView")
 	proto.RegisterType((*QueryPositionsResponse)(nil), "bluechipchain.liquidityvault.QueryPositionsResponse")
+	proto.RegisterType((*QueryValuePostsRequest)(nil), "bluechipchain.liquidityvault.QueryValuePostsRequest")
+	proto.RegisterType((*QueryValuePostsResponse)(nil), "bluechipchain.liquidityvault.QueryValuePostsResponse")
+	proto.RegisterType((*QuerySetRankingRequest)(nil), "bluechipchain.liquidityvault.QuerySetRankingRequest")
+	proto.RegisterType((*RankedValidator)(nil), "bluechipchain.liquidityvault.RankedValidator")
+	proto.RegisterType((*QuerySetRankingResponse)(nil), "bluechipchain.liquidityvault.QuerySetRankingResponse")
 }
 
 func init() {
@@ -691,69 +950,86 @@ func init() {
 }
 
 var fileDescriptor_57ea5533ca9e4b9e = []byte{
-	// 986 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x56, 0x41, 0x6f, 0xdc, 0x44,
-	0x14, 0x8e, 0x93, 0x6e, 0xd4, 0x4c, 0xdb, 0x40, 0xa6, 0x09, 0x0a, 0x4b, 0xd9, 0x16, 0x37, 0xb4,
-	0x21, 0x6d, 0xed, 0x26, 0x45, 0x82, 0x0a, 0x41, 0x95, 0x0d, 0xa2, 0x44, 0x42, 0x55, 0x70, 0xab,
-	0x20, 0x01, 0x62, 0x35, 0x6b, 0x0f, 0xce, 0x28, 0x5e, 0x8f, 0xe3, 0x99, 0xdd, 0x10, 0x21, 0x2e,
-	0xfc, 0x02, 0x24, 0x0e, 0x1c, 0x40, 0x42, 0x9c, 0x40, 0xe2, 0xc2, 0xa1, 0x37, 0xc4, 0xbd, 0xc7,
-	0xa8, 0x48, 0x08, 0x71, 0xa8, 0x50, 0x82, 0xc4, 0x81, 0x3f, 0x81, 0x3c, 0xf3, 0x26, 0x59, 0x6f,
-	0xb6, 0x5e, 0x6f, 0xd5, 0x5c, 0xac, 0xb5, 0xfd, 0xbe, 0xef, 0x7d, 0xef, 0x9b, 0xe7, 0xf7, 0x16,
-	0xcd, 0x37, 0xa3, 0x36, 0xf5, 0x37, 0x58, 0xe2, 0x6f, 0x10, 0x16, 0xbb, 0x11, 0xdb, 0x6a, 0xb3,
-	0x80, 0xc9, 0x9d, 0x0e, 0x69, 0x47, 0xd2, 0xdd, 0x6a, 0xd3, 0x74, 0xc7, 0x49, 0x52, 0x2e, 0x39,
-	0x3e, 0x97, 0x8b, 0x74, 0xf2, 0x91, 0xd5, 0x29, 0xd2, 0x62, 0x31, 0x77, 0xd5, 0x55, 0x03, 0xaa,
-	0xcf, 0xfb, 0x5c, 0xb4, 0xb8, 0x68, 0xa8, 0x3b, 0x57, 0xdf, 0xc0, 0xab, 0xe9, 0x90, 0x87, 0x5c,
-	0x3f, 0xcf, 0x7e, 0xc1, 0xd3, 0x73, 0x21, 0xe7, 0x61, 0x44, 0x5d, 0x92, 0x30, 0x97, 0xc4, 0x31,
-	0x97, 0x44, 0x32, 0x1e, 0x1b, 0xcc, 0x82, 0x66, 0x70, 0x9b, 0x44, 0x50, 0x2d, 0xcc, 0xed, 0x2c,
-	0x36, 0xa9, 0x24, 0x8b, 0x6e, 0x42, 0x42, 0x16, 0xab, 0x60, 0x88, 0x7d, 0xa5, 0xb0, 0xaa, 0x84,
-	0xa4, 0xa4, 0x65, 0x68, 0x2f, 0x17, 0x87, 0x72, 0x1e, 0x41, 0x60, 0xb1, 0x53, 0xea, 0xaa, 0x23,
-	0xed, 0x69, 0x84, 0xdf, 0xcf, 0xf4, 0xad, 0xa9, 0x3c, 0x1e, 0xdd, 0x6a, 0x53, 0x21, 0xed, 0x4f,
-	0xd0, 0xd9, 0xdc, 0x53, 0x91, 0xf0, 0x58, 0x50, 0x7c, 0x1b, 0x8d, 0x6b, 0x3d, 0xb3, 0xd6, 0x05,
-	0x6b, 0xfe, 0xd4, 0xd2, 0x9c, 0x53, 0xe4, 0xb3, 0xa3, 0xd1, 0xf5, 0x89, 0x07, 0x8f, 0xce, 0x8f,
-	0xfc, 0xf4, 0xef, 0x2f, 0x0b, 0x96, 0x07, 0x70, 0xdb, 0x47, 0x53, 0x8a, 0x7f, 0x3d, 0x8b, 0x83,
-	0xa4, 0xf8, 0x0e, 0x9a, 0xea, 0x90, 0x88, 0x05, 0x44, 0xf2, 0xb4, 0x41, 0x82, 0x20, 0xa5, 0x42,
-	0x27, 0x9a, 0xa8, 0xbf, 0xf4, 0xf0, 0xfe, 0xb5, 0x17, 0xe1, 0x54, 0xd6, 0x4d, 0xcc, 0xb2, 0x0e,
-	0xb9, 0x2b, 0x53, 0x16, 0x87, 0xde, 0xb3, 0x9d, 0x9e, 0xe7, 0xf6, 0x6f, 0x16, 0xd4, 0x06, 0x59,
-	0xa0, 0x88, 0x5b, 0xa8, 0xa2, 0xe4, 0x41, 0x0d, 0x17, 0x8b, 0x6b, 0x50, 0xd8, 0xfa, 0x89, 0xac,
-	0x04, 0x4f, 0xe3, 0xf0, 0xa7, 0xe8, 0x6c, 0x42, 0xe3, 0x80, 0xc5, 0x61, 0x63, 0x9b, 0xc9, 0x8d,
-	0x20, 0x25, 0xdb, 0x24, 0x12, 0xb3, 0xa3, 0x17, 0xc6, 0xe6, 0x4f, 0x2d, 0xb9, 0x03, 0x2c, 0xd1,
-	0xc0, 0x0f, 0x0e, 0x70, 0x40, 0x8d, 0x93, 0xde, 0x17, 0xc2, 0xfe, 0xb8, 0x5b, 0xbe, 0x39, 0x1a,
-	0xfc, 0x0e, 0x42, 0x87, 0x2d, 0x04, 0x35, 0x5c, 0x72, 0xc0, 0x9b, 0xac, 0xdf, 0x1c, 0xfd, 0x21,
-	0x40, 0xbf, 0x39, 0x6b, 0x24, 0xa4, 0x80, 0xf5, 0xba, 0x90, 0xf6, 0x0f, 0x16, 0x9c, 0xb1, 0xa1,
-	0x07, 0x7b, 0x96, 0xd1, 0xb8, 0x92, 0x9a, 0x59, 0x3f, 0x36, 0x9c, 0x3f, 0x00, 0xc4, 0xb7, 0x73,
-	0x12, 0x47, 0x95, 0xc4, 0xcb, 0x03, 0x25, 0xea, 0xfc, 0x39, 0x8d, 0x11, 0xaa, 0x2a, 0x89, 0x2b,
-	0xbc, 0x95, 0x70, 0xc1, 0x24, 0xbd, 0xeb, 0xf3, 0x94, 0x1e, 0x57, 0xbf, 0xfc, 0x37, 0x8a, 0x5e,
-	0xe8, 0x9b, 0x0e, 0x9c, 0x59, 0x43, 0x67, 0x84, 0x24, 0x9b, 0x34, 0x68, 0x48, 0xbe, 0x49, 0x63,
-	0x93, 0xeb, 0x4a, 0x56, 0xfb, 0x5f, 0x8f, 0xce, 0xcf, 0xe8, 0x7c, 0x22, 0xd8, 0x74, 0x18, 0x77,
-	0x5b, 0x44, 0x6e, 0x38, 0xab, 0xb1, 0x7c, 0x78, 0xff, 0x1a, 0x02, 0x21, 0xab, 0xb1, 0xf4, 0x4e,
-	0x6b, 0x86, 0x7b, 0x8a, 0x20, 0x63, 0x54, 0x96, 0x35, 0x9a, 0x24, 0x22, 0xb1, 0x4f, 0x95, 0x57,
-	0xc3, 0x32, 0x2a, 0x86, 0xba, 0x26, 0xc0, 0xf7, 0xd0, 0x33, 0xbe, 0x51, 0xdf, 0x10, 0x99, 0xfc,
-	0xd9, 0xb1, 0xe1, 0x39, 0x27, 0xfd, 0x9c, 0x03, 0xd8, 0x43, 0x93, 0xea, 0x96, 0xf1, 0xb8, 0xd1,
-	0x21, 0x51, 0x9b, 0xce, 0x9e, 0x18, 0x9e, 0xf4, 0x8c, 0xa1, 0x58, 0xcf, 0x18, 0xec, 0x8f, 0x60,
-	0x04, 0xac, 0x71, 0x1e, 0x3d, 0xf5, 0xe6, 0xfe, 0xd1, 0x7c, 0xfa, 0xc0, 0x0e, 0x27, 0xf8, 0x2e,
-	0xaa, 0x64, 0x43, 0xd2, 0xb4, 0xf6, 0xd5, 0xe2, 0xd6, 0xf6, 0x68, 0xc8, 0x84, 0xa4, 0x29, 0x0d,
-	0x32, 0x16, 0x33, 0x03, 0x14, 0xc1, 0xd3, 0x6b, 0xf1, 0x10, 0xcd, 0x80, 0x50, 0x6d, 0x8e, 0x38,
-	0xae, 0xee, 0xfe, 0xde, 0x42, 0xa7, 0x4d, 0x92, 0x75, 0x46, 0xb7, 0xf1, 0x7b, 0xe8, 0xa4, 0x39,
-	0x11, 0x70, 0x7a, 0x61, 0xc0, 0xec, 0xe2, 0x3c, 0x32, 0x0c, 0xe0, 0xc6, 0x01, 0x03, 0x5e, 0xce,
-	0xa6, 0x6a, 0xd6, 0x19, 0x4f, 0xd0, 0xc2, 0x1a, 0x69, 0xff, 0x61, 0xa1, 0xe7, 0x7a, 0xbd, 0x80,
-	0x83, 0xbb, 0x83, 0x26, 0x4c, 0x26, 0x73, 0x78, 0x03, 0xc5, 0x1e, 0x96, 0x0a, 0x62, 0x0f, 0x29,
-	0x70, 0x84, 0x66, 0xcc, 0x08, 0x0f, 0x28, 0x89, 0x22, 0xee, 0xeb, 0xf5, 0x0d, 0x43, 0x7c, 0xb1,
-	0xd4, 0x10, 0x7f, 0xbb, 0x0b, 0x09, 0x29, 0xa6, 0x93, 0xa3, 0xaf, 0xc4, 0xd2, 0x77, 0x27, 0x51,
-	0x45, 0x15, 0x86, 0xbf, 0xb5, 0xd0, 0xb8, 0xde, 0x8a, 0xf8, 0x7a, 0x71, 0x8e, 0xa3, 0x4b, 0xb9,
-	0xba, 0x38, 0x04, 0x42, 0xfb, 0x66, 0x5f, 0xfd, 0xf2, 0xf7, 0x7f, 0xbe, 0x1e, 0xbd, 0x84, 0xe7,
-	0x5c, 0x03, 0x5d, 0x79, 0xfc, 0x9f, 0x0c, 0xfc, 0xb3, 0x85, 0x2a, 0x6a, 0x9e, 0x63, 0xb7, 0x44,
-	0xaa, 0xee, 0xdd, 0x5d, 0xbd, 0x5e, 0x1e, 0x00, 0xd2, 0x6e, 0x29, 0x69, 0x37, 0xf1, 0x6b, 0xc5,
-	0xd2, 0xf4, 0xf5, 0xf3, 0x23, 0x9f, 0xc2, 0x17, 0xca, 0x4b, 0xbd, 0xbb, 0x70, 0xe9, 0xec, 0x43,
-	0x79, 0x99, 0x5f, 0x8c, 0x65, 0xbd, 0x84, 0x1d, 0xb8, 0x6b, 0xa1, 0xc9, 0xfc, 0x1e, 0xc1, 0xaf,
-	0x97, 0xc8, 0xd9, 0x77, 0xd3, 0x55, 0x6f, 0x3e, 0x01, 0x12, 0x54, 0xaf, 0x2a, 0xd5, 0x2b, 0x78,
-	0xb9, 0x58, 0x75, 0xcf, 0xd2, 0xe8, 0x6b, 0xf8, 0x37, 0x16, 0xaa, 0xa8, 0x79, 0x5a, 0xaa, 0x3d,
-	0xba, 0xe7, 0x7a, 0xa9, 0xf6, 0xc8, 0x8d, 0x6a, 0xfb, 0x8a, 0xd2, 0xfd, 0x32, 0xbe, 0x38, 0xa0,
-	0x73, 0x95, 0x9e, 0x5f, 0x2d, 0x34, 0x71, 0x30, 0x34, 0xf0, 0x8d, 0x52, 0xc9, 0xf2, 0xe3, 0xb6,
-	0xfa, 0xea, 0x70, 0x20, 0x50, 0xb9, 0xa2, 0x54, 0xbe, 0x89, 0xdf, 0x18, 0xa4, 0x12, 0x80, 0xfd,
-	0x7c, 0xad, 0xbf, 0xf5, 0x60, 0xaf, 0x66, 0xed, 0xee, 0xd5, 0xac, 0xbf, 0xf7, 0x6a, 0xd6, 0x57,
-	0xfb, 0xb5, 0x91, 0xdd, 0xfd, 0xda, 0xc8, 0x9f, 0xfb, 0xb5, 0x91, 0x0f, 0xe7, 0xf2, 0xac, 0x9f,
-	0xf5, 0xf2, 0xca, 0x9d, 0x84, 0x8a, 0xe6, 0xb8, 0xfa, 0x27, 0x7f, 0xe3, 0xff, 0x00, 0x00, 0x00,
-	0xff, 0xff, 0xed, 0xab, 0xdb, 0x9b, 0x1f, 0x0d, 0x00, 0x00,
+	// 1264 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x57, 0xcf, 0x6f, 0x1b, 0x45,
+	0x14, 0xce, 0x26, 0x71, 0x44, 0x26, 0x69, 0xda, 0x4c, 0x13, 0x08, 0xa6, 0x38, 0x65, 0x1b, 0x9a,
+	0x34, 0x3f, 0x76, 0x9b, 0xb4, 0x08, 0x2a, 0x54, 0xa2, 0xd8, 0xd0, 0x12, 0x09, 0x55, 0xc1, 0x89,
+	0x82, 0xf8, 0x21, 0xac, 0xb1, 0x77, 0xea, 0xac, 0xb2, 0xde, 0xd9, 0x78, 0xc6, 0x49, 0x23, 0xc4,
+	0x85, 0x3f, 0x00, 0x55, 0xe2, 0xc0, 0x81, 0x03, 0xe2, 0x04, 0x12, 0x1c, 0x38, 0xf4, 0x86, 0x90,
+	0x38, 0xa1, 0x1e, 0xa3, 0x22, 0x21, 0xc4, 0xa1, 0xa0, 0xa4, 0x12, 0x07, 0xfe, 0x09, 0x34, 0x33,
+	0x6f, 0x6d, 0xaf, 0x6d, 0xec, 0x75, 0x9a, 0x5c, 0xac, 0xec, 0xee, 0x7b, 0xdf, 0xfb, 0xde, 0x37,
+	0x6f, 0xde, 0x7b, 0x41, 0x33, 0x79, 0xaf, 0x42, 0x0b, 0x5b, 0x6e, 0x50, 0xd8, 0x22, 0xae, 0x6f,
+	0x7b, 0xee, 0x4e, 0xc5, 0x75, 0x5c, 0xb1, 0xbf, 0x4b, 0x2a, 0x9e, 0xb0, 0x77, 0x2a, 0xb4, 0xbc,
+	0x6f, 0x05, 0x65, 0x26, 0x18, 0xbe, 0x10, 0xb1, 0xb4, 0xa2, 0x96, 0xc9, 0x51, 0x52, 0x72, 0x7d,
+	0x66, 0xab, 0x5f, 0xed, 0x90, 0x7c, 0xbe, 0xc0, 0x78, 0x89, 0xf1, 0x9c, 0x7a, 0xb2, 0xf5, 0x03,
+	0x7c, 0x1a, 0x2b, 0xb2, 0x22, 0xd3, 0xef, 0xe5, 0x5f, 0xf0, 0xf6, 0x42, 0x91, 0xb1, 0xa2, 0x47,
+	0x6d, 0x12, 0xb8, 0x36, 0xf1, 0x7d, 0x26, 0x88, 0x70, 0x99, 0x1f, 0xfa, 0xcc, 0x6a, 0x04, 0x3b,
+	0x4f, 0x38, 0xd5, 0xc4, 0xec, 0xdd, 0xc5, 0x3c, 0x15, 0x64, 0xd1, 0x0e, 0x48, 0xd1, 0xf5, 0x95,
+	0x31, 0xd8, 0x4e, 0x02, 0x92, 0x7a, 0xca, 0x57, 0xee, 0xda, 0xc2, 0x2d, 0x51, 0x2e, 0x48, 0x29,
+	0x00, 0x83, 0x2b, 0x6d, 0xd3, 0x0e, 0x48, 0x99, 0x94, 0xc2, 0xb8, 0xd3, 0xed, 0x4d, 0x19, 0xf3,
+	0xc0, 0x70, 0xbe, 0xad, 0xe1, 0x2e, 0xf1, 0x2a, 0x34, 0x60, 0x5c, 0x80, 0xf5, 0x4c, 0x07, 0xeb,
+	0x8a, 0x07, 0x96, 0xe6, 0x18, 0xc2, 0xef, 0xca, 0x74, 0xd7, 0x14, 0xab, 0x2c, 0xdd, 0xa9, 0x50,
+	0x2e, 0xcc, 0x8f, 0xd1, 0xf9, 0xc8, 0x5b, 0x1e, 0x30, 0x9f, 0x53, 0x7c, 0x1b, 0x0d, 0x68, 0xf6,
+	0x13, 0xc6, 0x45, 0x63, 0x66, 0x68, 0x69, 0xca, 0x6a, 0x77, 0x6c, 0x96, 0xf6, 0x4e, 0x0f, 0x3e,
+	0x7c, 0x3c, 0xd9, 0xf3, 0xdd, 0x3f, 0x3f, 0xce, 0x1a, 0x59, 0x70, 0x37, 0x0b, 0x68, 0x54, 0xe1,
+	0x6f, 0x4a, 0x3b, 0x08, 0x8a, 0xef, 0xa0, 0xd1, 0x5d, 0xe2, 0xb9, 0x0e, 0x11, 0xac, 0x9c, 0x23,
+	0x8e, 0x53, 0xa6, 0x5c, 0x07, 0x1a, 0x4c, 0xbf, 0xf4, 0xe8, 0xc1, 0xc2, 0x8b, 0x70, 0xc8, 0x9b,
+	0xa1, 0xcd, 0x8a, 0x36, 0x59, 0x17, 0x65, 0xd7, 0x2f, 0x66, 0xcf, 0xed, 0x36, 0xbc, 0x37, 0x7f,
+	0x36, 0x20, 0x37, 0x88, 0x02, 0x49, 0x2c, 0xa3, 0x84, 0xa2, 0x07, 0x39, 0x5c, 0x6a, 0x9f, 0x83,
+	0xf2, 0x4d, 0xf7, 0xcb, 0x14, 0xb2, 0xda, 0x0f, 0xdf, 0x45, 0xe7, 0x03, 0xea, 0x3b, 0xae, 0x5f,
+	0xcc, 0xed, 0xb9, 0x62, 0xcb, 0x29, 0x93, 0x3d, 0xe2, 0xf1, 0x89, 0xde, 0x8b, 0x7d, 0x33, 0x43,
+	0x4b, 0x76, 0x07, 0x49, 0xb4, 0xe3, 0x7b, 0x55, 0x3f, 0x80, 0xc6, 0x41, 0xe3, 0x07, 0x6e, 0x7e,
+	0x54, 0x4f, 0x3f, 0x3c, 0x1a, 0x7c, 0x0b, 0xa1, 0x5a, 0x45, 0x42, 0x0e, 0x97, 0x2d, 0xd0, 0x46,
+	0x96, 0xaf, 0xa5, 0xef, 0x15, 0x94, 0xaf, 0xb5, 0x46, 0x8a, 0x14, 0x7c, 0xb3, 0x75, 0x9e, 0xe6,
+	0x37, 0x06, 0x9c, 0x71, 0x08, 0x0f, 0xf2, 0xac, 0xa0, 0x01, 0x45, 0x55, 0x4a, 0xdf, 0xd7, 0x9d,
+	0x3e, 0xe0, 0x88, 0x6f, 0x47, 0x28, 0xf6, 0x2a, 0x8a, 0xd3, 0x1d, 0x29, 0xea, 0xf8, 0x11, 0x8e,
+	0x1e, 0x4a, 0x2a, 0x8a, 0x19, 0x56, 0x0a, 0x18, 0x77, 0x05, 0x5d, 0x2f, 0xb0, 0x32, 0x3d, 0xad,
+	0x7a, 0xf9, 0xb5, 0x0f, 0xbd, 0xd0, 0x32, 0x1c, 0x28, 0xb3, 0x86, 0xce, 0x70, 0x41, 0xb6, 0xa9,
+	0x93, 0x13, 0x6c, 0x9b, 0xfa, 0x61, 0xac, 0x39, 0x99, 0xfb, 0x9f, 0x8f, 0x27, 0xc7, 0x75, 0x3c,
+	0xee, 0x6c, 0x5b, 0x2e, 0xb3, 0x4b, 0x44, 0x6c, 0x59, 0xab, 0xbe, 0x78, 0xf4, 0x60, 0x01, 0x01,
+	0x91, 0x55, 0x5f, 0x64, 0x87, 0x35, 0xc2, 0x86, 0x02, 0x90, 0x88, 0x4a, 0xb2, 0x5c, 0x9e, 0x78,
+	0xc4, 0x2f, 0x50, 0xa5, 0x55, 0xb7, 0x88, 0x0a, 0x21, 0xad, 0x01, 0xf0, 0x06, 0x3a, 0x5b, 0x08,
+	0xd9, 0xe7, 0xb8, 0xa4, 0x3f, 0xd1, 0xd7, 0x3d, 0xe6, 0x48, 0x21, 0xa2, 0x00, 0xce, 0xa2, 0x11,
+	0xf5, 0xe8, 0x32, 0x3f, 0xa7, 0x5a, 0xcd, 0x44, 0x7f, 0xf7, 0xa0, 0x67, 0x42, 0x88, 0x4d, 0x89,
+	0x80, 0xdf, 0x47, 0xb8, 0x44, 0x1d, 0x97, 0x48, 0x44, 0x29, 0x81, 0xc6, 0x4d, 0x74, 0x8f, 0x7b,
+	0x4e, 0xc3, 0xa8, 0x42, 0x54, 0xd0, 0xe6, 0x87, 0xd0, 0x5d, 0xd6, 0x18, 0xf3, 0x4e, 0xfc, 0xde,
+	0x7c, 0x1b, 0x76, 0x15, 0x40, 0x87, 0xe2, 0x78, 0x1b, 0x25, 0x64, 0xb7, 0x0e, 0x6f, 0xcd, 0x7c,
+	0xfb, 0x5b, 0x93, 0xa5, 0x45, 0x97, 0x0b, 0x5a, 0xa6, 0x8e, 0x44, 0x09, 0xdb, 0x8b, 0x02, 0x38,
+	0xb9, 0xdb, 0x53, 0x44, 0xe3, 0x40, 0x54, 0xeb, 0xce, 0x4f, 0xeb, 0xe2, 0x7c, 0x6d, 0xa0, 0xe1,
+	0x30, 0xc8, 0xa6, 0x4b, 0xf7, 0xf0, 0x3b, 0xe8, 0x99, 0xf0, 0xb0, 0x41, 0xe9, 0xd9, 0x0e, 0x6d,
+	0x91, 0x31, 0x2f, 0x44, 0x00, 0x35, 0xaa, 0x08, 0x78, 0x45, 0x36, 0x6c, 0x59, 0x1c, 0xc7, 0xb8,
+	0x1d, 0xda, 0xd3, 0xfc, 0xdd, 0x40, 0xcf, 0x36, 0x6a, 0x01, 0x07, 0x77, 0x07, 0x0d, 0x86, 0x91,
+	0xc2, 0xc3, 0xeb, 0x48, 0xb6, 0x96, 0x2a, 0x90, 0xad, 0x41, 0x60, 0x0f, 0x8d, 0x87, 0xd3, 0xc1,
+	0xa1, 0xc4, 0xf3, 0x58, 0x41, 0x2f, 0x1a, 0x30, 0x1f, 0x16, 0x63, 0xcd, 0x87, 0x37, 0xeb, 0x3c,
+	0x21, 0xc4, 0x58, 0xd0, 0xfc, 0x89, 0x9b, 0x5b, 0x90, 0x97, 0x2a, 0xfc, 0x35, 0xc6, 0xc5, 0xa9,
+	0x1d, 0xf2, 0xbf, 0x06, 0x7a, 0xae, 0x29, 0x14, 0x68, 0x98, 0x91, 0xc5, 0xcf, 0xab, 0x23, 0x63,
+	0xba, 0xd3, 0xc8, 0x00, 0x80, 0x5a, 0xdd, 0x73, 0xc1, 0x71, 0x06, 0x0d, 0xe8, 0x9b, 0x7c, 0x9c,
+	0x73, 0x06, 0x57, 0x7c, 0x0b, 0x8d, 0xf8, 0xf4, 0x9e, 0xc8, 0x49, 0xc8, 0x9c, 0xdc, 0xcb, 0x54,
+	0xfb, 0x1b, 0x5a, 0x4a, 0x5a, 0x7a, 0x69, 0xb3, 0xc2, 0xa5, 0xcd, 0xda, 0x08, 0x97, 0xb6, 0x74,
+	0xff, 0xfd, 0xbf, 0x26, 0x8d, 0xec, 0xb0, 0xf4, 0x93, 0xac, 0xe4, 0x07, 0x73, 0x02, 0x74, 0x5d,
+	0xa7, 0x22, 0x4b, 0xfc, 0x6d, 0x29, 0x09, 0xac, 0x46, 0x4f, 0x7a, 0xd1, 0x59, 0xf9, 0x8a, 0x3a,
+	0x55, 0xe9, 0x4e, 0x5a, 0xeb, 0xe6, 0x49, 0xd3, 0xfb, 0xb4, 0x93, 0xa6, 0x75, 0xb7, 0xed, 0x3b,
+	0x81, 0x6e, 0xdb, 0x6a, 0xe4, 0xf4, 0x3f, 0xf5, 0xc8, 0x31, 0x7d, 0xa8, 0xb6, 0xfa, 0x03, 0x80,
+	0x6a, 0x5b, 0x47, 0xa8, 0xaa, 0x58, 0x58, 0x72, 0x0b, 0x1d, 0xfa, 0x6d, 0xf4, 0xc0, 0xa0, 0xf0,
+	0xea, 0x60, 0x96, 0x3e, 0x1f, 0x42, 0x09, 0x15, 0x10, 0x7f, 0x65, 0xa0, 0x01, 0xbd, 0xb9, 0xe2,
+	0xab, 0xed, 0x51, 0x9b, 0x17, 0xe7, 0xe4, 0x62, 0x17, 0x1e, 0x3a, 0x1d, 0x73, 0xfe, 0xb3, 0xdf,
+	0x9e, 0x7c, 0xd1, 0x7b, 0x19, 0x4f, 0xd9, 0xa1, 0x6b, 0xe6, 0xff, 0xff, 0x6d, 0xc0, 0xdf, 0x1b,
+	0x28, 0xa1, 0xc4, 0xc7, 0x76, 0x8c, 0x50, 0xf5, 0xfb, 0x75, 0xf2, 0x6a, 0x7c, 0x07, 0xa0, 0xb6,
+	0xac, 0xa8, 0xdd, 0xc0, 0xaf, 0xb6, 0xa7, 0xa6, 0x7f, 0x3f, 0x69, 0xba, 0x02, 0x9f, 0x2a, 0x2d,
+	0xf5, 0x7e, 0x89, 0x63, 0x47, 0xef, 0x4a, 0xcb, 0xe8, 0xf2, 0x1a, 0x57, 0x4b, 0xd8, 0x53, 0x0f,
+	0x0c, 0x34, 0x12, 0xdd, 0xf5, 0xf0, 0x6b, 0x31, 0x62, 0xb6, 0xdc, 0x46, 0x93, 0x37, 0x8e, 0xe1,
+	0x09, 0xac, 0x57, 0x15, 0xeb, 0x0c, 0x5e, 0x69, 0xcf, 0xba, 0xe1, 0x96, 0xb5, 0x14, 0xfc, 0x4b,
+	0x03, 0x25, 0xd4, 0x62, 0x12, 0xab, 0x3c, 0xea, 0x17, 0xa4, 0x58, 0xe5, 0x11, 0xd9, 0x79, 0xcc,
+	0x39, 0xc5, 0xfb, 0x65, 0x7c, 0xa9, 0x43, 0xe5, 0x2a, 0x3e, 0x3f, 0x19, 0x68, 0xb0, 0x3a, 0x7d,
+	0xf1, 0xb5, 0x58, 0xc1, 0xa2, 0x7b, 0x4b, 0xf2, 0x7a, 0x77, 0x4e, 0xc0, 0x32, 0xa3, 0x58, 0xde,
+	0xc4, 0xaf, 0x77, 0x62, 0x09, 0x8e, 0x2d, 0x75, 0xfd, 0xc5, 0x40, 0xa8, 0x36, 0xf8, 0xf0, 0xf5,
+	0x58, 0xa5, 0xd9, 0x30, 0x92, 0x93, 0xaf, 0x74, 0xe9, 0x05, 0x09, 0xbc, 0xa5, 0x12, 0x58, 0xc6,
+	0x37, 0x3b, 0x15, 0xb5, 0x57, 0xa1, 0x6a, 0xf0, 0xb5, 0x4e, 0xe1, 0x07, 0x03, 0xa1, 0x5a, 0x37,
+	0x8d, 0x95, 0x42, 0xd3, 0xf4, 0x8b, 0x95, 0x42, 0x73, 0xcb, 0x36, 0x17, 0x55, 0x0a, 0x73, 0xf8,
+	0x4a, 0xfb, 0x14, 0x38, 0x15, 0xb9, 0xb2, 0x76, 0x4d, 0xbf, 0xf1, 0xf0, 0x30, 0x65, 0x1c, 0x1c,
+	0xa6, 0x8c, 0xbf, 0x0f, 0x53, 0xc6, 0xfd, 0xa3, 0x54, 0xcf, 0xc1, 0x51, 0xaa, 0xe7, 0x8f, 0xa3,
+	0x54, 0xcf, 0x07, 0x53, 0x51, 0x8c, 0x7b, 0x8d, 0x28, 0x62, 0x3f, 0xa0, 0x3c, 0x3f, 0xa0, 0x26,
+	0xfd, 0xb5, 0xff, 0x02, 0x00, 0x00, 0xff, 0xff, 0xab, 0xe3, 0xf7, 0x8c, 0x84, 0x12, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -784,6 +1060,14 @@ type QueryClient interface {
 	// Positions queries a validator's pool positions, valued at current pool
 	// prices, including pending deallocations.
 	Positions(ctx context.Context, in *QueryPositionsRequest, opts ...grpc.CallOption) (*QueryPositionsResponse, error)
+	// ValuePosts queries a validator's rolling value-post window and the
+	// median derived from it.
+	ValuePosts(ctx context.Context, in *QueryValuePostsRequest, opts ...grpc.CallOption) (*QueryValuePostsResponse, error)
+	// SetRanking is a SHADOW of the design document's complex validator-set
+	// check: all validators ranked by staked tokens with the composite score
+	// as tiebreaker. Observability only — it has no effect on the actual
+	// validator set in stage 1.
+	SetRanking(ctx context.Context, in *QuerySetRankingRequest, opts ...grpc.CallOption) (*QuerySetRankingResponse, error)
 }
 
 type queryClient struct {
@@ -848,6 +1132,24 @@ func (c *queryClient) Positions(ctx context.Context, in *QueryPositionsRequest, 
 	return out, nil
 }
 
+func (c *queryClient) ValuePosts(ctx context.Context, in *QueryValuePostsRequest, opts ...grpc.CallOption) (*QueryValuePostsResponse, error) {
+	out := new(QueryValuePostsResponse)
+	err := c.cc.Invoke(ctx, "/bluechipchain.liquidityvault.Query/ValuePosts", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) SetRanking(ctx context.Context, in *QuerySetRankingRequest, opts ...grpc.CallOption) (*QuerySetRankingResponse, error) {
+	out := new(QuerySetRankingResponse)
+	err := c.cc.Invoke(ctx, "/bluechipchain.liquidityvault.Query/SetRanking", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 type QueryServer interface {
 	// Parameters queries the parameters of the module.
@@ -866,6 +1168,14 @@ type QueryServer interface {
 	// Positions queries a validator's pool positions, valued at current pool
 	// prices, including pending deallocations.
 	Positions(context.Context, *QueryPositionsRequest) (*QueryPositionsResponse, error)
+	// ValuePosts queries a validator's rolling value-post window and the
+	// median derived from it.
+	ValuePosts(context.Context, *QueryValuePostsRequest) (*QueryValuePostsResponse, error)
+	// SetRanking is a SHADOW of the design document's complex validator-set
+	// check: all validators ranked by staked tokens with the composite score
+	// as tiebreaker. Observability only — it has no effect on the actual
+	// validator set in stage 1.
+	SetRanking(context.Context, *QuerySetRankingRequest) (*QuerySetRankingResponse, error)
 }
 
 // UnimplementedQueryServer can be embedded to have forward compatible implementations.
@@ -889,6 +1199,12 @@ func (*UnimplementedQueryServer) Pools(ctx context.Context, req *QueryPoolsReque
 }
 func (*UnimplementedQueryServer) Positions(ctx context.Context, req *QueryPositionsRequest) (*QueryPositionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Positions not implemented")
+}
+func (*UnimplementedQueryServer) ValuePosts(ctx context.Context, req *QueryValuePostsRequest) (*QueryValuePostsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ValuePosts not implemented")
+}
+func (*UnimplementedQueryServer) SetRanking(ctx context.Context, req *QuerySetRankingRequest) (*QuerySetRankingResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetRanking not implemented")
 }
 
 func RegisterQueryServer(s grpc1.Server, srv QueryServer) {
@@ -1003,6 +1319,42 @@ func _Query_Positions_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_ValuePosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryValuePostsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ValuePosts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bluechipchain.liquidityvault.Query/ValuePosts",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ValuePosts(ctx, req.(*QueryValuePostsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_SetRanking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QuerySetRankingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).SetRanking(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bluechipchain.liquidityvault.Query/SetRanking",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).SetRanking(ctx, req.(*QuerySetRankingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var Query_serviceDesc = _Query_serviceDesc
 var _Query_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "bluechipchain.liquidityvault.Query",
@@ -1031,6 +1383,14 @@ var _Query_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Positions",
 			Handler:    _Query_Positions_Handler,
+		},
+		{
+			MethodName: "ValuePosts",
+			Handler:    _Query_ValuePosts_Handler,
+		},
+		{
+			MethodName: "SetRanking",
+			Handler:    _Query_SetRanking_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -1305,6 +1665,16 @@ func (m *QueryCompositeScoreResponse) MarshalToSizedBuffer(dAtA []byte) (int, er
 	var l int
 	_ = l
 	{
+		size := m.MedianVaultValue.Size()
+		i -= size
+		if _, err := m.MedianVaultValue.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x2a
+	{
 		size := m.PositionValue.Size()
 		i -= size
 		if _, err := m.PositionValue.MarshalTo(dAtA[i:]); err != nil {
@@ -1555,6 +1925,213 @@ func (m *QueryPositionsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 	return len(dAtA) - i, nil
 }
 
+func (m *QueryValuePostsRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryValuePostsRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryValuePostsRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ValidatorAddress) > 0 {
+		i -= len(m.ValidatorAddress)
+		copy(dAtA[i:], m.ValidatorAddress)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.ValidatorAddress)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QueryValuePostsResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QueryValuePostsResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QueryValuePostsResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.NextPostTime != nil {
+		n8, err8 := github_com_cosmos_gogoproto_types.StdTimeMarshalTo(*m.NextPostTime, dAtA[i-github_com_cosmos_gogoproto_types.SizeOfStdTime(*m.NextPostTime):])
+		if err8 != nil {
+			return 0, err8
+		}
+		i -= n8
+		i = encodeVarintQuery(dAtA, i, uint64(n8))
+		i--
+		dAtA[i] = 0x1a
+	}
+	{
+		size := m.Median.Size()
+		i -= size
+		if _, err := m.Median.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x12
+	if len(m.Posts) > 0 {
+		for iNdEx := len(m.Posts) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Posts[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QuerySetRankingRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QuerySetRankingRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QuerySetRankingRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	return len(dAtA) - i, nil
+}
+
+func (m *RankedValidator) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *RankedValidator) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *RankedValidator) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size := m.CompositeScore.Size()
+		i -= size
+		if _, err := m.CompositeScore.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x22
+	{
+		size := m.MedianVaultValue.Size()
+		i -= size
+		if _, err := m.MedianVaultValue.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x1a
+	{
+		size := m.StakedTokens.Size()
+		i -= size
+		if _, err := m.StakedTokens.MarshalTo(dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintQuery(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x12
+	if len(m.ValidatorAddress) > 0 {
+		i -= len(m.ValidatorAddress)
+		copy(dAtA[i:], m.ValidatorAddress)
+		i = encodeVarintQuery(dAtA, i, uint64(len(m.ValidatorAddress)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *QuerySetRankingResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *QuerySetRankingResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *QuerySetRankingResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Validators) > 0 {
+		for iNdEx := len(m.Validators) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Validators[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintQuery(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintQuery(dAtA []byte, offset int, v uint64) int {
 	offset -= sovQuery(v)
 	base := offset
@@ -1675,6 +2252,8 @@ func (m *QueryCompositeScoreResponse) Size() (n int) {
 	n += 1 + l + sovQuery(uint64(l))
 	l = m.PositionValue.Size()
 	n += 1 + l + sovQuery(uint64(l))
+	l = m.MedianVaultValue.Size()
+	n += 1 + l + sovQuery(uint64(l))
 	return n
 }
 
@@ -1750,6 +2329,83 @@ func (m *QueryPositionsResponse) Size() (n int) {
 	}
 	if len(m.PendingDeallocations) > 0 {
 		for _, e := range m.PendingDeallocations {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	return n
+}
+
+func (m *QueryValuePostsRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.ValidatorAddress)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QueryValuePostsResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Posts) > 0 {
+		for _, e := range m.Posts {
+			l = e.Size()
+			n += 1 + l + sovQuery(uint64(l))
+		}
+	}
+	l = m.Median.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	if m.NextPostTime != nil {
+		l = github_com_cosmos_gogoproto_types.SizeOfStdTime(*m.NextPostTime)
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	return n
+}
+
+func (m *QuerySetRankingRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	return n
+}
+
+func (m *RankedValidator) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.ValidatorAddress)
+	if l > 0 {
+		n += 1 + l + sovQuery(uint64(l))
+	}
+	l = m.StakedTokens.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	l = m.MedianVaultValue.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	l = m.CompositeScore.Size()
+	n += 1 + l + sovQuery(uint64(l))
+	return n
+}
+
+func (m *QuerySetRankingResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Validators) > 0 {
+		for _, e := range m.Validators {
 			l = e.Size()
 			n += 1 + l + sovQuery(uint64(l))
 		}
@@ -2548,6 +3204,40 @@ func (m *QueryCompositeScoreResponse) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MedianVaultValue", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.MedianVaultValue.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipQuery(dAtA[iNdEx:])
@@ -3068,6 +3758,560 @@ func (m *QueryPositionsResponse) Unmarshal(dAtA []byte) error {
 			}
 			m.PendingDeallocations = append(m.PendingDeallocations, PendingDeallocation{})
 			if err := m.PendingDeallocations[len(m.PendingDeallocations)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryValuePostsRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryValuePostsRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryValuePostsRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ValidatorAddress", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ValidatorAddress = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QueryValuePostsResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QueryValuePostsResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QueryValuePostsResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Posts", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Posts = append(m.Posts, ValuePost{})
+			if err := m.Posts[len(m.Posts)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Median", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Median.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NextPostTime", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.NextPostTime == nil {
+				m.NextPostTime = new(time.Time)
+			}
+			if err := github_com_cosmos_gogoproto_types.StdTimeUnmarshal(m.NextPostTime, dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QuerySetRankingRequest) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QuerySetRankingRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QuerySetRankingRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *RankedValidator) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: RankedValidator: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: RankedValidator: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ValidatorAddress", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ValidatorAddress = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field StakedTokens", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.StakedTokens.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MedianVaultValue", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.MedianVaultValue.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CompositeScore", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.CompositeScore.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipQuery(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *QuerySetRankingResponse) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowQuery
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: QuerySetRankingResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: QuerySetRankingResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Validators", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowQuery
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthQuery
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthQuery
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Validators = append(m.Validators, RankedValidator{})
+			if err := m.Validators[len(m.Validators)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

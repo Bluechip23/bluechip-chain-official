@@ -2,7 +2,9 @@ package keeper
 
 import (
 	"context"
+	"sort"
 
+	"cosmossdk.io/math"
 	"cosmossdk.io/store/prefix"
 	"github.com/cosmos/cosmos-sdk/runtime"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -80,17 +82,99 @@ func (k Keeper) CompositeScore(goCtx context.Context, req *types.QueryCompositeS
 		return nil, status.Error(codes.InvalidArgument, "invalid validator address")
 	}
 
-	staked, vaultBalance, positionValue, score, err := k.GetCompositeScore(goCtx, valAddr)
+	score, err := k.GetCompositeScore(goCtx, valAddr)
 	if err != nil {
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
 
 	return &types.QueryCompositeScoreResponse{
-		StakedTokens:   staked,
-		VaultBalance:   vaultBalance,
-		PositionValue:  positionValue,
-		CompositeScore: score,
+		StakedTokens:     score.StakedTokens,
+		VaultBalance:     score.VaultBalance,
+		PositionValue:    score.PositionValue,
+		MedianVaultValue: score.MedianVaultValue,
+		CompositeScore:   score.Score,
 	}, nil
+}
+
+// ValuePosts queries a validator's value-post window and its median.
+func (k Keeper) ValuePosts(goCtx context.Context, req *types.QueryValuePostsRequest) (*types.QueryValuePostsResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	valAddr, err := sdk.ValAddressFromBech32(req.ValidatorAddress)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid validator address")
+	}
+
+	history := k.GetValuePostHistory(goCtx, valAddr)
+	resp := &types.QueryValuePostsResponse{
+		Posts:  history.Posts,
+		Median: MedianOfPosts(history.Posts),
+	}
+	if next, found := k.NextScheduledValuePost(goCtx, valAddr); found {
+		postTime := next.PostTime
+		resp.NextPostTime = &postTime
+	}
+	return resp, nil
+}
+
+// SetRanking queries the shadow complex-check ranking: validators ordered
+// by staked tokens with the composite score as tiebreaker. Observability
+// only; it has no effect on the actual validator set.
+func (k Keeper) SetRanking(goCtx context.Context, req *types.QuerySetRankingRequest) (*types.QuerySetRankingResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
+	validators, err := k.stakingKeeper.GetAllValidators(goCtx)
+	if err != nil {
+		return nil, status.Error(codes.Internal, err.Error())
+	}
+
+	sdkCtx := sdk.UnwrapSDKContext(goCtx)
+	ranked := make([]types.RankedValidator, 0, len(validators))
+	for _, validator := range validators {
+		valAddr, err := sdk.ValAddressFromBech32(validator.GetOperator())
+		if err != nil {
+			return nil, status.Error(codes.Internal, err.Error())
+		}
+
+		// Same definition as GetCompositeScore's vault component; dark
+		// pools degrade to their cached values so one broken contract
+		// cannot take down the whole ranking.
+		vaultBalance := math.ZeroInt()
+		positionValue := math.ZeroInt()
+		if vault, found := k.GetVault(goCtx, valAddr); found {
+			vaultBalance = vault.Balance
+			positionValue, err = k.positionsValueWithFallback(sdkCtx, valAddr, false)
+			if err != nil {
+				return nil, status.Error(codes.Internal, err.Error())
+			}
+		}
+		median := k.medianVaultValueOrLive(sdkCtx, valAddr, vaultBalance, positionValue)
+
+		staked := validator.GetTokens()
+		ranked = append(ranked, types.RankedValidator{
+			ValidatorAddress: validator.GetOperator(),
+			StakedTokens:     staked,
+			MedianVaultValue: median,
+			CompositeScore:   staked.Add(median),
+		})
+	}
+
+	// The design document's complex check: staked tokens first, composite
+	// score as the tiebreaker; address as a final deterministic tiebreak.
+	sort.SliceStable(ranked, func(i, j int) bool {
+		if !ranked[i].StakedTokens.Equal(ranked[j].StakedTokens) {
+			return ranked[i].StakedTokens.GT(ranked[j].StakedTokens)
+		}
+		if !ranked[i].CompositeScore.Equal(ranked[j].CompositeScore) {
+			return ranked[i].CompositeScore.GT(ranked[j].CompositeScore)
+		}
+		return ranked[i].ValidatorAddress < ranked[j].ValidatorAddress
+	})
+
+	return &types.QuerySetRankingResponse{Validators: ranked}, nil
 }
 
 // Pools queries all registered liquidity pools.

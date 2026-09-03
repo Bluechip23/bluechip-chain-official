@@ -5,6 +5,7 @@ import "amino/amino.proto";
 import "gogoproto/gogo.proto";
 import "bluechipchain/liquidityvault/params.proto";
 import "bluechipchain/liquidityvault/pool.proto";
+import "bluechipchain/liquidityvault/valuepost.proto";
 import "bluechipchain/liquidityvault/vault.proto";
 
 option go_package = "bluechipChain/x/liquidityvault/types";
@@ -36,4 +37,14 @@ message GenesisState {
   // pending_deallocations are pool exits still waiting out the deallocation
   // grace period.
   repeated PendingDeallocation pending_deallocations = 7 [(gogoproto.nullable) = false];
+
+  // value_post_histories are the validators' rolling value-post windows.
+  repeated ValuePostHistory value_post_histories = 8 [(gogoproto.nullable) = false];
+
+  // scheduled_value_posts is the pending value-post schedule.
+  repeated ScheduledValuePost scheduled_value_posts = 9 [(gogoproto.nullable) = false];
+
+  // cached_pool_values are the last observed position values per pool (the
+  // dark-pool valuation fallback).
+  repeated CachedPoolValue cached_pool_values = 10 [(gogoproto.nullable) = false];
 }

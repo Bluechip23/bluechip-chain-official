@@ -19,20 +19,26 @@ var (
 	// DefaultDeallocationGracePeriod is the universal "Liquidity Providing
 	// Change" waiting period before liquidity leaves a pool.
 	DefaultDeallocationGracePeriod = 72 * time.Hour
+
+	// DefaultValuePostInterval is the average time between vault value
+	// posts: six posts per five-day complex-check window, per the LPV
+	// design document.
+	DefaultValuePostInterval = 20 * time.Hour
 )
 
 // NewParams creates a new Params instance
-func NewParams(stakeCap math.Int, withdrawalGracePeriod, deallocationGracePeriod time.Duration) Params {
+func NewParams(stakeCap math.Int, withdrawalGracePeriod, deallocationGracePeriod, valuePostInterval time.Duration) Params {
 	return Params{
 		StakeCap:                stakeCap,
 		WithdrawalGracePeriod:   withdrawalGracePeriod,
 		DeallocationGracePeriod: deallocationGracePeriod,
+		ValuePostInterval:       valuePostInterval,
 	}
 }
 
 // DefaultParams returns a default set of parameters
 func DefaultParams() Params {
-	return NewParams(DefaultStakeCap, DefaultWithdrawalGracePeriod, DefaultDeallocationGracePeriod)
+	return NewParams(DefaultStakeCap, DefaultWithdrawalGracePeriod, DefaultDeallocationGracePeriod, DefaultValuePostInterval)
 }
 
 // Validate validates the set of params
@@ -48,6 +54,9 @@ func (p Params) Validate() error {
 	}
 	if p.DeallocationGracePeriod < 0 {
 		return fmt.Errorf("deallocation grace period cannot be negative: %s", p.DeallocationGracePeriod)
+	}
+	if p.ValuePostInterval <= 0 {
+		return fmt.Errorf("value post interval must be positive: %s", p.ValuePostInterval)
 	}
 	return nil
 }

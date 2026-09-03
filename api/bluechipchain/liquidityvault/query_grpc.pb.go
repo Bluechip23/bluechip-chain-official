@@ -25,6 +25,8 @@ const (
 	Query_CompositeScore_FullMethodName = "/bluechipchain.liquidityvault.Query/CompositeScore"
 	Query_Pools_FullMethodName          = "/bluechipchain.liquidityvault.Query/Pools"
 	Query_Positions_FullMethodName      = "/bluechipchain.liquidityvault.Query/Positions"
+	Query_ValuePosts_FullMethodName     = "/bluechipchain.liquidityvault.Query/ValuePosts"
+	Query_SetRanking_FullMethodName     = "/bluechipchain.liquidityvault.Query/SetRanking"
 )
 
 // QueryClient is the client API for Query service.
@@ -49,6 +51,14 @@ type QueryClient interface {
 	// Positions queries a validator's pool positions, valued at current pool
 	// prices, including pending deallocations.
 	Positions(ctx context.Context, in *QueryPositionsRequest, opts ...grpc.CallOption) (*QueryPositionsResponse, error)
+	// ValuePosts queries a validator's rolling value-post window and the
+	// median derived from it.
+	ValuePosts(ctx context.Context, in *QueryValuePostsRequest, opts ...grpc.CallOption) (*QueryValuePostsResponse, error)
+	// SetRanking is a SHADOW of the design document's complex validator-set
+	// check: all validators ranked by staked tokens with the composite score
+	// as tiebreaker. Observability only — it has no effect on the actual
+	// validator set in stage 1.
+	SetRanking(ctx context.Context, in *QuerySetRankingRequest, opts ...grpc.CallOption) (*QuerySetRankingResponse, error)
 }
 
 type queryClient struct {
@@ -119,6 +129,26 @@ func (c *queryClient) Positions(ctx context.Context, in *QueryPositionsRequest, 
 	return out, nil
 }
 
+func (c *queryClient) ValuePosts(ctx context.Context, in *QueryValuePostsRequest, opts ...grpc.CallOption) (*QueryValuePostsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryValuePostsResponse)
+	err := c.cc.Invoke(ctx, Query_ValuePosts_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *queryClient) SetRanking(ctx context.Context, in *QuerySetRankingRequest, opts ...grpc.CallOption) (*QuerySetRankingResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QuerySetRankingResponse)
+	err := c.cc.Invoke(ctx, Query_SetRanking_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility.
@@ -141,6 +171,14 @@ type QueryServer interface {
 	// Positions queries a validator's pool positions, valued at current pool
 	// prices, including pending deallocations.
 	Positions(context.Context, *QueryPositionsRequest) (*QueryPositionsResponse, error)
+	// ValuePosts queries a validator's rolling value-post window and the
+	// median derived from it.
+	ValuePosts(context.Context, *QueryValuePostsRequest) (*QueryValuePostsResponse, error)
+	// SetRanking is a SHADOW of the design document's complex validator-set
+	// check: all validators ranked by staked tokens with the composite score
+	// as tiebreaker. Observability only — it has no effect on the actual
+	// validator set in stage 1.
+	SetRanking(context.Context, *QuerySetRankingRequest) (*QuerySetRankingResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -168,6 +206,12 @@ func (UnimplementedQueryServer) Pools(context.Context, *QueryPoolsRequest) (*Que
 }
 func (UnimplementedQueryServer) Positions(context.Context, *QueryPositionsRequest) (*QueryPositionsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Positions not implemented")
+}
+func (UnimplementedQueryServer) ValuePosts(context.Context, *QueryValuePostsRequest) (*QueryValuePostsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ValuePosts not implemented")
+}
+func (UnimplementedQueryServer) SetRanking(context.Context, *QuerySetRankingRequest) (*QuerySetRankingResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetRanking not implemented")
 }
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 func (UnimplementedQueryServer) testEmbeddedByValue()               {}
@@ -298,6 +342,42 @@ func _Query_Positions_Handler(srv interface{}, ctx context.Context, dec func(int
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_ValuePosts_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryValuePostsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).ValuePosts(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_ValuePosts_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).ValuePosts(ctx, req.(*QueryValuePostsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Query_SetRanking_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QuerySetRankingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).SetRanking(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_SetRanking_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).SetRanking(ctx, req.(*QuerySetRankingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -328,6 +408,14 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Positions",
 			Handler:    _Query_Positions_Handler,
+		},
+		{
+			MethodName: "ValuePosts",
+			Handler:    _Query_ValuePosts_Handler,
+		},
+		{
+			MethodName: "SetRanking",
+			Handler:    _Query_SetRanking_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

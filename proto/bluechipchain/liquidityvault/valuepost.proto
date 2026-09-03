@@ -1,0 +1,65 @@
+syntax = "proto3";
+package bluechipchain.liquidityvault;
+
+import "cosmos_proto/cosmos.proto";
+import "gogoproto/gogo.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "bluechipChain/x/liquidityvault/types";
+
+// ValuePost is one snapshot of a vault's total value (active balance plus
+// valued pool positions), taken at a pseudo-random time by the end blocker.
+// The median of the last posts feeds the composite score, damping value
+// swings and post-timing gaming, per the LPV design document.
+message ValuePost {
+  // value is the vault's total value in the bond denom at post time.
+  string value = 1 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+
+  // post_time is when the snapshot was taken.
+  google.protobuf.Timestamp post_time = 2 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false
+  ];
+}
+
+// ValuePostHistory is a validator's rolling window of value posts, newest
+// last, trimmed to the window size (6).
+message ValuePostHistory {
+  // validator_address is the operator address of the vault's owner.
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.ValidatorAddressString"];
+
+  // posts are the retained snapshots, oldest first.
+  repeated ValuePost posts = 2 [(gogoproto.nullable) = false];
+}
+
+// CachedPoolValue is the last successfully observed position value for a
+// pool — the fallback used when the pool contract cannot be queried during
+// a value post. Exported with genesis so an export/import round trip keeps
+// the dark-pool fallback intact.
+message CachedPoolValue {
+  // pool_id is the pool the observation belongs to.
+  uint64 pool_id = 1;
+
+  // value is the last observed position value in the bond denom.
+  string value = 2 [
+    (cosmos_proto.scalar) = "cosmos.Int",
+    (gogoproto.customtype) = "cosmossdk.io/math.Int",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// ScheduledValuePost is a pending entry in the value-post schedule.
+message ScheduledValuePost {
+  // validator_address is the operator address of the vault to snapshot.
+  string validator_address = 1 [(cosmos_proto.scalar) = "cosmos.ValidatorAddressString"];
+
+  // post_time is when the next snapshot is due.
+  google.protobuf.Timestamp post_time = 2 [
+    (gogoproto.stdtime) = true,
+    (gogoproto.nullable) = false
+  ];
+}

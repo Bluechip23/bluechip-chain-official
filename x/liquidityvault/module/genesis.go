@@ -38,6 +38,17 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	if err := k.ImportPendingDeallocations(ctx, genState.PendingDeallocations); err != nil {
 		panic(err)
 	}
+	for _, history := range genState.ValuePostHistories {
+		if err := k.SetValuePostHistory(ctx, history); err != nil {
+			panic(err)
+		}
+	}
+	if err := k.ImportValuePostSchedule(ctx, genState.Vaults, genState.ScheduledValuePosts); err != nil {
+		panic(err)
+	}
+	if err := k.ImportCachedPoolValues(ctx, genState.CachedPoolValues); err != nil {
+		panic(err)
+	}
 }
 
 // ExportGenesis returns the module's exported genesis.
@@ -50,6 +61,9 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis.NextPoolId = k.GetNextPoolID(ctx)
 	genesis.Positions = k.GetAllPositions(ctx)
 	genesis.PendingDeallocations = k.GetAllPendingDeallocations(ctx)
+	genesis.ValuePostHistories = k.GetAllValuePostHistories(ctx)
+	genesis.ScheduledValuePosts = k.GetAllScheduledValuePosts(ctx)
+	genesis.CachedPoolValues = k.GetAllCachedPoolValues(ctx)
 
 	return genesis
 }

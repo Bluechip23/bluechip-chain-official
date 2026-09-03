@@ -149,6 +149,12 @@ func (k Keeper) AllocateToPool(ctx context.Context, valAddr sdk.ValAddress, pool
 	if err != nil {
 		return math.Int{}, err
 	}
+	// Keep the fallback cache fresh: a pool that goes dark before the
+	// vault's first value post should fall back to this observation, not
+	// zero.
+	if err := k.setCachedPoolValue(ctx, poolID, valueAfter); err != nil {
+		return math.Int{}, err
+	}
 	delta := valueAfter.Sub(valueBefore)
 	if !delta.IsPositive() {
 		return math.Int{}, errorsmod.Wrapf(types.ErrInvalidAllocation, "pool %d position value did not increase (before %s, after %s)", poolID, valueBefore, valueAfter)

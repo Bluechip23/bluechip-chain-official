@@ -158,28 +158,28 @@ func TestCompositeScore(t *testing.T) {
 	bankKeeper.SetBalance(valAccAddr, sdk.NewCoins(coin(600)))
 
 	// Without a vault the score is just the staked tokens.
-	staked, vaultBalance, _, score, err := k.GetCompositeScore(ctx, valAddr)
+	score, err := k.GetCompositeScore(ctx, valAddr)
 	require.NoError(t, err)
-	require.Equal(t, math.NewInt(1_000), staked)
-	require.True(t, vaultBalance.IsZero())
-	require.Equal(t, math.NewInt(1_000), score)
+	require.Equal(t, math.NewInt(1_000), score.StakedTokens)
+	require.True(t, score.VaultBalance.IsZero())
+	require.Equal(t, math.NewInt(1_000), score.Score)
 
 	// Deposits raise the score.
 	require.NoError(t, k.Deposit(ctx, valAddr, coin(600)))
-	_, vaultBalance, _, score, err = k.GetCompositeScore(ctx, valAddr)
+	score, err = k.GetCompositeScore(ctx, valAddr)
 	require.NoError(t, err)
-	require.Equal(t, math.NewInt(600), vaultBalance)
-	require.Equal(t, math.NewInt(1_600), score)
+	require.Equal(t, math.NewInt(600), score.VaultBalance)
+	require.Equal(t, math.NewInt(1_600), score.Score)
 
 	// Pending withdrawals stop counting immediately.
 	_, err = k.InitiateWithdrawal(ctx.WithBlockTime(time.Now().UTC()), valAddr, coin(100))
 	require.NoError(t, err)
-	_, vaultBalance, _, score, err = k.GetCompositeScore(ctx, valAddr)
+	score, err = k.GetCompositeScore(ctx, valAddr)
 	require.NoError(t, err)
-	require.Equal(t, math.NewInt(500), vaultBalance)
-	require.Equal(t, math.NewInt(1_500), score)
+	require.Equal(t, math.NewInt(500), score.VaultBalance)
+	require.Equal(t, math.NewInt(1_500), score.Score)
 
 	// Unknown validator errors.
-	_, _, _, _, err = k.GetCompositeScore(ctx, sdk.ValAddress([]byte("validator-operator-2")))
+	_, err = k.GetCompositeScore(ctx, sdk.ValAddress([]byte("validator-operator-2")))
 	require.ErrorIs(t, err, types.ErrValidatorNotFound)
 }

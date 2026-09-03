@@ -271,6 +271,13 @@ func (k Keeper) settleDeallocation(ctx sdk.Context, deallocation types.PendingDe
 	if err := k.setPoolTotalShares(cacheCtx, deallocation.PoolId, totalShares.Sub(shares)); err != nil {
 		return err
 	}
+	// Refresh the fallback cache with the post-withdrawal value so a pool
+	// that goes dark right after doesn't get overvalued by a stale entry.
+	if newValue, err := k.guardedPoolValue(cacheCtx, pool); err == nil {
+		if err := k.setCachedPoolValue(cacheCtx, deallocation.PoolId, newValue); err != nil {
+			return err
+		}
+	}
 	pending := k.GetPendingShares(cacheCtx, valAddr, deallocation.PoolId)
 	if err := k.setPendingShares(cacheCtx, valAddr, deallocation.PoolId, math.MaxInt(pending.Sub(deallocation.Shares), math.ZeroInt())); err != nil {
 		return err

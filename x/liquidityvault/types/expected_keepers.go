@@ -22,6 +22,7 @@ type BankKeeper interface {
 // StakingKeeper defines the expected interface for the Staking module.
 type StakingKeeper interface {
 	GetValidator(ctx context.Context, addr sdk.ValAddress) (stakingtypes.Validator, error)
+	GetAllValidators(ctx context.Context) ([]stakingtypes.Validator, error)
 	BondDenom(ctx context.Context) (string, error)
 }
 

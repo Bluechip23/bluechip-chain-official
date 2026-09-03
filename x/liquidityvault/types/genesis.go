@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"cosmossdk.io/math"
+	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
 // DefaultGenesis returns the default genesis state
@@ -77,6 +78,62 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("duplicate position for validator %s in pool %d", position.ValidatorAddress, position.PoolId)
 		}
 		positionShares[key] = position.Shares
+	}
+
+	historySeen := make(map[string]bool, len(gs.ValuePostHistories))
+	for _, history := range gs.ValuePostHistories {
+		if _, err := sdk.ValAddressFromBech32(history.ValidatorAddress); err != nil {
+			return fmt.Errorf("invalid value post history validator: %w", err)
+		}
+		if !seen[history.ValidatorAddress] {
+			return fmt.Errorf("value post history for %s has no vault", history.ValidatorAddress)
+		}
+		if historySeen[history.ValidatorAddress] {
+			return fmt.Errorf("duplicate value post history for validator %s", history.ValidatorAddress)
+		}
+		historySeen[history.ValidatorAddress] = true
+		if len(history.Posts) > ValuePostWindow {
+			return fmt.Errorf("value post history for %s exceeds the window of %d", history.ValidatorAddress, ValuePostWindow)
+		}
+		for _, post := range history.Posts {
+			if post.Value.IsNil() || post.Value.IsNegative() {
+				return fmt.Errorf("value post for %s must be non-negative", history.ValidatorAddress)
+			}
+			if post.PostTime.IsZero() {
+				return fmt.Errorf("value post for %s must have a post time", history.ValidatorAddress)
+			}
+		}
+	}
+
+	scheduleSeen := make(map[string]bool, len(gs.ScheduledValuePosts))
+	for _, entry := range gs.ScheduledValuePosts {
+		if _, err := sdk.ValAddressFromBech32(entry.ValidatorAddress); err != nil {
+			return fmt.Errorf("invalid scheduled value post validator: %w", err)
+		}
+		if !seen[entry.ValidatorAddress] {
+			return fmt.Errorf("scheduled value post for %s has no vault", entry.ValidatorAddress)
+		}
+		if scheduleSeen[entry.ValidatorAddress] {
+			return fmt.Errorf("duplicate scheduled value post for validator %s", entry.ValidatorAddress)
+		}
+		scheduleSeen[entry.ValidatorAddress] = true
+		if entry.PostTime.IsZero() {
+			return fmt.Errorf("scheduled value post for %s must have a post time", entry.ValidatorAddress)
+		}
+	}
+
+	cachedSeen := make(map[uint64]bool, len(gs.CachedPoolValues))
+	for _, cached := range gs.CachedPoolValues {
+		if !poolIDs[cached.PoolId] {
+			return fmt.Errorf("cached value references unregistered pool %d", cached.PoolId)
+		}
+		if cachedSeen[cached.PoolId] {
+			return fmt.Errorf("duplicate cached value for pool %d", cached.PoolId)
+		}
+		cachedSeen[cached.PoolId] = true
+		if cached.Value.IsNil() || cached.Value.IsNegative() {
+			return fmt.Errorf("cached value for pool %d must be non-negative", cached.PoolId)
+		}
 	}
 
 	pendingShares := make(map[positionKey]math.Int)

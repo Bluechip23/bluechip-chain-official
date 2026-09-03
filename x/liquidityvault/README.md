@@ -41,6 +41,7 @@ stage 1 is the fraction of vault rewards passed through to its delegators**
 | `stake_cap` | `0` (disabled) | Maximum bond-denom tokens a validator may have bonded directly to the chain. Governance enables it by setting a positive value. |
 | `withdrawal_grace_period` | `72h` | Universal delay between a vault withdrawal request and the release of funds. |
 | `deallocation_grace_period` | `72h` | Universal delay ("Liquidity Providing Change") between a pool deallocation request and the liquidity leaving the pool. |
+| `value_post_interval` | `20h` | Average time between a vault's value posts (six per five-day window). |
 
 ## Pool integration: the Vault Adapter Interface
 
@@ -67,6 +68,36 @@ stays in the position, favoring remaining shareholders.
 A thin adapter contract wrapping the existing creator pools (implementing
 the three calls above) lives on the contract side — it is the
 `bluechip-contracts` repository's half of this integration.
+
+## Value posts and the median composite score
+
+Per the design document, a vault's contribution to the composite score is
+the **median of six value posts** taken at pseudo-random times, damping both
+market swings and post-timing gaming:
+
+- The end blocker snapshots each vault's total value (active balance +
+  valued positions) on its own cadence: every `value_post_interval` (default
+  20h — six posts per five-day complex-check window) with a deterministic
+  jitter in [interval/2, interval*3/2) derived from the block header hash
+  and the validator address, so all nodes agree but validators cannot game
+  post times far ahead.
+- The last six posts are retained; `CompositeScore.composite_score` is
+  `staked_tokens + median(posts)`. Before a vault's first post, the live
+  vault value is used.
+- If a pool contract cannot be queried during a post, the pool's last
+  successfully observed value is used (zero if none was ever observed) — a
+  broken pool degrades a score gracefully instead of halting the chain or
+  zeroing the vault.
+
+## Shadow validator-set ranking
+
+The `SetRanking` query implements the design document's complex check —
+validators ordered by staked tokens with the composite score as tiebreaker —
+in **shadow mode**: it is observability only and has no effect on the actual
+validator set. Wiring it into consensus-power selection is deliberately left
+for a later, explicitly-approved stage; with the stake cap active, staking's
+own top-N-by-bonded-tokens selection already enforces the simple check's
+semantics continuously.
 
 ### End-blocker safety
 
@@ -105,10 +136,8 @@ it by accident.
 
 Still to come within stage 1 ("Introduce liquidity vaults"):
 
-- Value posts: the composite score currently values positions live; the
-  median of six pseudo-randomly timed value posts arrives next.
 - Reward flow: `delegator_reward_share` is stored and validated; collection
-  and distribution of pool rewards is the following increment.
+  and distribution of pool rewards is the next increment.
 
 Deliberately out of scope for stage 1, per the design document's timeline:
 

@@ -13,6 +13,7 @@ const (
 	EventTypeDeallocationCompleted = "vault_deallocation_completed"
 	EventTypeDeallocationRequeued  = "vault_deallocation_requeued"
 	EventTypeDeallocationAbandoned = "vault_deallocation_abandoned"
+	EventTypeValuePost             = "vault_value_post"
 
 	AttributeKeyValidator            = "validator"
 	AttributeKeyAmount               = "amount"

@@ -356,12 +356,12 @@ func TestAllocationChargesSlippageToAllocator(t *testing.T) {
 
 	// Pool value is now 900; val1 holds 500/900 shares -> 500, val2
 	// 400/900 -> 400.
-	_, _, positionValue, _, err := k.GetCompositeScore(ctx, valAddr)
+	score, err := k.GetCompositeScore(ctx, valAddr)
 	require.NoError(t, err)
-	require.Equal(t, math.NewInt(500), positionValue)
-	_, _, positionValue, _, err = k.GetCompositeScore(ctx, val2Addr)
+	require.Equal(t, math.NewInt(500), score.PositionValue)
+	score, err = k.GetCompositeScore(ctx, val2Addr)
 	require.NoError(t, err)
-	require.Equal(t, math.NewInt(400), positionValue)
+	require.Equal(t, math.NewInt(400), score.PositionValue)
 }
 
 func TestCompositeScoreWithPositions(t *testing.T) {
@@ -380,22 +380,26 @@ func TestCompositeScoreWithPositions(t *testing.T) {
 	// The pool value rises to 1800: val1 owns 2/3 (1200), val2 1/3 (600).
 	wasmKeeper.SetPoolValue(poolContract, math.NewInt(1800))
 
-	staked, vaultBalance, positionValue, score, err := k.GetCompositeScore(ctx, valAddr)
+	score, err := k.GetCompositeScore(ctx, valAddr)
 	require.NoError(t, err)
-	require.Equal(t, math.NewInt(1_000), staked)
-	require.Equal(t, math.NewInt(400), vaultBalance)
-	require.Equal(t, math.NewInt(1_200), positionValue)
-	require.Equal(t, math.NewInt(2_600), score)
+	require.Equal(t, math.NewInt(1_000), score.StakedTokens)
+	require.Equal(t, math.NewInt(400), score.VaultBalance)
+	require.Equal(t, math.NewInt(1_200), score.PositionValue)
+	require.Equal(t, math.NewInt(2_600), score.Score)
 
-	_, _, positionValue, score, err = k.GetCompositeScore(ctx, val2Addr)
+	score, err = k.GetCompositeScore(ctx, val2Addr)
 	require.NoError(t, err)
-	require.Equal(t, math.NewInt(600), positionValue)
-	require.Equal(t, math.NewInt(2_600), score)
+	require.Equal(t, math.NewInt(600), score.PositionValue)
+	require.Equal(t, math.NewInt(2_600), score.Score)
 
-	// A failing value query surfaces as an error rather than a bogus score.
+	// A dark pool degrades to its last cached value (900, observed at
+	// val2's allocation) instead of erroring: the score stays computable
+	// with the pool's pre-spike valuation. val1 owns 600/900 shares -> 600.
 	wasmKeeper.Pools[poolContract.String()].FailQuery = true
-	_, _, _, _, err = k.GetCompositeScore(ctx, valAddr)
-	require.ErrorIs(t, err, types.ErrPoolValueUnavailable)
+	score, err = k.GetCompositeScore(ctx, valAddr)
+	require.NoError(t, err)
+	require.Equal(t, math.NewInt(600), score.PositionValue)
+	require.Equal(t, math.NewInt(2_000), score.Score) // 1000 staked + 400 balance + 600 cached position
 }
 
 func TestPoolSharesInvariant(t *testing.T) {
