@@ -80,6 +80,11 @@ var (
 	// so a broken pool degrades a score gracefully instead of halting the
 	// end blocker or zeroing the vault.
 	CachedPoolValueKeyPrefix = []byte{0x0C}
+
+	// DelegatorRewardKeyPrefix is the store prefix for delegators'
+	// vault-reward accrual records, keyed by length-prefixed delegator
+	// address then validator operator address.
+	DelegatorRewardKeyPrefix = []byte{0x0D}
 )
 
 // VaultKey returns the store key for a validator's vault.
@@ -174,4 +179,11 @@ func ValuePostScheduleKey(t time.Time, valAddr sdk.ValAddress) []byte {
 // position value.
 func CachedPoolValueKey(poolID uint64) []byte {
 	return binary.BigEndian.AppendUint64(CachedPoolValueKeyPrefix, poolID)
+}
+
+// DelegatorRewardKey returns the store key for a delegator's reward record
+// against one validator.
+func DelegatorRewardKey(delAddr sdk.AccAddress, valAddr sdk.ValAddress) []byte {
+	key := append(DelegatorRewardKeyPrefix, address.MustLengthPrefix(delAddr.Bytes())...)
+	return append(key, valAddr.Bytes()...)
 }

@@ -17,14 +17,18 @@ func RegisterInvariants(ir sdk.InvariantRegistry, k Keeper) {
 }
 
 // ModuleAccountInvariant checks that the liquidityvault module account holds
-// at least the sum of all active vault balances and pending withdrawals in
-// the bond denom. (Stray sends could push the balance above the tracked sum;
-// they are inert, so only a deficit breaks the invariant.)
+// at least the sum of all active vault balances, pending withdrawals, and
+// outstanding delegator rewards in the bond denom. (Stray sends could push
+// the balance above the tracked sum; they are inert, so only a deficit
+// breaks the invariant.)
 func ModuleAccountInvariant(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
 		tracked := math.ZeroInt()
 		k.IterateVaults(ctx, func(vault types.Vault) bool {
 			tracked = tracked.Add(vault.Balance)
+			if !vault.OutstandingRewards.IsNil() {
+				tracked = tracked.Add(vault.OutstandingRewards.Ceil().TruncateInt())
+			}
 			return false
 		})
 		k.IteratePendingWithdrawals(ctx, func(withdrawal types.PendingWithdrawal) bool {

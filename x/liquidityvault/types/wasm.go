@@ -37,6 +37,13 @@ type WithdrawLiquidityPayload struct {
 	Ratio string `json:"ratio"`
 }
 
+// CollectRewardsMsg is the execute message collecting the accrued liquidity
+// fees for the caller's pool position; the contract sends them to the
+// caller as bond-denom native funds in the same execution.
+type CollectRewardsMsg struct {
+	CollectRewards struct{} `json:"collect_rewards"`
+}
+
 // PositionValueQuery is the smart query for the current value of an
 // address's pool position.
 type PositionValueQuery struct {

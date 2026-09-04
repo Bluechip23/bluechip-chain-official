@@ -17,6 +17,8 @@ func TestGenesisState_Validate(t *testing.T) {
 		ValidatorAddress:     valAddr,
 		Balance:              math.NewInt(100),
 		DelegatorRewardShare: math.LegacyNewDecWithPrec(5, 1),
+		RewardIndex:          math.LegacyZeroDec(),
+		OutstandingRewards:   math.LegacyZeroDec(),
 	}
 
 	tests := []struct {
@@ -66,6 +68,8 @@ func TestGenesisState_Validate(t *testing.T) {
 						ValidatorAddress:     valAddr,
 						Balance:              math.NewInt(-1),
 						DelegatorRewardShare: math.LegacyNewDecWithPrec(5, 1),
+						RewardIndex:          math.LegacyZeroDec(),
+						OutstandingRewards:   math.LegacyZeroDec(),
 					},
 				},
 			},
@@ -80,6 +84,8 @@ func TestGenesisState_Validate(t *testing.T) {
 						ValidatorAddress:     valAddr,
 						Balance:              math.NewInt(1),
 						DelegatorRewardShare: math.LegacyNewDec(2),
+						RewardIndex:          math.LegacyZeroDec(),
+						OutstandingRewards:   math.LegacyZeroDec(),
 					},
 				},
 			},

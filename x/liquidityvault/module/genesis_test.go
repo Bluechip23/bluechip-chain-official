@@ -23,6 +23,8 @@ func TestGenesisRoundTrip(t *testing.T) {
 				ValidatorAddress:     valAddr,
 				Balance:              math.NewInt(750),
 				DelegatorRewardShare: math.LegacyNewDecWithPrec(6, 1),
+				RewardIndex:          math.LegacyNewDecWithPrec(5, 1),
+				OutstandingRewards:   math.LegacyNewDec(40),
 			},
 		},
 		PendingWithdrawals: []types.PendingWithdrawal{
@@ -66,6 +68,14 @@ func TestGenesisRoundTrip(t *testing.T) {
 		CachedPoolValues: []types.CachedPoolValue{
 			{PoolId: 1, Value: math.NewInt(180)},
 		},
+		DelegatorRewards: []types.DelegatorReward{
+			{
+				DelegatorAddress: sdk.AccAddress([]byte("delegator-1---------")).String(),
+				ValidatorAddress: valAddr,
+				Index:            math.LegacyNewDecWithPrec(25, 2),
+				Accrued:          math.LegacyNewDecWithPrec(125, 1),
+			},
+		},
 	}
 	require.NoError(t, genesisState.Validate())
 
@@ -86,4 +96,5 @@ func TestGenesisRoundTrip(t *testing.T) {
 	require.Equal(t, genesisState.NextPoolId, got.NextPoolId)
 	require.ElementsMatch(t, genesisState.Positions, got.Positions)
 	require.ElementsMatch(t, genesisState.CachedPoolValues, got.CachedPoolValues)
+	require.ElementsMatch(t, genesisState.DelegatorRewards, got.DelegatorRewards)
 }

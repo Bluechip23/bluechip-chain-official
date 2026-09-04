@@ -30,6 +30,8 @@ stage 1 is the fraction of vault rewards passed through to its delegators**
 | `MsgSetRewardShare` | validator operator | Sets the delegator reward share, a fraction in [0, 1]. Defaults to 0.5. |
 | `MsgAllocateToPool` | validator operator | Moves active vault balance into a registered pool; the position counts toward the composite score at current value. |
 | `MsgDeallocateFromPool` | validator operator | Queues removal of pool liquidity; after the universal deallocation grace period the proceeds go to the validator's own account, leaving the vault (per the design document, withdrawn pool tokens must be re-staked or re-deposited manually). |
+| `MsgCollectPoolRewards` | validator operator (with a position in the pool) | Pulls the pool's accrued fees and distributes them to every validator in the pool pro rata by shares. |
+| `MsgClaimVaultRewards` | delegator | Pays out the delegator's accrued vault rewards from one validator. |
 | `MsgRegisterPool` | governance | Registers a pool contract implementing the Vault Adapter Interface. |
 | `MsgSetPoolEnabled` | governance | Enables/disables new allocations to a pool (deallocations always work). |
 | `MsgUpdateParams` | governance | Sets the stake cap and the grace periods. |
@@ -55,6 +57,9 @@ interface — see `types/wasm.go` for the schema:
 - `withdraw_liquidity {ratio}` (execute): remove that fraction of the
   caller's position and return the proceeds to the caller as bond-denom
   native funds in the same execution.
+- `collect_rewards` (execute): send the accrued liquidity fees for the
+  caller's position to the caller as bond-denom native funds in the same
+  execution.
 - `position_value {address}` (query): the address's position value in the
   bond denom.
 
@@ -88,6 +93,28 @@ market swings and post-timing gaming:
   successfully observed value is used (zero if none was ever observed) — a
   broken pool degrades a score gracefully instead of halting the chain or
   zeroing the vault.
+
+## Reward flow (F1-lite)
+
+Any validator with a position in a pool can trigger `MsgCollectPoolRewards`;
+the collected fees are split across the pool's validators pro rata by
+internal shares, then each cut is split by that vault's
+`delegator_reward_share`:
+
+- The validator's part goes to the operator account immediately.
+- The delegators' part raises the vault's cumulative **reward index**
+  (`delegator_cut / validator_staked_tokens`). A delegator's entitlement is
+  `(index_now − index_at_last_settlement) × their_stake`, settled lazily by
+  the delegation hooks BEFORE any stake change — so distribution never loops
+  over delegators, and a delegation created after a collection earns nothing
+  from it. `MsgClaimVaultRewards` pays the floor of the accrual; fractional
+  dust stays recorded.
+- A validator with zero staked tokens (a pure liquidity validator) has no
+  delegators to distribute to and receives its whole cut.
+- All roundings favor the module, and slashing (which shrinks stake without
+  a hook) can only lower settlements — the module can never owe more than it
+  holds, which the module-account invariant now also enforces including
+  outstanding rewards.
 
 ## Shadow validator-set ranking
 
@@ -133,11 +160,6 @@ is also in the bank blocked-address list so users cannot `MsgSend` funds into
 it by accident.
 
 ## Deliberate stage-1 scope limits
-
-Still to come within stage 1 ("Introduce liquidity vaults"):
-
-- Reward flow: `delegator_reward_share` is stored and validated; collection
-  and distribution of pool rewards is the next increment.
 
 Deliberately out of scope for stage 1, per the design document's timeline:
 

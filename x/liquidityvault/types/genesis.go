@@ -22,6 +22,7 @@ func (gs GenesisState) Validate() error {
 	}
 
 	seen := make(map[string]bool, len(gs.Vaults))
+	vaultIndexes := make(map[string]math.LegacyDec, len(gs.Vaults))
 	for _, vault := range gs.Vaults {
 		if err := vault.Validate(); err != nil {
 			return err
@@ -30,6 +31,7 @@ func (gs GenesisState) Validate() error {
 			return fmt.Errorf("duplicate vault for validator %s", vault.ValidatorAddress)
 		}
 		seen[vault.ValidatorAddress] = true
+		vaultIndexes[vault.ValidatorAddress] = vault.RewardIndex
 	}
 
 	for _, withdrawal := range gs.PendingWithdrawals {
@@ -72,6 +74,9 @@ func (gs GenesisState) Validate() error {
 		}
 		if !poolIDs[position.PoolId] {
 			return fmt.Errorf("position references unregistered pool %d", position.PoolId)
+		}
+		if !seen[position.ValidatorAddress] {
+			return fmt.Errorf("position for validator %s has no vault", position.ValidatorAddress)
 		}
 		key := positionKey{position.ValidatorAddress, position.PoolId}
 		if _, exists := positionShares[key]; exists {
@@ -133,6 +138,39 @@ func (gs GenesisState) Validate() error {
 		cachedSeen[cached.PoolId] = true
 		if cached.Value.IsNil() || cached.Value.IsNegative() {
 			return fmt.Errorf("cached value for pool %d must be non-negative", cached.PoolId)
+		}
+	}
+
+	rewardSeen := make(map[string]bool, len(gs.DelegatorRewards))
+	accruedPerVault := make(map[string]math.LegacyDec)
+	for _, reward := range gs.DelegatorRewards {
+		if err := reward.Validate(); err != nil {
+			return err
+		}
+		if !seen[reward.ValidatorAddress] {
+			return fmt.Errorf("delegator reward for validator %s has no vault", reward.ValidatorAddress)
+		}
+		if reward.Index.GT(vaultIndexes[reward.ValidatorAddress]) {
+			return fmt.Errorf("delegator reward index for %s exceeds the vault's reward index", reward.DelegatorAddress)
+		}
+		key := reward.DelegatorAddress + "/" + reward.ValidatorAddress
+		if rewardSeen[key] {
+			return fmt.Errorf("duplicate delegator reward for %s against %s", reward.DelegatorAddress, reward.ValidatorAddress)
+		}
+		rewardSeen[key] = true
+
+		total, ok := accruedPerVault[reward.ValidatorAddress]
+		if !ok {
+			total = math.LegacyZeroDec()
+		}
+		accruedPerVault[reward.ValidatorAddress] = total.Add(reward.Accrued)
+	}
+	// Settled accruals must be backed by the vault's outstanding rewards, or
+	// claims would draw funds the module-account invariant attributes to
+	// vault balances and pending withdrawals.
+	for _, vault := range gs.Vaults {
+		if total, ok := accruedPerVault[vault.ValidatorAddress]; ok && total.GT(vault.OutstandingRewards) {
+			return fmt.Errorf("delegator rewards accrued against %s exceed the vault's outstanding rewards", vault.ValidatorAddress)
 		}
 	}
 

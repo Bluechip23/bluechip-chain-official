@@ -12,16 +12,20 @@ import (
 	"bluechipChain/x/liquidityvault/types"
 )
 
-// Hooks enforces the validator stake cap through the staking module's hook
-// interface. Enforcing here (rather than in an ante decorator) covers every
-// delegation path, including messages nested inside authz MsgExec.
+// Hooks serves two duties on the staking module's hook interface:
 //
+// Stake cap — enforcing here (rather than in an ante decorator) covers
+// every delegation path, including messages nested inside authz MsgExec.
 // The Before* hooks snapshot the validator's tokens; AfterDelegationModified
 // compares against the snapshot and rejects the operation when it INCREASED
 // the validator's tokens beyond the cap. Operations that decrease tokens
 // (undelegations) are never blocked, even if the validator already sits above
 // a newly lowered cap. If no snapshot exists (paths that skip the Before
 // hooks, such as genesis import), the cap is not enforced.
+//
+// Reward settlement — every stake change closes the delegator's vault-reward
+// accrual window at the pre-change stake (see rewards.go), keeping the
+// F1-lite accounting exact without ever looping over delegators.
 type Hooks struct {
 	k Keeper
 }
@@ -34,14 +38,23 @@ func (k Keeper) StakingHooks() Hooks {
 }
 
 // BeforeDelegationCreated snapshots the validator's tokens before a new
-// delegation is added.
-func (h Hooks) BeforeDelegationCreated(ctx context.Context, _ sdk.AccAddress, valAddr sdk.ValAddress) error {
+// delegation is added, and pins the delegator's reward window to the
+// current index (a new delegation must not collect rewards from before it
+// existed).
+func (h Hooks) BeforeDelegationCreated(ctx context.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress) error {
+	if _, err := h.k.settleDelegatorReward(ctx, delAddr, valAddr); err != nil {
+		return err
+	}
 	return h.k.snapshotValidatorTokens(ctx, valAddr)
 }
 
 // BeforeDelegationSharesModified snapshots the validator's tokens before an
-// existing delegation changes.
-func (h Hooks) BeforeDelegationSharesModified(ctx context.Context, _ sdk.AccAddress, valAddr sdk.ValAddress) error {
+// existing delegation changes, and settles the delegator's vault rewards at
+// the pre-change stake.
+func (h Hooks) BeforeDelegationSharesModified(ctx context.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress) error {
+	if _, err := h.k.settleDelegatorReward(ctx, delAddr, valAddr); err != nil {
+		return err
+	}
 	return h.k.snapshotValidatorTokens(ctx, valAddr)
 }
 
@@ -62,8 +75,13 @@ func (h Hooks) AfterValidatorBonded(context.Context, sdk.ConsAddress, sdk.ValAdd
 func (h Hooks) AfterValidatorBeginUnbonding(context.Context, sdk.ConsAddress, sdk.ValAddress) error {
 	return nil
 }
-func (h Hooks) BeforeDelegationRemoved(context.Context, sdk.AccAddress, sdk.ValAddress) error {
-	return nil
+
+// BeforeDelegationRemoved settles the delegator's vault rewards at the
+// still-existing stake before the delegation is deleted; the accrued amount
+// stays claimable afterwards.
+func (h Hooks) BeforeDelegationRemoved(ctx context.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress) error {
+	_, err := h.k.settleDelegatorReward(ctx, delAddr, valAddr)
+	return err
 }
 func (h Hooks) BeforeValidatorSlashed(context.Context, sdk.ValAddress, math.LegacyDec) error {
 	return nil

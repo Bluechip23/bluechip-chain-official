@@ -13,6 +13,8 @@ func RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
 		&MsgSetRewardShare{},
 		&MsgAllocateToPool{},
 		&MsgDeallocateFromPool{},
+		&MsgCollectPoolRewards{},
+		&MsgClaimVaultRewards{},
 		&MsgRegisterPool{},
 		&MsgSetPoolEnabled{},
 		&MsgUpdateParams{},

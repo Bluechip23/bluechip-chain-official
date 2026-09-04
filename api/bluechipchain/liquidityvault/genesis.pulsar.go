@@ -422,6 +422,57 @@ func (x *_GenesisState_10_list) IsValid() bool {
 	return x.list != nil
 }
 
+var _ protoreflect.List = (*_GenesisState_11_list)(nil)
+
+type _GenesisState_11_list struct {
+	list *[]*DelegatorReward
+}
+
+func (x *_GenesisState_11_list) Len() int {
+	if x.list == nil {
+		return 0
+	}
+	return len(*x.list)
+}
+
+func (x *_GenesisState_11_list) Get(i int) protoreflect.Value {
+	return protoreflect.ValueOfMessage((*x.list)[i].ProtoReflect())
+}
+
+func (x *_GenesisState_11_list) Set(i int, value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*DelegatorReward)
+	(*x.list)[i] = concreteValue
+}
+
+func (x *_GenesisState_11_list) Append(value protoreflect.Value) {
+	valueUnwrapped := value.Message()
+	concreteValue := valueUnwrapped.Interface().(*DelegatorReward)
+	*x.list = append(*x.list, concreteValue)
+}
+
+func (x *_GenesisState_11_list) AppendMutable() protoreflect.Value {
+	v := new(DelegatorReward)
+	*x.list = append(*x.list, v)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_11_list) Truncate(n int) {
+	for i := n; i < len(*x.list); i++ {
+		(*x.list)[i] = nil
+	}
+	*x.list = (*x.list)[:n]
+}
+
+func (x *_GenesisState_11_list) NewElement() protoreflect.Value {
+	v := new(DelegatorReward)
+	return protoreflect.ValueOfMessage(v.ProtoReflect())
+}
+
+func (x *_GenesisState_11_list) IsValid() bool {
+	return x.list != nil
+}
+
 var (
 	md_GenesisState                       protoreflect.MessageDescriptor
 	fd_GenesisState_params                protoreflect.FieldDescriptor
@@ -434,6 +485,7 @@ var (
 	fd_GenesisState_value_post_histories  protoreflect.FieldDescriptor
 	fd_GenesisState_scheduled_value_posts protoreflect.FieldDescriptor
 	fd_GenesisState_cached_pool_values    protoreflect.FieldDescriptor
+	fd_GenesisState_delegator_rewards     protoreflect.FieldDescriptor
 )
 
 func init() {
@@ -449,6 +501,7 @@ func init() {
 	fd_GenesisState_value_post_histories = md_GenesisState.Fields().ByName("value_post_histories")
 	fd_GenesisState_scheduled_value_posts = md_GenesisState.Fields().ByName("scheduled_value_posts")
 	fd_GenesisState_cached_pool_values = md_GenesisState.Fields().ByName("cached_pool_values")
+	fd_GenesisState_delegator_rewards = md_GenesisState.Fields().ByName("delegator_rewards")
 }
 
 var _ protoreflect.Message = (*fastReflection_GenesisState)(nil)
@@ -576,6 +629,12 @@ func (x *fastReflection_GenesisState) Range(f func(protoreflect.FieldDescriptor,
 			return
 		}
 	}
+	if len(x.DelegatorRewards) != 0 {
+		value := protoreflect.ValueOfList(&_GenesisState_11_list{list: &x.DelegatorRewards})
+		if !f(fd_GenesisState_delegator_rewards, value) {
+			return
+		}
+	}
 }
 
 // Has reports whether a field is populated.
@@ -611,6 +670,8 @@ func (x *fastReflection_GenesisState) Has(fd protoreflect.FieldDescriptor) bool 
 		return len(x.ScheduledValuePosts) != 0
 	case "bluechipchain.liquidityvault.GenesisState.cached_pool_values":
 		return len(x.CachedPoolValues) != 0
+	case "bluechipchain.liquidityvault.GenesisState.delegator_rewards":
+		return len(x.DelegatorRewards) != 0
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.liquidityvault.GenesisState"))
@@ -647,6 +708,8 @@ func (x *fastReflection_GenesisState) Clear(fd protoreflect.FieldDescriptor) {
 		x.ScheduledValuePosts = nil
 	case "bluechipchain.liquidityvault.GenesisState.cached_pool_values":
 		x.CachedPoolValues = nil
+	case "bluechipchain.liquidityvault.GenesisState.delegator_rewards":
+		x.DelegatorRewards = nil
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.liquidityvault.GenesisState"))
@@ -717,6 +780,12 @@ func (x *fastReflection_GenesisState) Get(descriptor protoreflect.FieldDescripto
 		}
 		listValue := &_GenesisState_10_list{list: &x.CachedPoolValues}
 		return protoreflect.ValueOfList(listValue)
+	case "bluechipchain.liquidityvault.GenesisState.delegator_rewards":
+		if len(x.DelegatorRewards) == 0 {
+			return protoreflect.ValueOfList(&_GenesisState_11_list{})
+		}
+		listValue := &_GenesisState_11_list{list: &x.DelegatorRewards}
+		return protoreflect.ValueOfList(listValue)
 	default:
 		if descriptor.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.liquidityvault.GenesisState"))
@@ -773,6 +842,10 @@ func (x *fastReflection_GenesisState) Set(fd protoreflect.FieldDescriptor, value
 		lv := value.List()
 		clv := lv.(*_GenesisState_10_list)
 		x.CachedPoolValues = *clv.list
+	case "bluechipchain.liquidityvault.GenesisState.delegator_rewards":
+		lv := value.List()
+		clv := lv.(*_GenesisState_11_list)
+		x.DelegatorRewards = *clv.list
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.liquidityvault.GenesisState"))
@@ -846,6 +919,12 @@ func (x *fastReflection_GenesisState) Mutable(fd protoreflect.FieldDescriptor) p
 		}
 		value := &_GenesisState_10_list{list: &x.CachedPoolValues}
 		return protoreflect.ValueOfList(value)
+	case "bluechipchain.liquidityvault.GenesisState.delegator_rewards":
+		if x.DelegatorRewards == nil {
+			x.DelegatorRewards = []*DelegatorReward{}
+		}
+		value := &_GenesisState_11_list{list: &x.DelegatorRewards}
+		return protoreflect.ValueOfList(value)
 	case "bluechipchain.liquidityvault.GenesisState.next_pool_id":
 		panic(fmt.Errorf("field next_pool_id of message bluechipchain.liquidityvault.GenesisState is not mutable"))
 	default:
@@ -890,6 +969,9 @@ func (x *fastReflection_GenesisState) NewField(fd protoreflect.FieldDescriptor) 
 	case "bluechipchain.liquidityvault.GenesisState.cached_pool_values":
 		list := []*CachedPoolValue{}
 		return protoreflect.ValueOfList(&_GenesisState_10_list{list: &list})
+	case "bluechipchain.liquidityvault.GenesisState.delegator_rewards":
+		list := []*DelegatorReward{}
+		return protoreflect.ValueOfList(&_GenesisState_11_list{list: &list})
 	default:
 		if fd.IsExtension() {
 			panic(fmt.Errorf("proto3 declared messages do not support extensions: bluechipchain.liquidityvault.GenesisState"))
@@ -1014,6 +1096,12 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 				n += 1 + l + runtime.Sov(uint64(l))
 			}
 		}
+		if len(x.DelegatorRewards) > 0 {
+			for _, e := range x.DelegatorRewards {
+				l = options.Size(e)
+				n += 1 + l + runtime.Sov(uint64(l))
+			}
+		}
 		if x.unknownFields != nil {
 			n += len(x.unknownFields)
 		}
@@ -1042,6 +1130,22 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 		if x.unknownFields != nil {
 			i -= len(x.unknownFields)
 			copy(dAtA[i:], x.unknownFields)
+		}
+		if len(x.DelegatorRewards) > 0 {
+			for iNdEx := len(x.DelegatorRewards) - 1; iNdEx >= 0; iNdEx-- {
+				encoded, err := options.Marshal(x.DelegatorRewards[iNdEx])
+				if err != nil {
+					return protoiface.MarshalOutput{
+						NoUnkeyedLiterals: input.NoUnkeyedLiterals,
+						Buf:               input.Buf,
+					}, err
+				}
+				i -= len(encoded)
+				copy(dAtA[i:], encoded)
+				i = runtime.EncodeVarint(dAtA, i, uint64(len(encoded)))
+				i--
+				dAtA[i] = 0x5a
+			}
 		}
 		if len(x.CachedPoolValues) > 0 {
 			for iNdEx := len(x.CachedPoolValues) - 1; iNdEx >= 0; iNdEx-- {
@@ -1566,6 +1670,40 @@ func (x *fastReflection_GenesisState) ProtoMethods() *protoiface.Methods {
 					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
 				}
 				iNdEx = postIndex
+			case 11:
+				if wireType != 2 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, fmt.Errorf("proto: wrong wireType = %d for field DelegatorRewards", wireType)
+				}
+				var msglen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrIntOverflow
+					}
+					if iNdEx >= l {
+						return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					msglen |= int(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if msglen < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				postIndex := iNdEx + msglen
+				if postIndex < 0 {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, runtime.ErrInvalidLength
+				}
+				if postIndex > l {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, io.ErrUnexpectedEOF
+				}
+				x.DelegatorRewards = append(x.DelegatorRewards, &DelegatorReward{})
+				if err := options.Unmarshal(dAtA[iNdEx:postIndex], x.DelegatorRewards[len(x.DelegatorRewards)-1]); err != nil {
+					return protoiface.UnmarshalOutput{NoUnkeyedLiterals: input.NoUnkeyedLiterals, Flags: input.Flags}, err
+				}
+				iNdEx = postIndex
 			default:
 				iNdEx = preIndex
 				skippy, err := runtime.Skip(dAtA[iNdEx:])
@@ -1643,6 +1781,8 @@ type GenesisState struct {
 	// cached_pool_values are the last observed position values per pool (the
 	// dark-pool valuation fallback).
 	CachedPoolValues []*CachedPoolValue `protobuf:"bytes,10,rep,name=cached_pool_values,json=cachedPoolValues,proto3" json:"cached_pool_values,omitempty"`
+	// delegator_rewards are the delegators' vault-reward accrual records.
+	DelegatorRewards []*DelegatorReward `protobuf:"bytes,11,rep,name=delegator_rewards,json=delegatorRewards,proto3" json:"delegator_rewards,omitempty"`
 }
 
 func (x *GenesisState) Reset() {
@@ -1735,6 +1875,13 @@ func (x *GenesisState) GetCachedPoolValues() []*CachedPoolValue {
 	return nil
 }
 
+func (x *GenesisState) GetDelegatorRewards() []*DelegatorReward {
+	if x != nil {
+		return x.DelegatorRewards
+	}
+	return nil
+}
+
 var File_bluechipchain_liquidityvault_genesis_proto protoreflect.FileDescriptor
 
 var file_bluechipchain_liquidityvault_genesis_proto_rawDesc = []byte{
@@ -1756,7 +1903,7 @@ var file_bluechipchain_liquidityvault_genesis_proto_rawDesc = []byte{
 	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x28, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63,
 	0x68, 0x61, 0x69, 0x6e, 0x2f, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61,
 	0x75, 0x6c, 0x74, 0x2f, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22,
-	0xe3, 0x06, 0x0a, 0x0c, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x53, 0x74, 0x61, 0x74, 0x65,
+	0xc5, 0x07, 0x0a, 0x0c, 0x47, 0x65, 0x6e, 0x65, 0x73, 0x69, 0x73, 0x53, 0x74, 0x61, 0x74, 0x65,
 	0x12, 0x47, 0x0a, 0x06, 0x70, 0x61, 0x72, 0x61, 0x6d, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
 	0x32, 0x24, 0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e,
 	0x2e, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e,
@@ -1810,10 +1957,16 @@ var file_bluechipchain_liquidityvault_genesis_proto_rawDesc = []byte{
 	0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e, 0x43, 0x61,
 	0x63, 0x68, 0x65, 0x64, 0x50, 0x6f, 0x6f, 0x6c, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x42, 0x04, 0xc8,
 	0xde, 0x1f, 0x00, 0x52, 0x10, 0x63, 0x61, 0x63, 0x68, 0x65, 0x64, 0x50, 0x6f, 0x6f, 0x6c, 0x56,
-	0x61, 0x6c, 0x75, 0x65, 0x73, 0x42, 0x26, 0x5a, 0x24, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69,
-	0x70, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x78, 0x2f, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69,
-	0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x61, 0x6c, 0x75, 0x65, 0x73, 0x12, 0x60, 0x0a, 0x11, 0x64, 0x65, 0x6c, 0x65, 0x67, 0x61, 0x74,
+	0x6f, 0x72, 0x5f, 0x72, 0x65, 0x77, 0x61, 0x72, 0x64, 0x73, 0x18, 0x0b, 0x20, 0x03, 0x28, 0x0b,
+	0x32, 0x2d, 0x2e, 0x62, 0x6c, 0x75, 0x65, 0x63, 0x68, 0x69, 0x70, 0x63, 0x68, 0x61, 0x69, 0x6e,
+	0x2e, 0x6c, 0x69, 0x71, 0x75, 0x69, 0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2e,
+	0x44, 0x65, 0x6c, 0x65, 0x67, 0x61, 0x74, 0x6f, 0x72, 0x52, 0x65, 0x77, 0x61, 0x72, 0x64, 0x42,
+	0x04, 0xc8, 0xde, 0x1f, 0x00, 0x52, 0x10, 0x64, 0x65, 0x6c, 0x65, 0x67, 0x61, 0x74, 0x6f, 0x72,
+	0x52, 0x65, 0x77, 0x61, 0x72, 0x64, 0x73, 0x42, 0x26, 0x5a, 0x24, 0x62, 0x6c, 0x75, 0x65, 0x63,
+	0x68, 0x69, 0x70, 0x43, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x78, 0x2f, 0x6c, 0x69, 0x71, 0x75, 0x69,
+	0x64, 0x69, 0x74, 0x79, 0x76, 0x61, 0x75, 0x6c, 0x74, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1840,22 +1993,24 @@ var file_bluechipchain_liquidityvault_genesis_proto_goTypes = []interface{}{
 	(*ValuePostHistory)(nil),    // 7: bluechipchain.liquidityvault.ValuePostHistory
 	(*ScheduledValuePost)(nil),  // 8: bluechipchain.liquidityvault.ScheduledValuePost
 	(*CachedPoolValue)(nil),     // 9: bluechipchain.liquidityvault.CachedPoolValue
+	(*DelegatorReward)(nil),     // 10: bluechipchain.liquidityvault.DelegatorReward
 }
 var file_bluechipchain_liquidityvault_genesis_proto_depIdxs = []int32{
-	1, // 0: bluechipchain.liquidityvault.GenesisState.params:type_name -> bluechipchain.liquidityvault.Params
-	2, // 1: bluechipchain.liquidityvault.GenesisState.vaults:type_name -> bluechipchain.liquidityvault.Vault
-	3, // 2: bluechipchain.liquidityvault.GenesisState.pending_withdrawals:type_name -> bluechipchain.liquidityvault.PendingWithdrawal
-	4, // 3: bluechipchain.liquidityvault.GenesisState.pools:type_name -> bluechipchain.liquidityvault.RegisteredPool
-	5, // 4: bluechipchain.liquidityvault.GenesisState.positions:type_name -> bluechipchain.liquidityvault.PoolPosition
-	6, // 5: bluechipchain.liquidityvault.GenesisState.pending_deallocations:type_name -> bluechipchain.liquidityvault.PendingDeallocation
-	7, // 6: bluechipchain.liquidityvault.GenesisState.value_post_histories:type_name -> bluechipchain.liquidityvault.ValuePostHistory
-	8, // 7: bluechipchain.liquidityvault.GenesisState.scheduled_value_posts:type_name -> bluechipchain.liquidityvault.ScheduledValuePost
-	9, // 8: bluechipchain.liquidityvault.GenesisState.cached_pool_values:type_name -> bluechipchain.liquidityvault.CachedPoolValue
-	9, // [9:9] is the sub-list for method output_type
-	9, // [9:9] is the sub-list for method input_type
-	9, // [9:9] is the sub-list for extension type_name
-	9, // [9:9] is the sub-list for extension extendee
-	0, // [0:9] is the sub-list for field type_name
+	1,  // 0: bluechipchain.liquidityvault.GenesisState.params:type_name -> bluechipchain.liquidityvault.Params
+	2,  // 1: bluechipchain.liquidityvault.GenesisState.vaults:type_name -> bluechipchain.liquidityvault.Vault
+	3,  // 2: bluechipchain.liquidityvault.GenesisState.pending_withdrawals:type_name -> bluechipchain.liquidityvault.PendingWithdrawal
+	4,  // 3: bluechipchain.liquidityvault.GenesisState.pools:type_name -> bluechipchain.liquidityvault.RegisteredPool
+	5,  // 4: bluechipchain.liquidityvault.GenesisState.positions:type_name -> bluechipchain.liquidityvault.PoolPosition
+	6,  // 5: bluechipchain.liquidityvault.GenesisState.pending_deallocations:type_name -> bluechipchain.liquidityvault.PendingDeallocation
+	7,  // 6: bluechipchain.liquidityvault.GenesisState.value_post_histories:type_name -> bluechipchain.liquidityvault.ValuePostHistory
+	8,  // 7: bluechipchain.liquidityvault.GenesisState.scheduled_value_posts:type_name -> bluechipchain.liquidityvault.ScheduledValuePost
+	9,  // 8: bluechipchain.liquidityvault.GenesisState.cached_pool_values:type_name -> bluechipchain.liquidityvault.CachedPoolValue
+	10, // 9: bluechipchain.liquidityvault.GenesisState.delegator_rewards:type_name -> bluechipchain.liquidityvault.DelegatorReward
+	10, // [10:10] is the sub-list for method output_type
+	10, // [10:10] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_bluechipchain_liquidityvault_genesis_proto_init() }

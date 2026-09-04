@@ -111,6 +111,46 @@ func (k msgServer) DeallocateFromPool(goCtx context.Context, msg *types.MsgDeall
 	return &types.MsgDeallocateFromPoolResponse{CompleteTime: deallocation.CompleteTime}, nil
 }
 
+// CollectPoolRewards pulls and distributes a pool's accrued fees.
+func (k msgServer) CollectPoolRewards(goCtx context.Context, msg *types.MsgCollectPoolRewards) (*types.MsgCollectPoolRewardsResponse, error) {
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+	valAddr, err := sdk.ValAddressFromBech32(msg.ValidatorAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	collected, err := k.Keeper.CollectPoolRewards(goCtx, valAddr, msg.PoolId)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.MsgCollectPoolRewardsResponse{Collected: collected}, nil
+}
+
+// ClaimVaultRewards pays out a delegator's accrued vault rewards.
+func (k msgServer) ClaimVaultRewards(goCtx context.Context, msg *types.MsgClaimVaultRewards) (*types.MsgClaimVaultRewardsResponse, error) {
+	if err := msg.ValidateBasic(); err != nil {
+		return nil, err
+	}
+	delAddr, err := sdk.AccAddressFromBech32(msg.DelegatorAddress)
+	if err != nil {
+		return nil, err
+	}
+	valAddr, err := sdk.ValAddressFromBech32(msg.ValidatorAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	amount, err := k.Keeper.ClaimVaultRewards(goCtx, delAddr, valAddr)
+	if err != nil {
+		return nil, err
+	}
+
+	return &types.MsgClaimVaultRewardsResponse{Amount: amount}, nil
+}
+
 // RegisterPool registers a pool contract. Only the governance authority may
 // execute it.
 func (k msgServer) RegisterPool(goCtx context.Context, msg *types.MsgRegisterPool) (*types.MsgRegisterPoolResponse, error) {

@@ -32,6 +32,50 @@ message Vault {
     (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
     (gogoproto.nullable) = false
   ];
+
+  // reward_index is the cumulative delegator rewards per staked token (F1
+  // accumulator): each reward collection adds delegator_share /
+  // validator_tokens. Delegators accrue (current_index - their_last_index)
+  // * their_stake.
+  string reward_index = 4 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+
+  // outstanding_rewards is the bond-denom amount the module still owes this
+  // vault's delegators (held in the module account until claimed).
+  string outstanding_rewards = 5 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+}
+
+// DelegatorReward tracks one delegator's vault-reward accrual against one
+// validator: the reward index at the last settlement and the rewards
+// accrued but not yet claimed.
+message DelegatorReward {
+  // delegator_address is the delegator's account address.
+  string delegator_address = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+
+  // validator_address is the validator whose vault the rewards come from.
+  string validator_address = 2 [(cosmos_proto.scalar) = "cosmos.ValidatorAddressString"];
+
+  // index is the vault reward index at the delegator's last settlement.
+  string index = 3 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
+
+  // accrued is the settled, unclaimed reward amount in the bond denom
+  // (fractional dust is retained across claims).
+  string accrued = 4 [
+    (cosmos_proto.scalar) = "cosmos.Dec",
+    (gogoproto.customtype) = "cosmossdk.io/math.LegacyDec",
+    (gogoproto.nullable) = false
+  ];
 }
 
 // PendingWithdrawal is a vault withdrawal waiting out the universal grace

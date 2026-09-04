@@ -14,6 +14,9 @@ const (
 	EventTypeDeallocationRequeued  = "vault_deallocation_requeued"
 	EventTypeDeallocationAbandoned = "vault_deallocation_abandoned"
 	EventTypeValuePost             = "vault_value_post"
+	EventTypeRewardsCollected      = "vault_rewards_collected"
+	EventTypeRewardsDistributed    = "vault_rewards_distributed"
+	EventTypeRewardsClaimed        = "vault_rewards_claimed"
 
 	AttributeKeyValidator            = "validator"
 	AttributeKeyAmount               = "amount"
@@ -24,4 +27,6 @@ const (
 	AttributeKeyEnabled              = "enabled"
 	AttributeKeyShares               = "shares"
 	AttributeKeyError                = "error"
+	AttributeKeyDelegator            = "delegator"
+	AttributeKeyDelegatorCut         = "delegator_cut"
 )

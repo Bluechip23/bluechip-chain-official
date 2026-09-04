@@ -19,14 +19,15 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Query_Params_FullMethodName         = "/bluechipchain.liquidityvault.Query/Params"
-	Query_Vault_FullMethodName          = "/bluechipchain.liquidityvault.Query/Vault"
-	Query_Vaults_FullMethodName         = "/bluechipchain.liquidityvault.Query/Vaults"
-	Query_CompositeScore_FullMethodName = "/bluechipchain.liquidityvault.Query/CompositeScore"
-	Query_Pools_FullMethodName          = "/bluechipchain.liquidityvault.Query/Pools"
-	Query_Positions_FullMethodName      = "/bluechipchain.liquidityvault.Query/Positions"
-	Query_ValuePosts_FullMethodName     = "/bluechipchain.liquidityvault.Query/ValuePosts"
-	Query_SetRanking_FullMethodName     = "/bluechipchain.liquidityvault.Query/SetRanking"
+	Query_Params_FullMethodName          = "/bluechipchain.liquidityvault.Query/Params"
+	Query_Vault_FullMethodName           = "/bluechipchain.liquidityvault.Query/Vault"
+	Query_Vaults_FullMethodName          = "/bluechipchain.liquidityvault.Query/Vaults"
+	Query_CompositeScore_FullMethodName  = "/bluechipchain.liquidityvault.Query/CompositeScore"
+	Query_Pools_FullMethodName           = "/bluechipchain.liquidityvault.Query/Pools"
+	Query_Positions_FullMethodName       = "/bluechipchain.liquidityvault.Query/Positions"
+	Query_ValuePosts_FullMethodName      = "/bluechipchain.liquidityvault.Query/ValuePosts"
+	Query_SetRanking_FullMethodName      = "/bluechipchain.liquidityvault.Query/SetRanking"
+	Query_DelegatorReward_FullMethodName = "/bluechipchain.liquidityvault.Query/DelegatorReward"
 )
 
 // QueryClient is the client API for Query service.
@@ -59,6 +60,10 @@ type QueryClient interface {
 	// as tiebreaker. Observability only — it has no effect on the actual
 	// validator set in stage 1.
 	SetRanking(ctx context.Context, in *QuerySetRankingRequest, opts ...grpc.CallOption) (*QuerySetRankingResponse, error)
+	// DelegatorReward queries a delegator's claimable vault rewards from one
+	// validator (settled accrual plus the unsettled projection at the current
+	// index).
+	DelegatorReward(ctx context.Context, in *QueryDelegatorRewardRequest, opts ...grpc.CallOption) (*QueryDelegatorRewardResponse, error)
 }
 
 type queryClient struct {
@@ -149,6 +154,16 @@ func (c *queryClient) SetRanking(ctx context.Context, in *QuerySetRankingRequest
 	return out, nil
 }
 
+func (c *queryClient) DelegatorReward(ctx context.Context, in *QueryDelegatorRewardRequest, opts ...grpc.CallOption) (*QueryDelegatorRewardResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryDelegatorRewardResponse)
+	err := c.cc.Invoke(ctx, Query_DelegatorReward_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // QueryServer is the server API for Query service.
 // All implementations must embed UnimplementedQueryServer
 // for forward compatibility.
@@ -179,6 +194,10 @@ type QueryServer interface {
 	// as tiebreaker. Observability only — it has no effect on the actual
 	// validator set in stage 1.
 	SetRanking(context.Context, *QuerySetRankingRequest) (*QuerySetRankingResponse, error)
+	// DelegatorReward queries a delegator's claimable vault rewards from one
+	// validator (settled accrual plus the unsettled projection at the current
+	// index).
+	DelegatorReward(context.Context, *QueryDelegatorRewardRequest) (*QueryDelegatorRewardResponse, error)
 	mustEmbedUnimplementedQueryServer()
 }
 
@@ -212,6 +231,9 @@ func (UnimplementedQueryServer) ValuePosts(context.Context, *QueryValuePostsRequ
 }
 func (UnimplementedQueryServer) SetRanking(context.Context, *QuerySetRankingRequest) (*QuerySetRankingResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SetRanking not implemented")
+}
+func (UnimplementedQueryServer) DelegatorReward(context.Context, *QueryDelegatorRewardRequest) (*QueryDelegatorRewardResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DelegatorReward not implemented")
 }
 func (UnimplementedQueryServer) mustEmbedUnimplementedQueryServer() {}
 func (UnimplementedQueryServer) testEmbeddedByValue()               {}
@@ -378,6 +400,24 @@ func _Query_SetRanking_Handler(srv interface{}, ctx context.Context, dec func(in
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Query_DelegatorReward_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryDelegatorRewardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(QueryServer).DelegatorReward(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Query_DelegatorReward_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(QueryServer).DelegatorReward(ctx, req.(*QueryDelegatorRewardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Query_ServiceDesc is the grpc.ServiceDesc for Query service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -416,6 +456,10 @@ var Query_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetRanking",
 			Handler:    _Query_SetRanking_Handler,
+		},
+		{
+			MethodName: "DelegatorReward",
+			Handler:    _Query_DelegatorReward_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

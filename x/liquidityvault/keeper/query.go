@@ -177,6 +177,26 @@ func (k Keeper) SetRanking(goCtx context.Context, req *types.QuerySetRankingRequ
 	return &types.QuerySetRankingResponse{Validators: ranked}, nil
 }
 
+// DelegatorReward queries a delegator's claimable vault rewards from one
+// validator.
+func (k Keeper) DelegatorReward(goCtx context.Context, req *types.QueryDelegatorRewardRequest) (*types.QueryDelegatorRewardResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+	delAddr, err := sdk.AccAddressFromBech32(req.DelegatorAddress)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid delegator address")
+	}
+	valAddr, err := sdk.ValAddressFromBech32(req.ValidatorAddress)
+	if err != nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid validator address")
+	}
+
+	return &types.QueryDelegatorRewardResponse{
+		Claimable: k.ClaimableReward(goCtx, delAddr, valAddr),
+	}, nil
+}
+
 // Pools queries all registered liquidity pools.
 func (k Keeper) Pools(goCtx context.Context, req *types.QueryPoolsRequest) (*types.QueryPoolsResponse, error) {
 	if req == nil {

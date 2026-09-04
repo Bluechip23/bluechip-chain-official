@@ -30,21 +30,51 @@ import (
 const TestBondDenom = "ubluechip"
 
 // MockStakingKeeper is a minimal staking keeper for liquidityvault tests.
-// Tests control the validator set through the Validators map.
+// Tests control the validator set through the Validators map and
+// delegations through SetDelegationTokens.
 type MockStakingKeeper struct {
-	Validators map[string]stakingtypes.Validator
+	Validators  map[string]stakingtypes.Validator
+	Delegations map[string]stakingtypes.Delegation
 }
 
 func NewMockStakingKeeper() *MockStakingKeeper {
-	return &MockStakingKeeper{Validators: make(map[string]stakingtypes.Validator)}
+	return &MockStakingKeeper{
+		Validators:  make(map[string]stakingtypes.Validator),
+		Delegations: make(map[string]stakingtypes.Delegation),
+	}
 }
 
-// SetValidatorTokens registers (or updates) a validator with the given tokens.
+// SetValidatorTokens registers (or updates) a validator with the given
+// tokens; delegator shares are kept 1:1 with tokens for simplicity.
 func (m *MockStakingKeeper) SetValidatorTokens(valAddr sdk.ValAddress, tokens math.Int) {
 	m.Validators[valAddr.String()] = stakingtypes.Validator{
 		OperatorAddress: valAddr.String(),
 		Tokens:          tokens,
+		DelegatorShares: math.LegacyNewDecFromInt(tokens),
 	}
+}
+
+// SetDelegationTokens registers (or updates) a delegation with shares equal
+// to the given token amount (the mock keeps a 1:1 exchange rate).
+func (m *MockStakingKeeper) SetDelegationTokens(delAddr sdk.AccAddress, valAddr sdk.ValAddress, tokens math.Int) {
+	m.Delegations[delAddr.String()+"/"+valAddr.String()] = stakingtypes.Delegation{
+		DelegatorAddress: delAddr.String(),
+		ValidatorAddress: valAddr.String(),
+		Shares:           math.LegacyNewDecFromInt(tokens),
+	}
+}
+
+// RemoveDelegation deletes a delegation.
+func (m *MockStakingKeeper) RemoveDelegation(delAddr sdk.AccAddress, valAddr sdk.ValAddress) {
+	delete(m.Delegations, delAddr.String()+"/"+valAddr.String())
+}
+
+func (m *MockStakingKeeper) GetDelegation(_ context.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress) (stakingtypes.Delegation, error) {
+	delegation, found := m.Delegations[delAddr.String()+"/"+valAddr.String()]
+	if !found {
+		return stakingtypes.Delegation{}, stakingtypes.ErrNoDelegation
+	}
+	return delegation, nil
 }
 
 func (m *MockStakingKeeper) GetValidator(_ context.Context, addr sdk.ValAddress) (stakingtypes.Validator, error) {

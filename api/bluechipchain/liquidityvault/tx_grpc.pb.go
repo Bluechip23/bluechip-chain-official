@@ -24,6 +24,8 @@ const (
 	Msg_SetRewardShare_FullMethodName     = "/bluechipchain.liquidityvault.Msg/SetRewardShare"
 	Msg_AllocateToPool_FullMethodName     = "/bluechipchain.liquidityvault.Msg/AllocateToPool"
 	Msg_DeallocateFromPool_FullMethodName = "/bluechipchain.liquidityvault.Msg/DeallocateFromPool"
+	Msg_CollectPoolRewards_FullMethodName = "/bluechipchain.liquidityvault.Msg/CollectPoolRewards"
+	Msg_ClaimVaultRewards_FullMethodName  = "/bluechipchain.liquidityvault.Msg/ClaimVaultRewards"
 	Msg_RegisterPool_FullMethodName       = "/bluechipchain.liquidityvault.Msg/RegisterPool"
 	Msg_SetPoolEnabled_FullMethodName     = "/bluechipchain.liquidityvault.Msg/SetPoolEnabled"
 	Msg_UpdateParams_FullMethodName       = "/bluechipchain.liquidityvault.Msg/UpdateParams"
@@ -56,6 +58,15 @@ type MsgClient interface {
 	// the universal deallocation grace period ends; the withdrawn funds then
 	// go to the validator's own account, leaving the vault.
 	DeallocateFromPool(ctx context.Context, in *MsgDeallocateFromPool, opts ...grpc.CallOption) (*MsgDeallocateFromPoolResponse, error)
+	// CollectPoolRewards pulls the accrued liquidity fees for the module's
+	// position in a pool and distributes them: each participating validator's
+	// cut (pro rata by internal shares) is split by that vault's delegator
+	// reward share — the validator's part is paid out immediately, the
+	// delegators' part accrues to their claimable rewards.
+	CollectPoolRewards(ctx context.Context, in *MsgCollectPoolRewards, opts ...grpc.CallOption) (*MsgCollectPoolRewardsResponse, error)
+	// ClaimVaultRewards pays out a delegator's accrued vault rewards for one
+	// validator.
+	ClaimVaultRewards(ctx context.Context, in *MsgClaimVaultRewards, opts ...grpc.CallOption) (*MsgClaimVaultRewardsResponse, error)
 	// RegisterPool registers a liquidity pool contract that vaults may supply
 	// liquidity to. Governance gated.
 	RegisterPool(ctx context.Context, in *MsgRegisterPool, opts ...grpc.CallOption) (*MsgRegisterPoolResponse, error)
@@ -125,6 +136,26 @@ func (c *msgClient) DeallocateFromPool(ctx context.Context, in *MsgDeallocateFro
 	return out, nil
 }
 
+func (c *msgClient) CollectPoolRewards(ctx context.Context, in *MsgCollectPoolRewards, opts ...grpc.CallOption) (*MsgCollectPoolRewardsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgCollectPoolRewardsResponse)
+	err := c.cc.Invoke(ctx, Msg_CollectPoolRewards_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *msgClient) ClaimVaultRewards(ctx context.Context, in *MsgClaimVaultRewards, opts ...grpc.CallOption) (*MsgClaimVaultRewardsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(MsgClaimVaultRewardsResponse)
+	err := c.cc.Invoke(ctx, Msg_ClaimVaultRewards_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *msgClient) RegisterPool(ctx context.Context, in *MsgRegisterPool, opts ...grpc.CallOption) (*MsgRegisterPoolResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(MsgRegisterPoolResponse)
@@ -182,6 +213,15 @@ type MsgServer interface {
 	// the universal deallocation grace period ends; the withdrawn funds then
 	// go to the validator's own account, leaving the vault.
 	DeallocateFromPool(context.Context, *MsgDeallocateFromPool) (*MsgDeallocateFromPoolResponse, error)
+	// CollectPoolRewards pulls the accrued liquidity fees for the module's
+	// position in a pool and distributes them: each participating validator's
+	// cut (pro rata by internal shares) is split by that vault's delegator
+	// reward share — the validator's part is paid out immediately, the
+	// delegators' part accrues to their claimable rewards.
+	CollectPoolRewards(context.Context, *MsgCollectPoolRewards) (*MsgCollectPoolRewardsResponse, error)
+	// ClaimVaultRewards pays out a delegator's accrued vault rewards for one
+	// validator.
+	ClaimVaultRewards(context.Context, *MsgClaimVaultRewards) (*MsgClaimVaultRewardsResponse, error)
 	// RegisterPool registers a liquidity pool contract that vaults may supply
 	// liquidity to. Governance gated.
 	RegisterPool(context.Context, *MsgRegisterPool) (*MsgRegisterPoolResponse, error)
@@ -215,6 +255,12 @@ func (UnimplementedMsgServer) AllocateToPool(context.Context, *MsgAllocateToPool
 }
 func (UnimplementedMsgServer) DeallocateFromPool(context.Context, *MsgDeallocateFromPool) (*MsgDeallocateFromPoolResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method DeallocateFromPool not implemented")
+}
+func (UnimplementedMsgServer) CollectPoolRewards(context.Context, *MsgCollectPoolRewards) (*MsgCollectPoolRewardsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CollectPoolRewards not implemented")
+}
+func (UnimplementedMsgServer) ClaimVaultRewards(context.Context, *MsgClaimVaultRewards) (*MsgClaimVaultRewardsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ClaimVaultRewards not implemented")
 }
 func (UnimplementedMsgServer) RegisterPool(context.Context, *MsgRegisterPool) (*MsgRegisterPoolResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method RegisterPool not implemented")
@@ -336,6 +382,42 @@ func _Msg_DeallocateFromPool_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Msg_CollectPoolRewards_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgCollectPoolRewards)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).CollectPoolRewards(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_CollectPoolRewards_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).CollectPoolRewards(ctx, req.(*MsgCollectPoolRewards))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Msg_ClaimVaultRewards_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MsgClaimVaultRewards)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MsgServer).ClaimVaultRewards(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Msg_ClaimVaultRewards_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MsgServer).ClaimVaultRewards(ctx, req.(*MsgClaimVaultRewards))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Msg_RegisterPool_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(MsgRegisterPool)
 	if err := dec(in); err != nil {
@@ -416,6 +498,14 @@ var Msg_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeallocateFromPool",
 			Handler:    _Msg_DeallocateFromPool_Handler,
+		},
+		{
+			MethodName: "CollectPoolRewards",
+			Handler:    _Msg_CollectPoolRewards_Handler,
+		},
+		{
+			MethodName: "ClaimVaultRewards",
+			Handler:    _Msg_ClaimVaultRewards_Handler,
 		},
 		{
 			MethodName: "RegisterPool",

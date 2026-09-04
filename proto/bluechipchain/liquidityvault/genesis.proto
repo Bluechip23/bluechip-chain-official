@@ -47,4 +47,7 @@ message GenesisState {
   // cached_pool_values are the last observed position values per pool (the
   // dark-pool valuation fallback).
   repeated CachedPoolValue cached_pool_values = 10 [(gogoproto.nullable) = false];
+
+  // delegator_rewards are the delegators' vault-reward accrual records.
+  repeated DelegatorReward delegator_rewards = 11 [(gogoproto.nullable) = false];
 }

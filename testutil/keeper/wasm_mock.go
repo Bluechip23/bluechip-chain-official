@@ -23,6 +23,10 @@ type MockPool struct {
 	// DepositFeeBps simulates slippage/fees on provide_liquidity: the
 	// position value grows by the deposit minus this many basis points.
 	DepositFeeBps int64
+
+	// AccruedFees is what the next collect_rewards pays out. Tests fund it
+	// via AccrueFees, which also mints the backing balance to the contract.
+	AccruedFees math.Int
 }
 
 // MockWasmKeeper simulates the wasm bridge for liquidityvault tests. It
@@ -39,9 +43,18 @@ func NewMockWasmKeeper(bank *MockBankKeeper) *MockWasmKeeper {
 
 // AddPool registers a simulated pool contract at the given address.
 func (m *MockWasmKeeper) AddPool(contractAddr sdk.AccAddress) *MockPool {
-	pool := &MockPool{ContractAddr: contractAddr, Value: math.ZeroInt()}
+	pool := &MockPool{ContractAddr: contractAddr, Value: math.ZeroInt(), AccruedFees: math.ZeroInt()}
 	m.Pools[contractAddr.String()] = pool
 	return pool
+}
+
+// AccrueFees simulates the pool earning trading fees for the module's
+// position: the amount becomes collectable and the contract receives the
+// backing balance.
+func (m *MockWasmKeeper) AccrueFees(contractAddr sdk.AccAddress, amount math.Int) {
+	pool := m.Pools[contractAddr.String()]
+	pool.AccruedFees = pool.AccruedFees.Add(amount)
+	m.Bank.Balances[contractAddr.String()] = m.Bank.Balances[contractAddr.String()].Add(sdk.NewCoin(TestBondDenom, amount))
 }
 
 // SetPoolValue simulates the pool position gaining or losing value. It keeps
@@ -70,6 +83,18 @@ func (m *MockWasmKeeper) Execute(ctx sdk.Context, contractAddress, caller sdk.Ac
 		deposited := coins.AmountOf(TestBondDenom)
 		fee := deposited.MulRaw(pool.DepositFeeBps).QuoRaw(10_000)
 		pool.Value = pool.Value.Add(deposited.Sub(fee))
+		return nil, nil
+	}
+
+	if jsonHasKey(msg, "collect_rewards") {
+		out := pool.AccruedFees
+		pool.AccruedFees = math.ZeroInt()
+		if out.IsPositive() {
+			coins := sdk.NewCoins(sdk.NewCoin(TestBondDenom, out))
+			if err := m.Bank.send(contractAddress, caller, coins); err != nil {
+				return nil, err
+			}
+		}
 		return nil, nil
 	}
 

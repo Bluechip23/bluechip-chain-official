@@ -11,6 +11,8 @@ var (
 	_ sdk.Msg = &MsgSetRewardShare{}
 	_ sdk.Msg = &MsgAllocateToPool{}
 	_ sdk.Msg = &MsgDeallocateFromPool{}
+	_ sdk.Msg = &MsgCollectPoolRewards{}
+	_ sdk.Msg = &MsgClaimVaultRewards{}
 	_ sdk.Msg = &MsgRegisterPool{}
 	_ sdk.Msg = &MsgSetPoolEnabled{}
 	_ sdk.Msg = &MsgUpdateParams{}
@@ -79,6 +81,28 @@ func (m *MsgDeallocateFromPool) ValidateBasic() error {
 	}
 	if m.Shares.IsNil() || !m.Shares.IsPositive() {
 		return errorsmod.Wrap(ErrInvalidDeallocation, "deallocation shares must be positive")
+	}
+	return nil
+}
+
+// ValidateBasic does a sanity check on the provided data.
+func (m *MsgCollectPoolRewards) ValidateBasic() error {
+	if _, err := sdk.ValAddressFromBech32(m.ValidatorAddress); err != nil {
+		return errorsmod.Wrap(err, "invalid validator address")
+	}
+	if m.PoolId == 0 {
+		return errorsmod.Wrap(ErrPoolNotFound, "pool id cannot be zero")
+	}
+	return nil
+}
+
+// ValidateBasic does a sanity check on the provided data.
+func (m *MsgClaimVaultRewards) ValidateBasic() error {
+	if _, err := sdk.AccAddressFromBech32(m.DelegatorAddress); err != nil {
+		return errorsmod.Wrap(err, "invalid delegator address")
+	}
+	if _, err := sdk.ValAddressFromBech32(m.ValidatorAddress); err != nil {
+		return errorsmod.Wrap(err, "invalid validator address")
 	}
 	return nil
 }

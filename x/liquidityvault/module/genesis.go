@@ -49,6 +49,11 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, genState types.GenesisState) 
 	if err := k.ImportCachedPoolValues(ctx, genState.CachedPoolValues); err != nil {
 		panic(err)
 	}
+	for _, reward := range genState.DelegatorRewards {
+		if err := k.SetDelegatorReward(ctx, reward); err != nil {
+			panic(err)
+		}
+	}
 }
 
 // ExportGenesis returns the module's exported genesis.
@@ -64,6 +69,7 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) *types.GenesisState {
 	genesis.ValuePostHistories = k.GetAllValuePostHistories(ctx)
 	genesis.ScheduledValuePosts = k.GetAllScheduledValuePosts(ctx)
 	genesis.CachedPoolValues = k.GetAllCachedPoolValues(ctx)
+	genesis.DelegatorRewards = k.GetAllDelegatorRewards(ctx)
 
 	return genesis
 }

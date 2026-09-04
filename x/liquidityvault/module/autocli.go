@@ -56,6 +56,15 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					Use:       "set-ranking",
 					Short:     "Shows the shadow complex-check ranking (staked tokens, composite score tiebreaker)",
 				},
+				{
+					RpcMethod: "DelegatorReward",
+					Use:       "delegator-reward [delegator-address] [validator-address]",
+					Short:     "Shows a delegator's claimable vault rewards from one validator",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "delegator_address"},
+						{ProtoField: "validator_address"},
+					},
+				},
 			},
 		},
 		Tx: &autocliv1.ServiceCommandDescriptor{
@@ -96,6 +105,22 @@ func (am AppModule) AutoCLIOptions() *autocliv1.ModuleOptions {
 					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
 						{ProtoField: "pool_id"},
 						{ProtoField: "shares"},
+					},
+				},
+				{
+					RpcMethod: "CollectPoolRewards",
+					Use:       "collect-pool-rewards [pool-id]",
+					Short:     "Collect and distribute a pool's accrued liquidity fees",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "pool_id"},
+					},
+				},
+				{
+					RpcMethod: "ClaimVaultRewards",
+					Use:       "claim-vault-rewards [validator-address]",
+					Short:     "Claim your accrued vault rewards from one validator",
+					PositionalArgs: []*autocliv1.PositionalArgDescriptor{
+						{ProtoField: "validator_address"},
 					},
 				},
 				{

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	errorsmod "cosmossdk.io/errors"
+	"cosmossdk.io/math"
 	storetypes "cosmossdk.io/store/types"
 	"github.com/cosmos/cosmos-sdk/runtime"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -11,7 +12,9 @@ import (
 	"bluechipChain/x/liquidityvault/types"
 )
 
-// GetVault returns a validator's vault, if it exists.
+// GetVault returns a validator's vault, if it exists. Reward fields are
+// normalized on read: a vault record persisted before those fields existed
+// unmarshals them as nil, and nil LegacyDec arithmetic panics.
 func (k Keeper) GetVault(ctx context.Context, valAddr sdk.ValAddress) (types.Vault, bool) {
 	store := runtime.KVStoreAdapter(k.storeService.OpenKVStore(ctx))
 	bz := store.Get(types.VaultKey(valAddr))
@@ -21,6 +24,12 @@ func (k Keeper) GetVault(ctx context.Context, valAddr sdk.ValAddress) (types.Vau
 
 	var vault types.Vault
 	k.cdc.MustUnmarshal(bz, &vault)
+	if vault.RewardIndex.IsNil() {
+		vault.RewardIndex = math.LegacyZeroDec()
+	}
+	if vault.OutstandingRewards.IsNil() {
+		vault.OutstandingRewards = math.LegacyZeroDec()
+	}
 	return vault, true
 }
 

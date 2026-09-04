@@ -20,6 +20,8 @@ func NewVault(valAddr sdk.ValAddress) Vault {
 		ValidatorAddress:     valAddr.String(),
 		Balance:              math.ZeroInt(),
 		DelegatorRewardShare: DefaultDelegatorRewardShare,
+		RewardIndex:          math.LegacyZeroDec(),
+		OutstandingRewards:   math.LegacyZeroDec(),
 	}
 }
 
@@ -31,7 +33,30 @@ func (v Vault) Validate() error {
 	if v.Balance.IsNil() || v.Balance.IsNegative() {
 		return fmt.Errorf("vault balance must be a non-negative integer: %s", v.Balance)
 	}
+	if v.RewardIndex.IsNil() || v.RewardIndex.IsNegative() {
+		return fmt.Errorf("vault reward index must be non-negative: %s", v.RewardIndex)
+	}
+	if v.OutstandingRewards.IsNil() || v.OutstandingRewards.IsNegative() {
+		return fmt.Errorf("vault outstanding rewards must be non-negative: %s", v.OutstandingRewards)
+	}
 	return ValidateRewardShare(v.DelegatorRewardShare)
+}
+
+// Validate performs basic delegator reward record validation.
+func (r DelegatorReward) Validate() error {
+	if _, err := sdk.AccAddressFromBech32(r.DelegatorAddress); err != nil {
+		return errorsmod.Wrap(err, "invalid delegator address")
+	}
+	if _, err := sdk.ValAddressFromBech32(r.ValidatorAddress); err != nil {
+		return errorsmod.Wrap(err, "invalid validator address")
+	}
+	if r.Index.IsNil() || r.Index.IsNegative() {
+		return fmt.Errorf("delegator reward index must be non-negative: %s", r.Index)
+	}
+	if r.Accrued.IsNil() || r.Accrued.IsNegative() {
+		return fmt.Errorf("delegator accrued rewards must be non-negative: %s", r.Accrued)
+	}
+	return nil
 }
 
 // Validate performs basic pending withdrawal field validation.
