@@ -66,9 +66,19 @@ interface — see `types/wasm.go` for the schema:
 The module account is the caller for every pool, holding one aggregate
 position per pool at the contract. Validators own internal shares of it
 (ERC-4626-style: first allocation mints 1:1, later allocations mint
-`amount * total_shares / position_value`), so the contracts need no
-per-validator accounting. Ratio truncation dust from partial withdrawals
-stays in the position, favoring remaining shareholders.
+`delta * total_shares / position_value` from the MEASURED value delta), so
+the contracts need no per-validator accounting. Ratio truncation dust from
+partial withdrawals stays in the position, favoring remaining shareholders.
+
+Two share-math attacks are explicitly defended (see `AllocateToPool`):
+zero-share mints are rejected, and any mint whose truncation loss would
+exceed 0.1% of the allocation's measured value is rejected — so the classic
+ERC-4626 donation/inflation attack (dust first allocation + donating into
+the pool position to inflate the share price) fails the victim's transaction
+harmlessly instead of skimming their deposit. The attacker's donation is
+recoverable, so the residual is only a griefing vector (an inflated share
+price rejects small allocations to that pool); governance ends it by
+disabling the pool with `MsgSetPoolEnabled`.
 
 A thin adapter contract wrapping the existing creator pools (implementing
 the three calls above) lives on the contract side — it is the

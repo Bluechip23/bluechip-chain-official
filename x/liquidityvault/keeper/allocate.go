@@ -18,6 +18,11 @@ import (
 // positions at the contracts.
 var moduleAccountAddress = authtypes.NewModuleAddress(types.ModuleName)
 
+// maxMintTruncationLossDivisor bounds the value a share mint may lose to
+// truncation: loss * divisor must not exceed the allocation's value (i.e.
+// at most 0.1%). See the donation-attack guard in AllocateToPool.
+var maxMintTruncationLossDivisor = math.NewInt(1000)
+
 // PoolPositionValue queries a pool contract for the current value of the
 // module's aggregate position, in the bond denom.
 func (k Keeper) PoolPositionValue(ctx context.Context, pool types.RegisteredPool) (math.Int, error) {
@@ -164,7 +169,24 @@ func (k Keeper) AllocateToPool(ctx context.Context, valAddr sdk.ValAddress, pool
 	if totalShares.IsZero() {
 		shares = delta
 	} else {
-		shares = totalShares.Mul(delta).Quo(valueBefore)
+		// Guard against the ERC-4626 donation/inflation attack: an attacker
+		// who takes a dust first allocation and then donates into the pool
+		// position inflates the share price so that later allocators lose
+		// up to one share's price to mint truncation — silently transferred
+		// to existing shareholders. Rejecting any mint whose truncation
+		// loss exceeds 0.1% of the allocation's measured value turns the
+		// victim's loss into a harmless tx failure. The attacker gains
+		// nothing (their donation is recoverable but transfers no victim
+		// funds); the residual is a griefing vector — an inflated share
+		// price rejects small allocations — which governance ends by
+		// disabling the pool.
+		numerator := totalShares.Mul(delta)
+		shares = numerator.Quo(valueBefore)
+		truncationLoss := numerator.Mod(valueBefore)
+		if truncationLoss.Mul(maxMintTruncationLossDivisor).GT(numerator) {
+			return math.Int{}, errorsmod.Wrapf(types.ErrInvalidAllocation,
+				"pool %d share price is too high for this allocation: mint truncation would cost more than 0.1%% of the allocation's measured value; allocate a larger amount", poolID)
+		}
 	}
 	if shares.IsZero() {
 		return math.Int{}, errorsmod.Wrapf(types.ErrInvalidAllocation, "allocation of %s is too small to mint shares", amount)

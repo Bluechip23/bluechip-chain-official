@@ -185,6 +185,48 @@ func TestAllocationTooSmallRejected(t *testing.T) {
 	require.Equal(t, math.NewInt(600), k.GetPoolTotalShares(ctx, poolID))
 }
 
+func TestDonationInflationAttackRejected(t *testing.T) {
+	// The ERC-4626 donation attack: attacker seeds a fresh pool with dust,
+	// donates into the pool position to inflate the share price, and waits
+	// for a victim whose allocation loses up to one share's price to mint
+	// truncation. The guard must fail the victim's tx instead of letting
+	// value transfer to the attacker.
+	k, ctx, stakingKeeper, bankKeeper, wasmKeeper, poolID := setupPool(t)
+
+	// Attacker (val2) takes the dust first allocation: 2 shares.
+	stakingKeeper.SetValidatorTokens(val2Addr, math.NewInt(1))
+	bankKeeper.SetBalance(val2AccAddr, sdk.NewCoins(coin(2)))
+	require.NoError(t, k.Deposit(ctx, val2Addr, coin(2)))
+	_, err := k.AllocateToPool(ctx, val2Addr, poolID, coin(2))
+	require.NoError(t, err)
+
+	// Donation: position value jumps to 500 with total shares still 2
+	// (share price 250).
+	wasmKeeper.SetPoolValue(poolContract, math.NewInt(500))
+
+	// Victim allocates 900: floor(2*900/500) = 3 shares worth 3/5 of 1400
+	// = 840 — a 60-token (6.7%) truncation loss to the attacker. The guard
+	// rejects the mint; the victim keeps their funds.
+	_, err = k.AllocateToPool(ctx, valAddr, poolID, coin(900))
+	require.ErrorIs(t, err, types.ErrInvalidAllocation)
+	vault, _ := k.GetVault(ctx, valAddr)
+	require.Equal(t, math.NewInt(1_000), vault.Balance)
+	require.Equal(t, math.NewInt(2), k.GetPoolTotalShares(ctx, poolID))
+
+	// On a real chain the failed tx also reverts the bank transfer and
+	// cached-value write the mock already performed; simulate the balance
+	// rollback (1000 backs the victim's vault; the attacker's 2 sit in the
+	// contract) before the next step. The stale cache is irrelevant here.
+	bankKeeper.SetBalance(moduleAddr, sdk.NewCoins(coin(1_000)))
+	wasmKeeper.SetPoolValue(poolContract, math.NewInt(500))
+
+	// An exact-multiple allocation (zero truncation loss) still works.
+	_, err = k.AllocateToPool(ctx, valAddr, poolID, coin(1_000))
+	require.NoError(t, err)
+	position, _ := k.GetPosition(ctx, valAddr, poolID)
+	require.Equal(t, math.NewInt(4), position.Shares)
+}
+
 func TestDeallocateFromPool(t *testing.T) {
 	k, ctx, _, _, _, poolID := setupPool(t)
 	_, err := k.AllocateToPool(ctx, valAddr, poolID, coin(600))
